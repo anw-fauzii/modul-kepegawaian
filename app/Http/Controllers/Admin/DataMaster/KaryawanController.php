@@ -48,7 +48,31 @@ class KaryawanController extends Controller
 
     public function show(Karyawan $karyawan): View
     {
-        $karyawan->loadMissing(['kategori', 'jenjangPendidikan', 'jamKerja', 'user']);
+        $karyawan->load([
+            'kategori',
+            'jenjangPendidikan',
+            'jamKerja',
+            'user',
+            'fasilitas' => fn ($q) => $q->orderBy('status', 'asc')->latest('tahun_terima'),
+            'diklat' => fn ($q) => $q->with('kegiatanLembaga')->latest('tanggal'),
+            'rapotKinerja' => fn ($q) => $q->with('tahunAjaran')->latest('id'),
+            'suratKeputusan' => fn ($q) => $q->with('tahunAjaran')->latest('tanggal_sk'),
+            'sertifikatPenghargaan' => fn ($q) => $q->latest('tahun'),
+            'tupoksi' => fn ($q) => $q->with('tahunAjaran')->latest('id'),
+            'kehadiranKegiatan' => fn ($q) => $q->with('kegiatan')->latest('waktu_scan')->limit(20),
+            'presensi' => fn ($q) => $q->with('bulan')->latest('tanggal')->limit(31),
+        ]);
+
+        $karyawan->loadCount([
+            'fasilitas',
+            'diklat',
+            'rapotKinerja',
+            'suratKeputusan',
+            'sertifikatPenghargaan',
+            'tupoksi',
+            'kehadiranKegiatan',
+            'presensi',
+        ]);
 
         return view('admin.dataMaster.karyawan.show', compact('karyawan'));
     }

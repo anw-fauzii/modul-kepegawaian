@@ -50,6 +50,31 @@
         @include('admin.dataMaster.karyawan._input', ['name' => 'tempat_lahir', 'label' => 'Tempat Lahir', 'type' => 'text', 'col' => 3])
         @include('admin.dataMaster.karyawan._input', ['name' => 'tanggal_lahir', 'label' => 'Tanggal Lahir', 'type' => 'date', 'col' => 3])
     </div>
+
+    <div class="form-row">
+        <div class="col-md-12">
+            <div class="position-relative form-group">
+                <label for="foto" class="font-weight-bold" style="font-size: 0.85rem; color: #475569;">
+                    Foto Karyawan (opsional)
+                </label>
+                <div class="d-flex align-items-center" style="gap: 14px;">
+                    <img id="fotoPreview"
+                        src="{{ $isEdit && $karyawan->foto_url ? $karyawan->foto_url : '' }}"
+                        alt="Preview foto"
+                        style="width: 80px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; {{ $isEdit && $karyawan->foto_url ? '' : 'display:none;' }}">
+                    <div class="flex-grow-1">
+                        <input type="file" name="foto" id="foto" accept="image/jpeg,image/png,image/webp"
+                            class="form-control-file @error('foto') is-invalid @enderror"
+                            onchange="(function(i){var p=document.getElementById('fotoPreview');if(i.files&&i.files[0]){p.src=URL.createObjectURL(i.files[0]);p.style.display='block';}})(this)">
+                        <small class="text-muted">Format JPG/PNG/WEBP, maksimal 2 MB.</small>
+                        @error('foto')
+                            <div class="text-danger" style="font-style: italic; font-size: 0.7rem;">{{ strtolower($message) }}</div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="form-section mb-4 pb-2 border-bottom">

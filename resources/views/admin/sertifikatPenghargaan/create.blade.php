@@ -54,7 +54,7 @@
                         <select name="karyawan_nipy" class="form-control select2 @error('karyawan_nipy') is-invalid @enderror" required>
                             <option value="">-- Pilih Karyawan --</option>
                             @foreach($karyawanList as $karyawan)
-                                <option value="{{ $karyawan->nipy }}" {{ old('karyawan_nipy') == $karyawan->nipy ? 'selected' : '' }}>
+                                <option value="{{ $karyawan->nipy }}" {{ old('karyawan_nipy', request('karyawan_nipy')) == $karyawan->nipy ? 'selected' : '' }}>
                                     {{ $karyawan->nama_lengkap }}{{ $karyawan->gelar ? ', ' . $karyawan->gelar : '' }} (NIPY: {{ $karyawan->nipy }}) - {{ $karyawan->unit ?? 'N/A' }}
                                 </option>
                             @endforeach

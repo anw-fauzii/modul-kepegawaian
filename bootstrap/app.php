@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'sso.check' => CheckSsoSession::class,
             'nocache' => NoCache::class,
         ]);
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

@@ -58,6 +58,7 @@ class KaryawanRequest extends FormRequest
             'sertifikasi'   => ['boolean'],
             'nik'           => ['nullable', 'string', 'max:20'],
             'kepegawaian_master_jam_kerja_id' => ['required', Rule::exists('kepegawaian_master_jam_kerja', 'id')],
+            'foto'          => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 
@@ -86,6 +87,9 @@ class KaryawanRequest extends FormRequest
             'tahun_lulus.required'   => 'Tahun Lulus wajib diisi.',
             'tahun_lulus.digits'     => 'Tahun Lulus harus 4 digit.',
             'kepegawaian_master_jam_kerja_id.required' => 'Jam Kerja wajib dipilih.',
+            'foto.image'             => 'Foto harus berupa gambar.',
+            'foto.mimes'             => 'Foto harus berformat jpg, jpeg, png, atau webp.',
+            'foto.max'               => 'Ukuran foto maksimal 2 MB.',
         ];
     }
 }

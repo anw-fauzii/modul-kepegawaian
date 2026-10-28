@@ -38,6 +38,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'sertifikasi',
     'nik',
     'kepegawaian_master_jam_kerja_id',
+    'foto',
 
 ])]
 #[Table('kepegawaian_master_karyawan')]
@@ -75,6 +76,11 @@ class Karyawan extends Model
 
             return $diff->y . ' tahun ' . $diff->m . ' bulan';
         });
+    }
+
+    protected function fotoUrl(): Attribute
+    {
+        return Attribute::get(fn () => $this->foto ? asset('storage/' . $this->foto) : null);
     }
 
     protected function email(): Attribute
@@ -164,5 +170,15 @@ class Karyawan extends Model
     public function sertifikatPenghargaan(): HasMany
     {
         return $this->hasMany(\App\Models\Admin\SertifikatPenghargaan\SertifikatPenghargaan::class, 'karyawan_nipy', 'nipy');
+    }
+
+    public function diklat(): HasMany
+    {
+        return $this->hasMany(\App\Models\Admin\Diklat\Diklat::class, 'karyawan_nipy', 'nipy');
+    }
+
+    public function tupoksi(): HasMany
+    {
+        return $this->hasMany(\App\Models\Admin\Tupoksi\Tupoksi::class, 'karyawan_nipy', 'nipy');
     }
 }

@@ -8,6 +8,13 @@ use App\Models\Admin\DataMaster\Karyawan;
 use App\Models\Admin\DataMaster\Kategori;
 use App\Models\Admin\DataMaster\TahunAjaran;
 use App\Models\Admin\Presensi\Presensi;
+use App\Models\Admin\Diklat\Diklat;
+use App\Models\Admin\Fasilitas\Fasilitas;
+use App\Models\Admin\Kegiatan\KegiatanLembaga;
+use App\Models\Admin\RapotKinerja\RapotKinerja;
+use App\Models\Admin\SertifikatPenghargaan\SertifikatPenghargaan;
+use App\Models\Admin\SuratKeputusan\SuratKeputusan;
+use App\Models\Admin\Tupoksi\Tupoksi;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Facades\DB;
@@ -125,6 +132,25 @@ class HomeController extends Controller
         $activeTahunAjaran = TahunAjaran::where('is_active', true)->first();
         $jamKerjaList = JamKerja::all();
 
+        // 6. MODUL ARSIP & KEGIATAN
+        $modulStats = [
+            'kegiatan'    => KegiatanLembaga::count(),
+            'fasilitas'   => Fasilitas::count(),
+            'diklat'      => Diklat::count(),
+            'rapot'       => RapotKinerja::count(),
+            'sk'          => SuratKeputusan::count(),
+            'penghargaan' => SertifikatPenghargaan::count(),
+            'tupoksi'     => Tupoksi::count(),
+        ];
+        $fasilitasBelumKembali = Fasilitas::where('status', false)->count();
+        $kegiatanHariIni = KegiatanLembaga::withCount('kehadiran')
+            ->whereDate('tanggal', $today)
+            ->orderBy('jam_mulai')
+            ->take(5)
+            ->get();
+        $kegiatanAktifCount = KegiatanLembaga::where('is_active', true)->count();
+        $sertifikasiPersen = $totalKaryawan > 0 ? round(($totalSertifikasi / $totalKaryawan) * 100) : 0;
+
         return view('home', compact(
             'totalKaryawan',
             'totalLaki',
@@ -149,7 +175,12 @@ class HomeController extends Controller
             'kategoriDistribution',
             'activeBulan',
             'activeTahunAjaran',
-            'jamKerjaList'
+            'jamKerjaList',
+            'modulStats',
+            'fasilitasBelumKembali',
+            'kegiatanHariIni',
+            'kegiatanAktifCount',
+            'sertifikasiPersen'
         ));
     }
 }

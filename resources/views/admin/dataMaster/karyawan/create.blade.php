@@ -32,7 +32,7 @@
 
         <div class="main-card card shadow-sm border-0" style="border-radius: 12px;">
             <div class="card-body p-4 sm:p-5">
-                <form method="post" action="{{ route('karyawan.store') }}" id="createForm">
+                <form method="post" action="{{ route('karyawan.store') }}" id="createForm" enctype="multipart/form-data">
                     @csrf
                     @include('admin.dataMaster.karyawan._form')
                 </form>

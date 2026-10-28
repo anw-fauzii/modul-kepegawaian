@@ -229,6 +229,17 @@
                                         </span>
                                     </td>
                                     <td>
+                                        <div class="d-flex align-items-center" style="gap: 10px;">
+                                        @if ($item->foto_url)
+                                            <img src="{{ $item->foto_url }}" alt="Foto"
+                                                style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.2); flex-shrink: 0;">
+                                        @else
+                                            <span class="d-flex align-items-center justify-content-center text-white font-weight-bold"
+                                                style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #ea580c, #d97706); font-size: 0.85rem; flex-shrink: 0;">
+                                                {{ strtoupper(mb_substr($item->nama_lengkap, 0, 1)) }}
+                                            </span>
+                                        @endif
+                                        <div>
                                         <div class="d-flex align-items-center flex-wrap" style="gap: 5px;">
                                             <span class="font-weight-bold text-dark" style="font-size: 0.92rem;">
                                                 {{ $item->nama_lengkap }}{{ $item->gelar ? ', ' . $item->gelar : '' }}
@@ -257,6 +268,8 @@
                                                 @endif
                                             </small>
                                         @endif
+                                        </div>
+                                        </div>
                                     </td>
                                     <td>
                                         <span class="font-weight-bold" style="color: #334155;">{{ $item->jabatan }}</span>

@@ -302,6 +302,9 @@
                         <span class="badge badge-light border" style="font-size: 10.5px;">Kontrak: {{ $statusPegawaiStats['kontrak'] }}</span>
                         <span class="badge badge-light border" style="font-size: 10.5px;">Honor: {{ $statusPegawaiStats['honor'] }}</span>
                     </div>
+                    <div class="small text-muted mt-2">
+                        <i class="fa fa-certificate text-success mr-1"></i> {{ $totalSertifikasi }} bersertifikasi ({{ $sertifikasiPersen }}%)
+                    </div>
                 </div>
                 <div class="pt-3 mt-3 border-top">
                     <a href="{{ route('karyawan.index') }}" class="small font-weight-bold text-primary">
@@ -418,6 +421,37 @@
         </div>
     </div>
 
+    <!-- ROW 1B: RINGKASAN MODUL ARSIP KEPEGAWAIAN -->
+    <div class="row mb-3">
+        @php
+            $modulCards = [
+                ['key' => 'kegiatan',    'label' => 'Kegiatan',    'icon' => 'fa fa-qrcode',     'route' => 'kegiatan.index',               'grad' => '#10b981, #047857'],
+                ['key' => 'fasilitas',   'label' => 'Fasilitas',   'icon' => 'pe-7s-box2',       'route' => 'fasilitas.index',              'grad' => '#f59e0b, #b45309'],
+                ['key' => 'diklat',      'label' => 'Diklat',      'icon' => 'pe-7s-culture',    'route' => 'diklat.index',                 'grad' => '#3b82f6, #1d4ed8'],
+                ['key' => 'rapot',       'label' => 'Rapor Kinerja', 'icon' => 'pe-7s-graph1',   'route' => 'rapot-kinerja.index',          'grad' => '#06b6d4, #0e7490'],
+                ['key' => 'sk',          'label' => 'Surat Keputusan', 'icon' => 'pe-7s-news-paper', 'route' => 'surat-keputusan.index',    'grad' => '#64748b, #334155'],
+                ['key' => 'penghargaan', 'label' => 'Penghargaan', 'icon' => 'pe-7s-medal',      'route' => 'sertifikat-penghargaan.index', 'grad' => '#ec4899, #be185d'],
+                ['key' => 'tupoksi',     'label' => 'Tupoksi',     'icon' => 'pe-7s-note2',      'route' => 'tupoksi.index',                'grad' => '#8b5cf6, #6d28d9'],
+            ];
+        @endphp
+        @foreach ($modulCards as $mc)
+            <div class="col-xl col-lg-3 col-md-4 col-6 mb-3">
+                <a href="{{ route($mc['route']) }}" class="quick-jump-item" style="background: #ffffff;">
+                    <div class="quick-jump-icon text-white" style="background: linear-gradient(135deg, {{ $mc['grad'] }});">
+                        <i class="{{ $mc['icon'] }}"></i>
+                    </div>
+                    <div>
+                        <div class="font-weight-bold text-dark" style="font-size: 18px; line-height: 1.1;">{{ $modulStats[$mc['key']] }}</div>
+                        <div class="small text-muted">{{ $mc['label'] }}</div>
+                        @if ($mc['key'] === 'fasilitas' && $fasilitasBelumKembali > 0)
+                            <span class="badge badge-soft-warning py-0 px-1" style="font-size: 10px;">{{ $fasilitasBelumKembali }} dipinjam</span>
+                        @endif
+                    </div>
+                </a>
+            </div>
+        @endforeach
+    </div>
+
     <!-- ROW 2: CHARTS (Tren 7 Hari & Komposisi Kategori) -->
     <div class="row">
         <!-- Chart 1: Tren Presensi 7 Hari Terakhir -->
@@ -495,9 +529,13 @@
                         @endphp
                         <div class="feed-item">
                             <div class="d-flex align-items-center">
+                                @if ($item->karyawan?->foto_url)
+                                    <img src="{{ $item->karyawan->foto_url }}" alt="Foto" class="avatar-circle mr-3" style="width: 36px; height: 36px; object-fit: cover;">
+                                @else
                                 <div class="avatar-circle mr-3" style="background: {{ $bgGrad }}; width: 36px; height: 36px; font-size: 12px;">
                                     {{ $initials }}
                                 </div>
+                                @endif
                                 <div>
                                     <div class="font-weight-bold text-dark" style="font-size: 13px;">
                                         {{ $item->karyawan?->nama_lengkap ?? '-' }}
@@ -568,9 +606,13 @@
                         @endphp
                         <div class="feed-item">
                             <div class="d-flex align-items-center">
+                                @if ($item->karyawan?->foto_url)
+                                    <img src="{{ $item->karyawan->foto_url }}" alt="Foto" class="avatar-circle mr-3" style="width: 36px; height: 36px; object-fit: cover;">
+                                @else
                                 <div class="avatar-circle mr-3" style="background: {{ $bgGrad }}; width: 36px; height: 36px; font-size: 12px;">
                                     {{ $initials }}
                                 </div>
+                                @endif
                                 <div>
                                     <div class="font-weight-bold text-dark" style="font-size: 13px;">
                                         {{ $item->karyawan?->nama_lengkap ?? '-' }}
@@ -604,6 +646,68 @@
                             </div>
                             <h6 class="font-weight-bold text-success mb-1">Semua Hadir Tepat Waktu!</h6>
                             <p class="small text-muted mb-0">Tidak ada catatan pegawai terlambat pada tanggal hari ini.</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROW 3B: KEGIATAN LEMBAGA HARI INI -->
+    <div class="row">
+        <div class="col-12">
+            <div class="content-card">
+                <div class="content-card-header">
+                    <div>
+                        <h6 class="font-weight-bold text-dark mb-0">
+                            <i class="fa fa-qrcode text-success mr-2"></i> Kegiatan Lembaga Hari Ini
+                        </h6>
+                        <small class="text-muted">{{ $kegiatanAktifCount }} kegiatan dengan gerbang presensi QR terbuka</small>
+                    </div>
+                    <div>
+                        <a href="{{ route('kegiatan.create') }}" class="btn btn-sm btn-light border mr-1" style="border-radius: 6px;">
+                            <i class="fa fa-plus mr-1"></i> Buat Kegiatan
+                        </a>
+                        <a href="{{ route('kegiatan.index') }}" class="small font-weight-bold text-primary">Semua Kegiatan →</a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    @forelse ($kegiatanHariIni as $kg)
+                        <div class="feed-item">
+                            <div class="d-flex align-items-center">
+                                <div class="quick-jump-icon {{ $kg->is_active ? 'badge-soft-success' : 'badge-soft-secondary' }}">
+                                    <i class="fa fa-calendar-check"></i>
+                                </div>
+                                <div>
+                                    <a href="{{ route('kegiatan.show', $kg->id) }}" class="font-weight-bold text-dark" style="font-size: 13px;">
+                                        {{ $kg->nama_kegiatan }}
+                                    </a>
+                                    @if ($kg->jenis_kegiatan === 'pelatihan')
+                                        <span class="badge badge-soft-primary py-0 px-2 ml-1" style="font-size: 10px;">Pelatihan</span>
+                                    @endif
+                                    <div class="small text-muted">
+                                        <i class="fa fa-clock mr-1"></i>{{ $kg->jam_mulai ? substr($kg->jam_mulai, 0, 5) : '-' }}
+                                        @if ($kg->jam_selesai) - {{ substr($kg->jam_selesai, 0, 5) }} @endif
+                                        @if ($kg->lokasi) &bull; <i class="fa fa-map-marker-alt mr-1"></i>{{ $kg->lokasi }} @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="badge badge-soft-success py-1 px-2 font-weight-bold" style="font-size: 11px;">
+                                    {{ $kg->kehadiran_count }} / {{ $totalKaryawan }} hadir
+                                </span>
+                                <div class="small mt-1">
+                                    @if ($kg->is_active)
+                                        <a href="{{ route('kegiatan.qr', $kg->id) }}" class="text-success font-weight-bold">Tampilkan QR</a>
+                                    @else
+                                        <span class="text-muted">Ditutup</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="text-center py-4 text-muted small">
+                            Tidak ada kegiatan lembaga terjadwal hari ini.
                         </div>
                     @endforelse
                 </div>
@@ -743,6 +847,93 @@
                                 <div>
                                     <div class="font-weight-bold" style="font-size: 13px;">Kategori Karyawan</div>
                                     <div class="small text-muted">Pengelompokan unit & jenjang</div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- Kegiatan Lembaga -->
+                        <div class="col-md-6 mb-2">
+                            <a href="{{ route('kegiatan.index') }}" class="quick-jump-item">
+                                <div class="quick-jump-icon badge-soft-success"><i class="fa fa-qrcode"></i></div>
+                                <div>
+                                    <div class="font-weight-bold" style="font-size: 13px;">Kegiatan Lembaga</div>
+                                    <div class="small text-muted">Agenda, QR & kehadiran kegiatan</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Fasilitas -->
+                        <div class="col-md-6 mb-2">
+                            <a href="{{ route('fasilitas.index') }}" class="quick-jump-item">
+                                <div class="quick-jump-icon badge-soft-warning"><i class="pe-7s-box2"></i></div>
+                                <div>
+                                    <div class="font-weight-bold" style="font-size: 13px;">Fasilitas & Aset</div>
+                                    <div class="small text-muted">Inventaris yang dipinjamkan</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Diklat -->
+                        <div class="col-md-6 mb-2">
+                            <a href="{{ route('diklat.index') }}" class="quick-jump-item">
+                                <div class="quick-jump-icon badge-soft-primary"><i class="pe-7s-culture"></i></div>
+                                <div>
+                                    <div class="font-weight-bold" style="font-size: 13px;">Diklat & Pelatihan</div>
+                                    <div class="small text-muted">Riwayat pelatihan pegawai</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Rapor Kinerja -->
+                        <div class="col-md-6 mb-2">
+                            <a href="{{ route('rapot-kinerja.index') }}" class="quick-jump-item">
+                                <div class="quick-jump-icon badge-soft-info"><i class="pe-7s-graph1"></i></div>
+                                <div>
+                                    <div class="font-weight-bold" style="font-size: 13px;">Rapor Kinerja</div>
+                                    <div class="small text-muted">Arsip penilaian per tahun ajaran</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Surat Keputusan -->
+                        <div class="col-md-6 mb-2">
+                            <a href="{{ route('surat-keputusan.index') }}" class="quick-jump-item">
+                                <div class="quick-jump-icon badge-soft-secondary"><i class="pe-7s-news-paper"></i></div>
+                                <div>
+                                    <div class="font-weight-bold" style="font-size: 13px;">Surat Keputusan</div>
+                                    <div class="small text-muted">SK pengangkatan & penugasan</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Penghargaan -->
+                        <div class="col-md-6 mb-2">
+                            <a href="{{ route('sertifikat-penghargaan.index') }}" class="quick-jump-item">
+                                <div class="quick-jump-icon badge-soft-warning"><i class="pe-7s-medal"></i></div>
+                                <div>
+                                    <div class="font-weight-bold" style="font-size: 13px;">Penghargaan</div>
+                                    <div class="small text-muted">Sertifikat & piagam prestasi</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Tupoksi -->
+                        <div class="col-md-6 mb-2">
+                            <a href="{{ route('tupoksi.index') }}" class="quick-jump-item">
+                                <div class="quick-jump-icon badge-soft-primary"><i class="pe-7s-note2"></i></div>
+                                <div>
+                                    <div class="font-weight-bold" style="font-size: 13px;">Tupoksi</div>
+                                    <div class="small text-muted">Tugas pokok & fungsi pegawai</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Bulan Presensi -->
+                        <div class="col-md-6 mb-2">
+                            <a href="{{ route('bulan.index') }}" class="quick-jump-item">
+                                <div class="quick-jump-icon badge-soft-info"><i class="fa fa-calendar-alt"></i></div>
+                                <div>
+                                    <div class="font-weight-bold" style="font-size: 13px;">Bulan Presensi</div>
+                                    <div class="small text-muted">Periode & tutup buku bulanan</div>
                                 </div>
                             </a>
                         </div>

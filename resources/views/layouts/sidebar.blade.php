@@ -200,7 +200,7 @@
 
                 <!-- Administrasi & Fasilitas Dropdown -->
                 @php
-                    $isAdministrasiActive = request()->is('fasilitas*', 'surat-keputusan*');
+                    $isAdministrasiActive = request()->is('fasilitas*', 'surat-keputusan*', 'penggajian*');
                 @endphp
                 <div class="has-submenu relative group/submenu">
                     <button type="button" data-sidebar-toggle="submenu-administrasi"
@@ -232,6 +232,10 @@
                         <a href="{{ route('surat-keputusan.index') }}"
                             class="block px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->is('surat-keputusan*') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
                             Surat Keputusan (SK)
+                        </a>
+                        <a href="{{ route('penggajian.index') }}"
+                            class="block px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->is('penggajian*') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
+                            Penggajian
                         </a>
                     </div>
                 </div>

@@ -13,7 +13,7 @@
     .scanner-box {
         position: relative;
         width: 100%;
-        min-height: 300px;
+        min-height: 280px;
         background: #0f172a;
         border-radius: 18px;
         overflow: hidden;
@@ -21,46 +21,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-    }
-    #preview {
-        width: 100%;
-        height: 100%;
-        min-height: 300px;
-        max-height: 380px;
-        object-fit: cover;
-        display: block;
-        background-color: #0f172a;
-    }
-    .scanner-overlay {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .scanner-target {
-        width: 220px;
-        height: 220px;
-        border: 2px solid rgba(245, 158, 11, 0.85);
-        border-radius: 16px;
-        position: relative;
-        box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.35);
-    }
-    .laser-line {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #ea580c, #f59e0b, transparent);
-        box-shadow: 0 0 8px #f59e0b;
-        animation: scanMove 2s infinite ease-in-out;
-    }
-    @keyframes scanMove {
-        0% { top: 5%; opacity: 0.3; }
-        50% { top: 95%; opacity: 1; }
-        100% { top: 5%; opacity: 0.3; }
     }
     .user-profile-badge {
         background: #ffffff;
@@ -70,20 +30,21 @@
         margin-bottom: 20px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     }
-    .btn-switch-cam {
-        background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    .btn-camera-capture {
+        background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
         border: none;
         color: #ffffff;
-        padding: 8px 16px;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 13px;
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 15px;
+        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.35);
         transition: all 0.2s ease;
     }
-    .btn-switch-cam:hover {
+    .btn-camera-capture:hover, .btn-camera-capture:focus {
         color: #ffffff;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(234, 88, 12, 0.45);
     }
 </style>
 
@@ -98,13 +59,13 @@
                     </div>
                 </div>
                 <div>
-                    <h6 class="mb-0 font-weight-bold text-dark">{{ auth()->user()?->name ?? 'User' }}</h6>
+                    <h6 class="mb-0 font-weight-bold text-dark">{{ auth()->user()->name ?? '-'}}</h6>
                     <div class="small text-muted">
-                        NIPY: <code class="text-primary font-weight-bold">{{ auth()->user()?->no_induk ?? '-' }}</code>
+                        NIPY: <code class="text-primary font-weight-bold">{{ auth()->user()->no_induk ?? '-' }}</code>
                     </div>
                 </div>
             </div>
-            <a href="{{ route('home') }}" class="btn btn-sm btn-outline-secondary" title="Kembali ke Dashboard">
+            <a href="{{ route('home') }}" class="btn btn-sm btn-outline-secondary" title="Kembali">
                 <i class="fa fa-home"></i>
             </a>
         </div>
@@ -119,34 +80,36 @@
             </p>
         </div>
 
-        {{-- Viewfinder Instascan --}}
-        <div class="scanner-box" id="scanner-container">
-            <video id="preview" playsinline autoplay muted></video>
+        {{-- Hidden Native File Input untuk Kamera Smartphone (Bekerja 100% di HTTP & HTTPS) --}}
+        <input type="file" id="qr-input-file" accept="image/*" capture="environment" style="display: none;">
 
-            <!-- Overlay Target Kotak & Laser Animasi -->
-            <div class="scanner-overlay">
-                <div class="scanner-target">
-                    <div class="laser-line"></div>
+        {{-- Viewfinder Kamera Live / Box Fallback --}}
+        <div class="scanner-box" id="scanner-container">
+            <div id="user-reader" style="width: 100%; min-height: 280px;"></div>
+            <div id="fallback-box" class="p-4 text-center text-white" style="display: none;">
+                <div class="mb-3">
+                    <i class="fa fa-camera fa-3x text-warning"></i>
+                </div>
+                <h6 class="font-weight-bold mb-1">Mode Kamera Snapshot Aktif</h6>
+                <p class="small text-white-50 mb-3">
+                    Klik tombol di bawah untuk membuka kamera smartphone Anda dan memotret QR Code di proyektor.
+                </p>
+                <button type="button" class="btn btn-camera-capture btn-block" onclick="triggerNativeCamera()">
+                    <i class="fa fa-camera mr-2"></i> Buka Kamera & Foto QR
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <div class="row no-gutters">
+                <div class="col-6 pl-1">
+                    <button type="button" class="btn btn-sm btn-outline-info btn-block" onclick="toggleManualInput()">
+                        <i class="fa fa-keyboard mr-1"></i> Input Token Manual
+                    </button>
                 </div>
             </div>
         </div>
 
-        {{-- Kontrol Kamera (Ganti Kamera & Input Manual) --}}
-        <div class="mt-3">
-            <div id="switch-camera-container" class="mb-2" style="display: none;">
-                <button type="button" class="btn btn-switch-cam btn-block" onclick="switchCamera()">
-                    <i class="fa fa-refresh mr-1"></i> Ganti Kamera (Depan / Belakang)
-                </button>
-            </div>
-
-            <div class="text-center">
-                <button type="button" class="btn btn-sm btn-outline-info" onclick="toggleManualInput()" style="border-radius: 8px;">
-                    <i class="fa fa-keyboard-o mr-1"></i> Input Token Manual
-                </button>
-            </div>
-        </div>
-
-        {{-- Form Input Manual (Collapsible) --}}
         <div id="manual-token-form" class="card mt-3 border-0 shadow-sm" style="border-radius: 12px; display: none;">
             <div class="card-body p-3">
                 <label class="small font-weight-bold text-dark mb-1">Ketik / Tempel Token atau Link QR:</label>
@@ -161,12 +124,10 @@
             </div>
         </div>
 
-        {{-- Status Alert Box --}}
         <div id="scan-alert" class="alert alert-info text-center mt-3 py-2 small shadow-sm" style="border-radius: 10px;">
-            <i class="fa fa-info-circle mr-1"></i> Menyiapkan pemindai kamera (Instascan)...
+            <i class="fa fa-info-circle mr-1"></i> Menyiapkan pemindai kamera...
         </div>
 
-        {{-- Modal Notifikasi Hasil Scan --}}
         <div class="modal fade" id="scanResultModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content text-center p-4" style="border-radius: 20px;">
@@ -187,95 +148,90 @@
     </div>
 </div>
 
-{{-- Library Instascan Lokal --}}
-<script src="{{ asset('js/instascan.min.js') }}" type="text/javascript"></script>
-
-<script type="text/javascript">
-    let scanner = null;
-    let availableCameras = [];
-    let currentCameraIndex = 0;
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script>
+    let html5Qr = null;
     let isProcessing = false;
 
     document.addEventListener("DOMContentLoaded", function () {
-        const previewElement = document.getElementById('preview');
+        html5Qr = new Html5Qrcode("user-reader");
 
-        try {
-            // Inisialisasi scanner Instascan sesuai dokumentasi resmi
-            scanner = new Instascan.Scanner({
-                video: previewElement,
-                mirror: false,
-                scanPeriod: 5
-            });
+        const isSecure = window.isSecureContext || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const hasMediaDevices = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
 
-            // Listener saat QR Code terdeteksi
-            scanner.addListener('scan', function (content) {
-                console.log('Instascan detected:', content);
-                onScanSuccess(content);
-            });
-
-            // Deteksi daftar kamera yang tersedia
-            Instascan.Camera.getCameras().then(function (cameras) {
-                availableCameras = cameras;
-
-                if (cameras.length > 0) {
-                    // Otomatis prioritaskan kamera belakang (environment) jika ada
-                    let selectedIndex = 0;
-                    for (let i = 0; i < cameras.length; i++) {
-                        const name = (cameras[i].name || '').toLowerCase();
-                        if (name.includes('back') || name.includes('rear') || name.includes('belakang') || name.includes('environment')) {
-                            selectedIndex = i;
-                            break;
-                        }
-                    }
-                    if (selectedIndex === 0 && cameras.length > 1) {
-                        selectedIndex = cameras.length - 1;
-                    }
-
-                    currentCameraIndex = selectedIndex;
-                    startSelectedCamera(cameras[selectedIndex]);
-
-                    // Jika tersedia lebih dari 1 kamera, tampilkan tombol ganti kamera
-                    if (cameras.length > 1) {
-                        document.getElementById('switch-camera-container').style.display = 'block';
-                    }
-                } else {
-                    updateAlert("warning", '<i class="fa fa-exclamation-triangle mr-1"></i> Tidak ada kamera yang ditemukan pada perangkat Anda.');
-                }
-            }).catch(function (e) {
-                console.error('Error Instascan getCameras:', e);
-                updateAlert("danger", '<i class="fa fa-times-circle mr-1"></i> Gagal mengakses kamera: ' + (e.message || e));
-            });
-        } catch (err) {
-            console.error('Instascan init error:', err);
-            updateAlert("danger", '<i class="fa fa-times-circle mr-1"></i> Terjadi kesalahan pada scanner: ' + err.message);
+        if (isSecure && hasMediaDevices) {
+            initLiveCamera();
+        } else {
+            // Jika diakses via IP http://192.168.x.x (Insecure Context), alihkan ke mode Native Camera
+            enableFallbackMode("Kamera live stream browser membutuhkan HTTPS. Mode Kamera Smartphone Native diaktifkan.");
         }
+
+        // Event listener saat user selesai memotret QR via input camera
+        document.getElementById('qr-input-file').addEventListener('change', handleFileInput);
     });
 
-    function startSelectedCamera(camera) {
-        if (!scanner || !camera) return;
+    function initLiveCamera() {
+        const config = {
+            fps: 12,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0
+        };
 
-        updateAlert("info", '<i class="fa fa-spinner fa-spin mr-1"></i> Membuka kamera...');
-
-        scanner.start(camera).then(function () {
-            const camLabel = camera.name ? camera.name : 'Kamera Aktif';
-            updateAlert("success", '<i class="fa fa-video-camera mr-1"></i> ' + camLabel + ' aktif. Arahkan ke QR Code kegiatan.');
-        }).catch(function (err) {
-            console.error('Error starting camera:', err);
-            updateAlert("danger", '<i class="fa fa-exclamation-triangle mr-1"></i> Gagal mengaktifkan kamera: ' + (err.message || err));
+        html5Qr.start(
+            { facingMode: "environment" },
+            config,
+            onScanSuccess
+        ).then(() => {
+            updateAlert("success", '<i class="fa fa-camera mr-1"></i> Kamera aktif. Silakan bidik QR Code kegiatan.');
+        }).catch(err => {
+            enableFallbackMode("Tidak dapat membuka live stream kamera. Silakan gunakan tombol foto di bawah.");
         });
     }
 
-    function switchCamera() {
-        if (!availableCameras || availableCameras.length <= 1) return;
+    function enableFallbackMode(msg) {
+        document.getElementById('user-reader').style.display = 'none';
+        document.getElementById('fallback-box').style.display = 'block';
+        updateAlert("warning", '<i class="fa fa-camera mr-1"></i> ' + msg);
+    }
 
-        currentCameraIndex = (currentCameraIndex + 1) % availableCameras.length;
-        const nextCamera = availableCameras[currentCameraIndex];
-        startSelectedCamera(nextCamera);
+    function triggerNativeCamera() {
+        const input = document.getElementById('qr-input-file');
+        input.removeAttribute('multiple');
+        input.setAttribute('capture', 'environment');
+        input.click();
+    }
+
+    function triggerGallery() {
+        const input = document.getElementById('qr-input-file');
+        input.removeAttribute('capture');
+        input.click();
+    }
+
+    function handleFileInput(e) {
+        if (!e.target.files || e.target.files.length === 0) return;
+
+        const file = e.target.files[0];
+        updateAlert("info", '<i class="fa fa-spinner fa-spin mr-1"></i> Membaca QR Code dari foto...');
+
+        html5Qr.scanFile(file, true)
+            .then(decodedText => {
+                onScanSuccess(decodedText);
+            })
+            .catch(err => {
+                updateAlert("danger", '<i class="fa fa-exclamation-triangle mr-1"></i> QR Code tidak terdeteksi pada foto. Pastikan foto tegak lurus, fokus, dan cukup terang.');
+            });
+
+        // Reset input agar bisa memotret ulang
+        e.target.value = '';
     }
 
     function onScanSuccess(decodedText) {
         if (isProcessing) return;
         isProcessing = true;
+
+        if (html5Qr && html5Qr.isScanning) {
+            html5Qr.pause();
+        }
 
         if (navigator.vibrate) {
             navigator.vibrate(150);
@@ -321,13 +277,19 @@
         .catch(err => {
             alert('Terjadi kendala koneksi dengan server.');
             isProcessing = false;
+            if (html5Qr && html5Qr.isScanning) html5Qr.resume();
         });
     }
 
     function continueScanning() {
         $('#scanResultModal').modal('hide');
         isProcessing = false;
-        updateAlert("success", '<i class="fa fa-video-camera mr-1"></i> Kamera siap kembali. Arahkan ke QR Code.');
+        if (html5Qr && html5Qr.isScanning) {
+            html5Qr.resume();
+            updateAlert("success", '<i class="fa fa-camera mr-1"></i> Kamera siap kembali.');
+        } else {
+            updateAlert("info", '<i class="fa fa-camera mr-1"></i> Silakan foto QR Code kembali.');
+        }
     }
 
     function toggleManualInput() {

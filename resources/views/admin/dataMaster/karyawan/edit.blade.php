@@ -32,7 +32,7 @@
 
         <div class="main-card card shadow-sm border-0" style="border-radius: 12px;">
             <div class="card-body p-4 sm:p-5">
-                <form method="post" action="{{ route('karyawan.update', $karyawan->nipy) }}" id="editForm">
+                <form method="post" action="{{ route('karyawan.update', $karyawan->nipy) }}" id="editForm" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     @include('admin.dataMaster.karyawan._form')

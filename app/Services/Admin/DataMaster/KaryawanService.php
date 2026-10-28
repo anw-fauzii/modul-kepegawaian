@@ -9,6 +9,8 @@ use App\View\Composers\SidebarComposer;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
 class KaryawanService
@@ -39,6 +41,12 @@ class KaryawanService
 
     public function store(array $data): Karyawan
     {
+        if (($data['foto'] ?? null) instanceof UploadedFile) {
+            $data['foto'] = $data['foto']->store('karyawan/foto', 'public');
+        } else {
+            unset($data['foto']);
+        }
+
         $karyawan = DB::transaction(function () use ($data) {
             $user = User::create([
                 'name'     => $data['nama_lengkap'],
@@ -57,6 +65,14 @@ class KaryawanService
 
     public function update(Karyawan $karyawan, array $data): bool
     {
+        $oldFoto = null;
+        if (($data['foto'] ?? null) instanceof UploadedFile) {
+            $oldFoto = $karyawan->foto;
+            $data['foto'] = $data['foto']->store('karyawan/foto', 'public');
+        } else {
+            unset($data['foto']);
+        }
+
         $result = DB::transaction(function () use ($karyawan, $data) {
             unset($data['nipy']);
 
@@ -64,6 +80,10 @@ class KaryawanService
 
             return $karyawan->update($data);
         });
+
+        if ($oldFoto) {
+            Storage::disk('public')->delete($oldFoto);
+        }
 
         Cache::forget(SidebarComposer::CACHE_KEY);
 
@@ -79,6 +99,10 @@ class KaryawanService
 
             return $deleted;
         });
+
+        if ($karyawan->foto) {
+            Storage::disk('public')->delete($karyawan->foto);
+        }
 
         Cache::forget(SidebarComposer::CACHE_KEY);
 

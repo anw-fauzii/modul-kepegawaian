@@ -63,4 +63,8 @@ Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     // Modul Sertifikat Penghargaan Karyawan
     Route::get('/sertifikat-penghargaan/{sertifikat_penghargaan}/download', [App\Http\Controllers\Admin\SertifikatPenghargaan\SertifikatPenghargaanController::class, 'download'])->name('sertifikat-penghargaan.download');
     Route::resource('/sertifikat-penghargaan', App\Http\Controllers\Admin\SertifikatPenghargaan\SertifikatPenghargaanController::class);
+
+    // Modul Penggajian (Keuangan) Karyawan
+    Route::patch('/penggajian/{penggajian}/status', [App\Http\Controllers\Admin\Penggajian\PenggajianController::class, 'updateStatus'])->name('penggajian.update-status');
+    Route::resource('/penggajian', App\Http\Controllers\Admin\Penggajian\PenggajianController::class);
 });
