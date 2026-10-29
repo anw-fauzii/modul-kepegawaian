@@ -21,7 +21,7 @@
         <div class="pg-section">
             <div class="pg-section__title"><span class="dot" style="background:#3b82f6"></span> Identitas &amp; Periode</div>
             <div class="form-row">
-                <div class="col-md-6 mb-3">
+                <div class="col-md-4 mb-3">
                     <label class="font-weight-bold small text-muted mb-1">Karyawan <span class="text-danger">*</span></label>
                     <select name="karyawan_nipy" id="karyawan_nipy" class="form-control @error('karyawan_nipy') is-invalid @enderror" required>
                         <option value="">-- Pilih Karyawan --</option>
@@ -35,13 +35,39 @@
                     </select>
                     @error('karyawan_nipy') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label class="font-weight-bold small text-muted mb-1">Periode Bulan <span class="text-danger">*</span></label>
-                    <select name="kepegawaian_master_bulan_id" class="form-control @error('kepegawaian_master_bulan_id') is-invalid @enderror" required>
-                        <option value="">-- Pilih Bulan --</option>
+                <div class="col-md-3 mb-3">
+                    <label class="font-weight-bold small text-muted mb-1">Jenis Pembayaran <span class="text-danger">*</span></label>
+                    <select name="jenis" id="formJenisSelect" class="form-control @error('jenis') is-invalid @enderror" required>
+                        @foreach ($jenisList as $key => $label)
+                            <option value="{{ $key }}" @selected($val('jenis', request('jenis', 'gaji')) === $key)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    @error('jenis') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="font-weight-bold small text-muted mb-1" id="formBulanLabel">
+                        @if ($val('jenis', request('jenis', 'gaji')) === 'thr')
+                            Tahun THR <span class="text-danger">*</span>
+                        @elseif ($val('jenis', request('jenis', 'gaji')) === 'bonus')
+                            Tahun Ajaran <span class="text-danger">*</span>
+                        @else
+                            Periode Bulan <span class="text-danger">*</span>
+                        @endif
+                    </label>
+                    <select name="kepegawaian_master_bulan_id" id="formBulanSelect" class="form-control @error('kepegawaian_master_bulan_id') is-invalid @enderror" required>
                         @foreach ($bulanList as $b)
-                            <option value="{{ $b->id }}" @selected((string) $val('kepegawaian_master_bulan_id') === (string) $b->id)>
-                                {{ $b->nama_bulan }}{{ $b->tahunAjaran ? ' - ' . $b->tahunAjaran->nama_tahun_ajaran : '' }}{{ $b->status ? ' ★ Aktif' : '' }}
+                            <option value="{{ $b->id }}"
+                                data-gaji="{{ $b->nama_bulan }}{{ $b->tahunAjaran ? ' - ' . $b->tahunAjaran->nama_tahun_ajaran : '' }}{{ $b->status ? ' ★ Aktif' : '' }}"
+                                data-thr="Tahun {{ $b->created_at ? $b->created_at->format('Y') : date('Y') }}{{ $b->status ? ' ★ Aktif' : '' }}"
+                                data-bonus="TA {{ $b->tahunAjaran ? $b->tahunAjaran->nama_tahun_ajaran : date('Y') }}{{ $b->status ? ' ★ Aktif' : '' }}"
+                                @selected((string) $val('kepegawaian_master_bulan_id') === (string) $b->id)>
+                                @if ($val('jenis', request('jenis', 'gaji')) === 'thr')
+                                    Tahun {{ $b->created_at ? $b->created_at->format('Y') : date('Y') }}{{ $b->status ? ' ★ Aktif' : '' }}
+                                @elseif ($val('jenis', request('jenis', 'gaji')) === 'bonus')
+                                    TA {{ $b->tahunAjaran ? $b->tahunAjaran->nama_tahun_ajaran : date('Y') }}{{ $b->status ? ' ★ Aktif' : '' }}
+                                @else
+                                    {{ $b->nama_bulan }}{{ $b->tahunAjaran ? ' - ' . $b->tahunAjaran->nama_tahun_ajaran : '' }}{{ $b->status ? ' ★ Aktif' : '' }}
+                                @endif
                             </option>
                         @endforeach
                     </select>
@@ -50,7 +76,7 @@
                 <div class="col-md-2 mb-3">
                     <label class="font-weight-bold small text-muted mb-1">Status <span class="text-danger">*</span></label>
                     <select name="status" class="form-control @error('status') is-invalid @enderror" required>
-                        @foreach (\App\Models\Admin\Penggajian\Penggajian::STATUS as $key => $label)
+                        @foreach ($statusList as $key => $label)
                             <option value="{{ $key }}" @selected($val('status', 'draft') === $key)>{{ $label }}</option>
                         @endforeach
                     </select>
@@ -72,7 +98,7 @@
         <div class="pg-section">
             <div class="pg-section__title"><span class="dot" style="background:#10b981"></span> Penerimaan</div>
             <div class="form-row">
-                @foreach (\App\Models\Admin\Penggajian\Penggajian::PENERIMAAN as $f => $label)
+                @foreach ($penerimaanList as $f => $label)
                     <div class="col-md-4 mb-3 pg-input">
                         <label for="{{ $f }}">{{ $label }}</label>
                         <div class="input-group">
@@ -91,7 +117,7 @@
         <div class="pg-section">
             <div class="pg-section__title"><span class="dot" style="background:#ef4444"></span> Potongan</div>
             <div class="form-row">
-                @foreach (\App\Models\Admin\Penggajian\Penggajian::POTONGAN as $f => $label)
+                @foreach ($potonganList as $f => $label)
                     <div class="col-md-4 mb-3 pg-input">
                         <label for="{{ $f }}">{{ $label }}</label>
                         <div class="input-group">
@@ -149,12 +175,48 @@
 
         // Isi otomatis unit/jabatan/golongan saat karyawan dipilih
         var sel = document.getElementById('karyawan_nipy');
-        sel.addEventListener('change', function () {
-            var opt = sel.options[sel.selectedIndex];
-            ['unit', 'jabatan', 'golongan'].forEach(function (f) {
-                var el = document.getElementById(f);
-                if (el) el.value = opt.dataset[f] || '';
+        if (sel) {
+            sel.addEventListener('change', function () {
+                var opt = sel.options[sel.selectedIndex];
+                ['unit', 'jabatan', 'golongan'].forEach(function (f) {
+                    var el = document.getElementById(f);
+                    if (el) el.value = opt ? (opt.dataset[f] || '') : '';
+                });
             });
-        });
+        }
+
+        // Update label & opsi periode saat jenis pembayaran diganti
+        var jenisSelect = document.getElementById('formJenisSelect');
+        var bulanLabel = document.getElementById('formBulanLabel');
+        var bulanSelect = document.getElementById('formBulanSelect');
+
+        var updateBulanDisplay = function () {
+            var j = jenisSelect ? jenisSelect.value : 'gaji';
+            if (bulanLabel) {
+                if (j === 'thr') {
+                    bulanLabel.innerHTML = 'Tahun THR <span class="text-danger">*</span>';
+                } else if (j === 'bonus') {
+                    bulanLabel.innerHTML = 'Tahun Ajaran <span class="text-danger">*</span>';
+                } else {
+                    bulanLabel.innerHTML = 'Periode Bulan <span class="text-danger">*</span>';
+                }
+            }
+            if (bulanSelect) {
+                Array.from(bulanSelect.options).forEach(function (opt) {
+                    if (j === 'thr') {
+                        opt.textContent = opt.getAttribute('data-thr') || opt.textContent;
+                    } else if (j === 'bonus') {
+                        opt.textContent = opt.getAttribute('data-bonus') || opt.textContent;
+                    } else {
+                        opt.textContent = opt.getAttribute('data-gaji') || opt.textContent;
+                    }
+                });
+            }
+        };
+
+        if (jenisSelect) {
+            jenisSelect.addEventListener('change', updateBulanDisplay);
+            updateBulanDisplay();
+        }
     });
 </script>

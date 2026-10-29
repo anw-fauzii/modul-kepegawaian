@@ -59,9 +59,6 @@ class TupoksiController extends Controller
         ));
     }
 
-    /**
-     * Menampilkan formulir penambahan Tupoksi baru.
-     */
     public function create(): View
     {
         $karyawanList = Karyawan::query()

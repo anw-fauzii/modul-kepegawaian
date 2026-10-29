@@ -51,9 +51,22 @@ class Penggajian extends Model
         'dibayar' => 'Dibayar',
     ];
 
+    public const JENIS = [
+        'gaji'  => 'Gaji Bulanan',
+        'thr'   => 'Tunjangan Hari Raya (THR)',
+        'bonus' => 'Bonus Kinerja',
+    ];
+
+    public const JENIS_SHORT = [
+        'gaji'  => 'Gaji',
+        'thr'   => 'THR',
+        'bonus' => 'Bonus',
+    ];
+
     protected $fillable = [
         'karyawan_nipy',
         'kepegawaian_master_bulan_id',
+        'jenis',
         'unit',
         'jabatan',
         'golongan',
@@ -150,7 +163,8 @@ class Penggajian extends Model
                 });
             })
             ->when(! empty($filters['kepegawaian_master_bulan_id']), fn (Builder $q) => $q->where('kepegawaian_master_bulan_id', $filters['kepegawaian_master_bulan_id']))
-            ->when(! empty($filters['status']), fn (Builder $q) => $q->where('status', $filters['status']));
+            ->when(! empty($filters['status']), fn (Builder $q) => $q->where('status', $filters['status']))
+            ->when(! empty($filters['jenis']), fn (Builder $q) => $q->where('jenis', $filters['jenis']));
     }
 
     public function getStatusLabelAttribute(): string
@@ -165,5 +179,53 @@ class Penggajian extends Model
             'final'   => 'badge-primary',
             default   => 'badge-secondary',
         };
+    }
+
+    public function getJenisLabelAttribute(): string
+    {
+        return self::JENIS[$this->jenis] ?? 'Gaji Bulanan';
+    }
+
+    public function getJenisShortLabelAttribute(): string
+    {
+        return self::JENIS_SHORT[$this->jenis] ?? $this->jenis_label;
+    }
+
+    public function getJenisBadgeClassAttribute(): string
+    {
+        return match ($this->jenis) {
+            'thr'   => 'badge-success',
+            'bonus' => 'badge-warning',
+            default => 'badge-info',
+        };
+    }
+
+    public function getSlipJudulAttribute(): string
+    {
+        return match ($this->jenis) {
+            'thr'   => 'SLIP TUNJANGAN HARI RAYA (THR)',
+            'bonus' => 'SLIP BONUS KINERJA',
+            default => 'SLIP GAJI BULANAN',
+        };
+    }
+
+    public function getTahunThrAttribute(): string
+    {
+        return $this->created_at ? $this->created_at->format('Y') : date('Y');
+    }
+
+    public function getPeriodeTeksAttribute(): string
+    {
+        if ($this->jenis === 'thr') {
+            return 'Tahun ' . $this->tahun_thr;
+        }
+
+        if ($this->jenis === 'bonus') {
+            return 'TA ' . ($this->bulan?->tahunAjaran?->nama_tahun_ajaran ?? date('Y'));
+        }
+
+        $bulan = $this->bulan?->nama_bulan ?? '-';
+        $ta = $this->bulan?->tahunAjaran?->nama_tahun_ajaran;
+        return $ta ? "{$bulan} ({$ta})" : $bulan;
     }
 }

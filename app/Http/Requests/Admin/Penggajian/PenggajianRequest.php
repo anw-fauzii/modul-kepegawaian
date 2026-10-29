@@ -42,8 +42,10 @@ class PenggajianRequest extends FormRequest
                 Rule::exists('kepegawaian_master_bulan', 'id'),
                 Rule::unique('kepegawaian_keuangan_penggajian', 'kepegawaian_master_bulan_id')
                     ->where('karyawan_nipy', $this->input('karyawan_nipy'))
+                    ->where('jenis', $this->input('jenis', 'gaji'))
                     ->ignore($currentId),
             ],
+            'jenis'    => ['required', Rule::in(array_keys(Penggajian::JENIS))],
             'unit'     => ['nullable', 'string', 'max:255'],
             'jabatan'  => ['nullable', 'string', 'max:255'],
             'golongan' => ['nullable', 'string', 'max:255'],

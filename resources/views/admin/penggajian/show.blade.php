@@ -30,12 +30,12 @@
             <div class="page-title-heading">
                 <div class="page-title-icon bg-success text-white"><i class="pe-7s-cash"></i></div>
                 <div>
-                    <strong>Slip Gaji</strong>
-                    <div class="page-title-subheading">{{ $k?->nama_lengkap ?? $penggajian->karyawan_nipy }} &bull; {{ $penggajian->bulan?->nama_bulan ?? '-' }}</div>
+                    <strong>{{ $penggajian->slip_judul }}</strong>
+                    <div class="page-title-subheading">{{ $k?->nama_lengkap ?? $penggajian->karyawan_nipy }} &bull; {{ $penggajian->periode_teks }}</div>
                 </div>
             </div>
             <div class="page-title-actions d-flex align-items-center" style="gap: 8px;">
-                <a href="{{ route('penggajian.index') }}" class="btn btn-outline-secondary font-weight-bold"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
+                <a href="{{ route('penggajian.index', ['jenis' => $penggajian->jenis]) }}" class="btn btn-outline-secondary font-weight-bold"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
                 <button type="button" class="btn btn-outline-dark font-weight-bold" onclick="window.print()"><i class="fa fa-print mr-1"></i> Cetak</button>
                 @if ($penggajian->status !== 'dibayar')
                     <a href="{{ route('penggajian.edit', $penggajian) }}" class="btn btn-primary font-weight-bold"><i class="fa fa-pen mr-1"></i> Edit</a>
@@ -57,7 +57,7 @@
         @method('PATCH')
         <span class="small text-muted font-weight-bold">Status slip:</span>
         <select name="status" class="form-control form-control-sm" style="width: 140px;">
-            @foreach (\App\Models\Admin\Penggajian\Penggajian::STATUS as $key => $label)
+            @foreach ($statusList as $key => $label)
                 <option value="{{ $key }}" @selected($penggajian->status === $key)>{{ $label }}</option>
             @endforeach
         </select>
@@ -68,13 +68,22 @@
         <div class="slip__head">
             <div>
                 <div class="small" style="color:#fb923c; letter-spacing:.08em; font-weight:700;">YAYASAN PRIMA INSANI</div>
-                <h4 class="mb-0 font-weight-bold text-white">SLIP GAJI</h4>
+                <h4 class="mb-0 font-weight-bold text-white">{{ $penggajian->slip_judul }}</h4>
                 <div class="small" style="color:#cbd5e1;">
-                    Periode {{ $penggajian->bulan?->nama_bulan ?? '-' }}
-                    @if ($penggajian->bulan?->tahunAjaran) &bull; TA {{ $penggajian->bulan->tahunAjaran->nama_tahun_ajaran }} @endif
+                    @if ($penggajian->jenis === 'thr')
+                        Tahun {{ $penggajian->tahun_thr }}
+                    @elseif ($penggajian->jenis === 'bonus')
+                        Tahun Ajaran {{ $penggajian->bulan?->tahunAjaran?->nama_tahun_ajaran ?? '-' }}
+                    @else
+                        Periode {{ $penggajian->bulan?->nama_bulan ?? '-' }}
+                        @if ($penggajian->bulan?->tahunAjaran) &bull; TA {{ $penggajian->bulan->tahunAjaran->nama_tahun_ajaran }} @endif
+                    @endif
                 </div>
             </div>
-            <span class="badge {{ $penggajian->status_badge_class }} px-3 py-2" style="font-size: .8rem;">{{ $penggajian->status_label }}</span>
+            <div>
+                <span class="badge {{ $penggajian->jenis_badge_class }} px-3 py-2 mr-1" style="font-size: .8rem;">{{ $penggajian->jenis_label }}</span>
+                <span class="badge {{ $penggajian->status_badge_class }} px-3 py-2" style="font-size: .8rem;">{{ $penggajian->status_label }}</span>
+            </div>
         </div>
 
         <div class="slip__body">
@@ -91,7 +100,7 @@
                 <div class="col-md-6 mb-3">
                     <h6 class="font-weight-bold text-success border-bottom pb-2"><i class="fa fa-plus-circle mr-1"></i> Penerimaan</h6>
                     <table class="w-100">
-                        @foreach (\App\Models\Admin\Penggajian\Penggajian::PENERIMAAN as $f => $label)
+                        @foreach ($penerimaanList as $f => $label)
                             @if ((float) $penggajian->{$f} != 0)
                                 <tr><td>{{ $label }}</td><td class="text-right">{{ $rp($penggajian->{$f}) }}</td></tr>
                             @endif
@@ -102,7 +111,7 @@
                 <div class="col-md-6 mb-3">
                     <h6 class="font-weight-bold text-danger border-bottom pb-2"><i class="fa fa-minus-circle mr-1"></i> Potongan</h6>
                     <table class="w-100">
-                        @forelse (\App\Models\Admin\Penggajian\Penggajian::POTONGAN as $f => $label)
+                        @forelse ($potonganList as $f => $label)
                             @if ((float) $penggajian->{$f} != 0)
                                 <tr><td>{{ $label }}</td><td class="text-right">{{ $rp($penggajian->{$f}) }}</td></tr>
                             @endif

@@ -13,6 +13,9 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Exports\PenggajianTemplateExport;
+use App\Imports\PenggajianImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\View\View;
 
 class PenggajianController extends Controller
@@ -23,14 +26,29 @@ class PenggajianController extends Controller
 
     public function index(PenggajianFilterRequest $request): View
     {
+        $bulanList = $this->allBulanList();
+        $defaultBulan = $bulanList->firstWhere('status', true) ?: $bulanList->first();
+
         $filters = $request->validated();
+        if (empty($filters['kepegawaian_master_bulan_id']) && $defaultBulan) {
+            $filters['kepegawaian_master_bulan_id'] = $defaultBulan->id;
+        }
+
         $perPage = (int) ($filters['per_page'] ?? 15);
 
         $penggajianList = $this->service->getPaginated($filters, $perPage);
         $statistik = $this->service->getStatistik($filters);
-        $bulanList = $this->bulanList();
+        $jenisList = $this->service->getJenisList();
+        $statusList = $this->service->getStatusList();
 
-        return view('admin.penggajian.index', compact('penggajianList', 'statistik', 'bulanList', 'filters'));
+        return view('admin.penggajian.index', compact(
+            'penggajianList',
+            'statistik',
+            'bulanList',
+            'filters',
+            'jenisList',
+            'statusList'
+        ));
     }
 
     public function create(): View
@@ -54,8 +72,11 @@ class PenggajianController extends Controller
     public function show(Penggajian $penggajian): View
     {
         $penggajian = $this->service->getById($penggajian);
+        $statusList = $this->service->getStatusList();
+        $penerimaanList = $this->service->getPenerimaanList();
+        $potonganList = $this->service->getPotonganList();
 
-        return view('admin.penggajian.show', compact('penggajian'));
+        return view('admin.penggajian.show', compact('penggajian', 'statusList', 'penerimaanList', 'potonganList'));
     }
 
     public function edit(Penggajian $penggajian): View|RedirectResponse
@@ -68,7 +89,7 @@ class PenggajianController extends Controller
 
         return view('admin.penggajian.edit', array_merge(
             compact('penggajian'),
-            $this->formOptions()
+            $this->formOptions($penggajian)
         ));
     }
 
@@ -87,13 +108,15 @@ class PenggajianController extends Controller
 
     public function updateStatus(Request $request, Penggajian $penggajian): RedirectResponse
     {
+        $statusList = $this->service->getStatusList();
+
         $data = $request->validate([
-            'status' => ['required', Rule::in(array_keys(Penggajian::STATUS))],
+            'status' => ['required', Rule::in(array_keys($statusList))],
         ]);
 
         $this->service->updateStatus($penggajian, $data['status']);
 
-        return back()->with('success', 'Status slip gaji diubah menjadi ' . Penggajian::STATUS[$data['status']] . '.');
+        return back()->with('success', 'Status slip gaji diubah menjadi ' . ($statusList[$data['status']] ?? $data['status']) . '.');
     }
 
     public function destroy(Penggajian $penggajian): RedirectResponse
@@ -109,20 +132,60 @@ class PenggajianController extends Controller
             ->with('success', 'Slip gaji berhasil dihapus.');
     }
 
-    private function formOptions(): array
+    public function template()
+    {
+        return Excel::download(new PenggajianTemplateExport, 'template-penggajian.xlsx');
+    }
+
+    public function import(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'kepegawaian_master_bulan_id' => ['required', 'exists:' . (new Bulan)->getTable() . ',id'],
+            'status'                      => ['required', Rule::in(['draft', 'final'])],
+            'jenis'                       => ['required', Rule::in(array_keys($this->service->getJenisList()))],
+            'file'                        => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:5120'],
+        ]);
+
+        $import = new PenggajianImport(
+            (int) $data['kepegawaian_master_bulan_id'],
+            $data['status'],
+            $data['jenis']
+        );
+
+        try {
+            Excel::import($import, $request->file('file'));
+        } catch (Exception $e) {
+            return back()->with('error', 'Import gagal: ' . $e->getMessage());
+        }
+
+        $msg = "Import selesai ({$import->created} slip baru, {$import->updated} diperbarui).";
+        if ($import->errors) {
+            $msg .= ' Catatan: ' . implode(' | ', array_slice($import->errors, 0, 5))
+                . (count($import->errors) > 5 ? ' ...(+' . (count($import->errors) - 5) . ' lainnya)' : '');
+        }
+
+        return redirect()->route('penggajian.index', ['jenis' => $data['jenis']])->with($import->errors ? 'error' : 'success', $msg);
+    }
+
+    private function formOptions(?Penggajian $penggajian = null): array
     {
         return [
-            'karyawanList' => Karyawan::query()
+            'karyawanList'   => Karyawan::query()
                 ->select('nipy', 'nama_lengkap', 'gelar', 'unit', 'jabatan', 'golongan')
                 ->orderBy('nama_lengkap')
                 ->get(),
-            'bulanList' => $this->bulanList(),
+            'bulanList'      => $this->allBulanList(),
+            'jenisList'      => $this->service->getJenisList(),
+            'statusList'     => $this->service->getStatusList(),
+            'penerimaanList' => $this->service->getPenerimaanList(),
+            'potonganList'   => $this->service->getPotonganList(),
         ];
     }
 
-    private function bulanList()
+    private function allBulanList()
     {
         return Bulan::with('tahunAjaran:id,nama_tahun_ajaran,semester')
+            ->orderByDesc('status')
             ->orderByDesc('id')
             ->get();
     }

@@ -19,6 +19,7 @@ class PenggajianFilterRequest extends FormRequest
             'search'                      => ['nullable', 'string', 'max:100'],
             'kepegawaian_master_bulan_id' => ['nullable', 'integer'],
             'status'                      => ['nullable', Rule::in(array_keys(Penggajian::STATUS))],
+            'jenis'                       => ['nullable', Rule::in(array_keys(Penggajian::JENIS))],
             'per_page'                    => ['nullable', 'integer', 'min:5', 'max:100'],
         ];
     }

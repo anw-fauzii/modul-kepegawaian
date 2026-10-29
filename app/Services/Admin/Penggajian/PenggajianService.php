@@ -107,4 +107,29 @@ class PenggajianService
 
         return $data;
     }
+
+    public function getJenisList(): array
+    {
+        return Penggajian::JENIS;
+    }
+
+    public function getJenisShortList(): array
+    {
+        return Penggajian::JENIS_SHORT;
+    }
+
+    public function getStatusList(): array
+    {
+        return Penggajian::STATUS;
+    }
+
+    public function getPenerimaanList(): array
+    {
+        return Penggajian::PENERIMAAN;
+    }
+
+    public function getPotonganList(): array
+    {
+        return Penggajian::POTONGAN;
+    }
 }

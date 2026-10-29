@@ -65,6 +65,8 @@ Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     Route::resource('/sertifikat-penghargaan', App\Http\Controllers\Admin\SertifikatPenghargaan\SertifikatPenghargaanController::class);
 
     // Modul Penggajian (Keuangan) Karyawan
+    Route::get('/penggajian/template', [App\Http\Controllers\Admin\Penggajian\PenggajianController::class, 'template'])->name('penggajian.template');
+    Route::post('/penggajian/import', [App\Http\Controllers\Admin\Penggajian\PenggajianController::class, 'import'])->name('penggajian.import');
     Route::patch('/penggajian/{penggajian}/status', [App\Http\Controllers\Admin\Penggajian\PenggajianController::class, 'updateStatus'])->name('penggajian.update-status');
     Route::resource('/penggajian', App\Http\Controllers\Admin\Penggajian\PenggajianController::class);
 });

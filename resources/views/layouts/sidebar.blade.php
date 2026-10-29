@@ -57,9 +57,9 @@
                 <div class="has-submenu relative group/submenu">
                     <button type="button" data-sidebar-toggle="submenu-data-master"
                         aria-expanded="{{ $isDataMasterActive ? 'true' : 'false' }}"
-                        class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isDataMasterActive ? 'text-white bg-slate-800' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
+                        class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isDataMasterActive ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
                         <div class="flex items-center gap-3">
-                            <svg class="h-4 w-4 shrink-0 text-slate-400 group-hover:text-orange-400" fill="none"
+                            <svg class="h-4 w-4 shrink-0 {{ $isDataMasterActive ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7zm0 4h16M10 4v16" />
@@ -99,9 +99,9 @@
                 <div class="has-submenu relative group/submenu">
                     <button type="button" data-sidebar-toggle="submenu-karyawan"
                         aria-expanded="{{ $isKaryawanActive ? 'true' : 'false' }}"
-                        class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isKaryawanActive ? 'text-white bg-slate-800' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
+                        class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isKaryawanActive ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
                         <div class="flex items-center gap-3">
-                            <svg class="h-4 w-4 shrink-0 text-slate-400 group-hover:text-orange-400" fill="none"
+                            <svg class="h-4 w-4 shrink-0 {{ $isKaryawanActive ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -147,9 +147,9 @@
                 <div class="has-submenu relative group/submenu">
                     <button type="button" data-sidebar-toggle="submenu-presensi"
                         aria-expanded="{{ $isPresensiActive ? 'true' : 'false' }}"
-                        class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isPresensiActive ? 'text-white bg-slate-800' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
+                        class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isPresensiActive ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
                         <div class="flex items-center gap-3">
-                            <svg class="h-4 w-4 shrink-0 text-slate-400 group-hover:text-orange-400" fill="none"
+                            <svg class="h-4 w-4 shrink-0 {{ $isPresensiActive ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -205,9 +205,9 @@
                 <div class="has-submenu relative group/submenu">
                     <button type="button" data-sidebar-toggle="submenu-administrasi"
                         aria-expanded="{{ $isAdministrasiActive ? 'true' : 'false' }}"
-                        class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isAdministrasiActive ? 'text-white bg-slate-800' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
+                        class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isAdministrasiActive ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
                         <div class="flex items-center gap-3">
-                            <svg class="h-4 w-4 shrink-0 text-slate-400 group-hover:text-orange-400" fill="none"
+                            <svg class="h-4 w-4 shrink-0 {{ $isAdministrasiActive ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -247,9 +247,9 @@
                 <div class="has-submenu relative group/submenu">
                     <button type="button" data-sidebar-toggle="submenu-kinerja"
                         aria-expanded="{{ $isKinerjaActive ? 'true' : 'false' }}"
-                        class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isKinerjaActive ? 'text-white bg-slate-800' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
+                        class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isKinerjaActive ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
                         <div class="flex items-center gap-3">
-                            <svg class="h-4 w-4 shrink-0 text-slate-400 group-hover:text-orange-400" fill="none"
+                            <svg class="h-4 w-4 shrink-0 {{ $isKinerjaActive ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
@@ -282,44 +282,6 @@
                         <a href="{{ route('sertifikat-penghargaan.index') }}"
                             class="block px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->is('sertifikat-penghargaan*') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
                             Penghargaan
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Yaumiyah Dropdown -->
-                @php
-                    $isYaumiyahActive = request()->is('yaumiyah-tahsin*', 'yaumiyah-tahfiz*');
-                @endphp
-                <div class="has-submenu relative group/submenu">
-                    <button type="button" data-sidebar-toggle="submenu-yaumiyah"
-                        aria-expanded="{{ $isYaumiyahActive ? 'true' : 'false' }}"
-                        class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isYaumiyahActive ? 'text-white bg-slate-800' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
-                        <div class="flex items-center gap-3">
-                            <svg class="h-4 w-4 shrink-0 text-slate-400 group-hover:text-orange-400" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                            </svg>
-                            <span class="menu-text">Yaumiyah</span>
-                        </div>
-                        <svg class="menu-chevron h-3.5 w-3.5 text-slate-400 transition-transform duration-200 {{ $isYaumiyahActive ? 'rotate-180' : '' }}"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <!-- Submenu list & flyout popup container -->
-                    <div id="submenu-yaumiyah"
-                        class="{{ $isYaumiyahActive ? '' : 'hidden' }} submenu-flyout mt-1 space-y-1 pl-4 border-l border-slate-800 ml-5 py-1">
-                        <div class="flyout-header hidden">
-                            <span>Yaumiyah</span>
-                        </div>
-                        <a href="#"
-                            class="block px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->is('yaumiyah-tahsin*') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
-                            Tahsin
-                        </a>
-                        <a href="#"
-                            class="block px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->is('yaumiyah-tahfiz*') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
-                            Tahfiz
                         </a>
                     </div>
                 </div>
