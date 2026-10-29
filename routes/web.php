@@ -19,12 +19,16 @@ Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     Route::resource('/data-master/kategori', App\Http\Controllers\Admin\DataMaster\KategoriController::class);      
     Route::resource('/data-master/jam-kerja', App\Http\Controllers\Admin\DataMaster\JamKerjaController::class);
     Route::resource('/data-master/bulan', App\Http\Controllers\Admin\DataMaster\BulanController::class);
+    Route::get('/data-master/karyawan/template', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'template'])->name('karyawan.template');
+    Route::get('/data-master/karyawan/export', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'export'])->name('karyawan.export');
+    Route::post('/data-master/karyawan/import', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'import'])->name('karyawan.import');
     Route::get('/data-master/karyawan/unit/{unit}', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'byUnit'])->name('karyawan.unit');
     Route::resource('/data-master/karyawan', App\Http\Controllers\Admin\DataMaster\KaryawanController::class);
 
     // Modul Presensi Karyawan
     Route::get('/presensi/statistik-tahunan', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'statistikTahunan'])->name('presensi.statistik-tahunan');
     Route::get('/presensi/rekap', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'rekap'])->name('presensi.rekap');
+    Route::get('/presensi/matriks/pdf', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'matriksPdf'])->name('presensi.matriks.pdf');
     Route::get('/presensi/matriks', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'matriks'])->name('presensi.matriks');
     Route::post('/presensi/bulk', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'storeBulk'])->name('presensi.store-bulk');
     Route::resource('/presensi', App\Http\Controllers\Admin\Presensi\PresensiController::class);

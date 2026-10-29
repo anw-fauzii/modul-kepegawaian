@@ -280,8 +280,25 @@
             </div>
 
             <div class="page-title-actions d-flex align-items-center flex-wrap no-print" style="gap: 8px;">
-                <a href="{{ route('presensi.create') }}" class="btn text-white shadow-sm"
-                    style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px;">
+                <!-- Tombol Cetak PDF (Kertas A3 Landscape) -->
+                <div class="btn-group shadow-sm">
+                    <a href="{{ route('presensi.matriks.pdf', request()->query()) }}"
+                        target="_blank"
+                        class="btn text-white font-weight-bold btn-cetak-pdf"
+                        style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important; border-radius: 8px 0 0 8px; border: none; font-size: 13px;"
+                        title="Buka Dokumen PDF Matriks Presensi (Kertas A3 Landscape)">
+                        <i class="fa fa-file-pdf-o mr-1"></i> Cetak PDF (A3)
+                    </a>
+                    <a href="{{ route('presensi.matriks.pdf', array_merge(request()->query(), ['download' => 1])) }}"
+                        class="btn text-white btn-cetak-pdf"
+                        style="background: #dc2626 !important; border-radius: 0 8px 8px 0; border: none; border-left: 1px solid rgba(255,255,255,0.25);"
+                        title="Unduh (Download) Langsung PDF A3">
+                        <i class="fa fa-download"></i>
+                    </a>
+                </div>
+
+                <a href="{{ route('presensi.create') }}" class="btn text-white shadow-sm font-weight-bold"
+                    style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px; border: none; font-size: 13px;">
                     <i class="fa fa-plus-circle mr-1"></i> Input Presensi
                 </a>
             </div>
@@ -457,9 +474,7 @@
             <button type="button" class="filter-pill" data-filter="ada_belum_absen">
                 Ada Belum Absen Bulan Ini
             </button>
-            <button type="button" class="filter-pill" data-filter="aktif_only">
-                Pegawai Aktif Saja ({{ $summary['total_pegawai_aktif'] }})
-            </button>
+            
         </div>
 
         <!-- Pencarian Cepat Nama Pegawai -->
@@ -469,38 +484,69 @@
         </div>
     </div>
 
-    <!-- LEGENDA STATUS PRESENSI (Sesuai Screenshot User) -->
+    <!-- LEGENDA STATUS PRESENSI & WARNA NOMOR (Sesuai Permintaan User) -->
     <div class="card mb-3 shadow-sm border-0 no-print" style="border-radius: 10px; background-color: #ffffff;">
-        <div class="card-body py-2 px-3 d-flex align-items-center justify-content-between flex-wrap" style="gap: 12px;">
-            <div class="d-flex align-items-center flex-wrap" style="gap: 16px; font-size: 12px;">
-                <span class="font-weight-bold text-muted small text-uppercase">Legenda Simbol:</span>
-                <span class="d-inline-flex align-items-center" style="gap: 5px;">
-                    <span class="matrix-symbol symbol-hadir">v</span>
-                    <span class="text-dark font-weight-bold">Hadir / Terlambat</span>
-                </span>
-                <span class="d-inline-flex align-items-center" style="gap: 5px;">
-                    <span class="matrix-symbol symbol-merah">i</span>
-                    <span class="text-dark font-weight-bold">Izin</span>
-                </span>
-                <span class="d-inline-flex align-items-center" style="gap: 5px;">
-                    <span class="matrix-symbol symbol-merah">s</span>
-                    <span class="text-dark font-weight-bold">Sakit</span>
-                </span>
-                <span class="d-inline-flex align-items-center" style="gap: 5px;">
-                    <span class="matrix-symbol symbol-merah">c</span>
-                    <span class="text-dark font-weight-bold">Cuti</span>
-                </span>
-                <span class="d-inline-flex align-items-center" style="gap: 5px;">
-                    <span class="matrix-symbol symbol-tugas">t</span>
-                    <span class="text-dark font-weight-bold">Tugas Luar</span>
-                </span>
-                <span class="d-inline-flex align-items-center" style="gap: 5px;">
-                    <span class="symbol-belum-absen">-</span>
-                    <span class="text-danger font-weight-bold">Belum Absen (Hari Kerja)</span>
-                </span>
+        <div class="card-body py-2 px-3">
+            <div class="d-flex align-items-center justify-content-between flex-wrap pb-2 mb-2 border-bottom" style="gap: 12px;">
+                <div class="d-flex align-items-center flex-wrap" style="gap: 16px; font-size: 12px;">
+                    <span class="font-weight-bold text-muted small text-uppercase">Legenda Simbol:</span>
+                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
+                        <span class="matrix-symbol symbol-hadir">v</span>
+                        <span class="text-dark font-weight-bold">Hadir / Terlambat</span>
+                    </span>
+                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
+                        <span class="matrix-symbol symbol-merah">i</span>
+                        <span class="text-dark font-weight-bold">Izin</span>
+                    </span>
+                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
+                        <span class="matrix-symbol symbol-merah">s</span>
+                        <span class="text-dark font-weight-bold">Sakit</span>
+                    </span>
+                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
+                        <span class="matrix-symbol symbol-merah">c</span>
+                        <span class="text-dark font-weight-bold">Cuti</span>
+                    </span>
+                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
+                        <span class="matrix-symbol symbol-tugas">t</span>
+                        <span class="text-dark font-weight-bold">Tugas Luar</span>
+                    </span>
+                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
+                        <span class="symbol-belum-absen">-</span>
+                        <span class="text-danger font-weight-bold">Belum Absen (Hari Kerja)</span>
+                    </span>
+                </div>
+                <div class="text-muted small">
+                    Hover pada simbol untuk melihat detail jam masuk / pulang
+                </div>
             </div>
-            <div class="text-muted small">
-                Hover pada simbol untuk melihat detail jam masuk / pulang
+
+            <!-- Keterangan Warna Nomor Pegawai -->
+            <div class="d-flex align-items-center flex-wrap" style="gap: 14px; font-size: 11.5px;">
+                <span class="font-weight-bold text-muted small text-uppercase">Warna Nomor:</span>
+                <span class="d-inline-flex align-items-center" style="gap: 5px;" title="Tidak ada keterlambatan, semua nol kecuali cuti tidak dihitung">
+                    <span class="badge border font-weight-bold" style="background-color: #fef08a; color: #854d0e; border-color: #ca8a04 !important; font-size: 11px;">No</span>
+                    <span class="font-weight-bold text-dark">Kuning = Reward</span>
+                </span>
+                <span class="d-inline-flex align-items-center" style="gap: 5px;" title="5 Kali Terlambat dalam 2 bulan berturut-turut">
+                    <span class="badge font-weight-bold text-white" style="background-color: #ef4444; font-size: 11px;">No</span>
+                    <span class="font-weight-bold text-dark">Merah = 5x Terlambat (2 Bulan Berturut)</span>
+                </span>
+                <span class="d-inline-flex align-items-center" style="gap: 5px;" title="5 Kali Terlambat dalam 1 bulan">
+                    <span class="badge font-weight-bold text-white" style="background-color: #22c55e; font-size: 11px;">No</span>
+                    <span class="font-weight-bold text-dark">Hijau = 5x Terlambat (1 Bulan)</span>
+                </span>
+                <span class="d-inline-flex align-items-center" style="gap: 5px;" title="3 Kali Terlambat dalam 7 hari">
+                    <span class="badge font-weight-bold text-white" style="background-color: #3b82f6; font-size: 11px;">No</span>
+                    <span class="font-weight-bold text-dark">Biru = 3x Terlambat (7 Hari)</span>
+                </span>
+                <span class="d-inline-flex align-items-center" style="gap: 5px;" title="Tidak ada data presensi">
+                    <span class="badge font-weight-bold text-white" style="background-color: #000000; font-size: 11px;">No</span>
+                    <span class="font-weight-bold text-dark">Hitam = Kosong</span>
+                </span>
+                <span class="d-inline-flex align-items-center" style="gap: 5px;" title="Normal">
+                    <span class="badge border font-weight-bold" style="background-color: #ffffff; color: #1e293b; border-color: #cbd5e1 !important; font-size: 11px;">No</span>
+                    <span class="font-weight-bold text-dark">Putih = Normal</span>
+                </span>
             </div>
         </div>
     </div>
@@ -537,17 +583,30 @@
                         $isActive = $row['user_is_active'];
                         $belumAbsenHariIni = $row['belum_absen_hari_ini'];
                         $hasBelumAbsen = $totals['belum_absen'] > 0;
+                        $statusNomor = $row['status_nomor'] ?? [
+                            'code'       => 'putih',
+                            'bg_color'   => '#ffffff',
+                            'text_color' => '#1e293b',
+                            'desc'       => 'Normal',
+                        ];
                     @endphp
                     <tr class="pegawai-row"
                         data-name="{{ strtolower($karyawan->nama_lengkap) }}"
                         data-active="{{ $isActive ? '1' : '0' }}"
                         data-belum-hari-ini="{{ $belumAbsenHariIni ? '1' : '0' }}"
                         data-ada-belum="{{ $hasBelumAbsen ? '1' : '0' }}">
-                        <td class="sticky-col-no font-weight-bold text-muted row-number">{{ $index + 1 }}</td>
+                        <td class="sticky-col-no font-weight-bold row-number"
+                            style="background-color: {{ $statusNomor['bg_color'] }} !important; color: {{ $statusNomor['text_color'] }} !important;"
+                            data-toggle="tooltip" data-placement="right" title="{{ $statusNomor['desc'] }}">
+                            {{ $index + 1 }}
+                        </td>
                         <td class="sticky-col-name">
                             <div class="d-flex align-items-center justify-content-between" style="gap: 4px;">
                                 <div class="text-truncate" style="max-width: 175px;" title="{{ $karyawan->nama_lengkap }}{{ $karyawan->gelar ? ', ' . $karyawan->gelar : '' }}">
                                     <span class="font-weight-bold text-dark" style="font-size: 12.5px;">
+                                        @if ($karyawan->golongan)
+                                            <strong>({{ $karyawan->golongan }})</strong>
+                                        @endif
                                         {{ $karyawan->nama_lengkap }}{{ $karyawan->gelar ? ', ' . $karyawan->gelar : '' }}
                                     </span>
                                     <div class="text-muted" style="font-size: 10px; font-family: monospace;">
@@ -712,6 +771,37 @@
                     row.find('.row-number').text(visibleCount);
                 } else {
                     row.hide();
+                }
+            });
+
+            updatePdfLinks();
+        }
+
+        // Fungsi Sinkronisasi Link Cetak PDF dengan Filter & Pencarian Aktif
+        function updatePdfLinks() {
+            $('.btn-cetak-pdf').each(function() {
+                var el = $(this);
+                var baseHref = el.data('base-href');
+                if (!baseHref) {
+                    baseHref = el.attr('href');
+                    el.data('base-href', baseHref);
+                }
+
+                try {
+                    var parsed = new URL(baseHref, window.location.origin);
+                    if (currentPillFilter && currentPillFilter !== 'all') {
+                        parsed.searchParams.set('filter_status', currentPillFilter);
+                    } else {
+                        parsed.searchParams.delete('filter_status');
+                    }
+                    if (searchKeyword && searchKeyword.trim() !== '') {
+                        parsed.searchParams.set('search', searchKeyword.trim());
+                    } else {
+                        parsed.searchParams.delete('search');
+                    }
+                    el.attr('href', parsed.pathname + parsed.search);
+                } catch (err) {
+                    // Ignore fallback
                 }
             });
         }

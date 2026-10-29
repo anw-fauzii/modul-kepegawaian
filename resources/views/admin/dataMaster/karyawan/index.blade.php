@@ -35,14 +35,51 @@
                     </div>
                 </div>
 
-                <div class="page-title-actions">
+                <div class="page-title-actions d-flex flex-wrap align-items-center" style="gap: 8px;">
+                    <a href="{{ route('karyawan.export', isset($unitAktif) ? ['unit' => $unitAktif] : []) }}" 
+                        class="btn btn-outline-success font-weight-bold shadow-sm" 
+                        title="Export Seluruh Data Karyawan ke File Excel"
+                        style="border-radius: 8px;">
+                        <i class="fa fa-file-excel mr-1"></i> Export Excel
+                    </a>
+                    <a href="{{ route('karyawan.template') }}" 
+                        class="btn btn-outline-primary font-weight-bold shadow-sm" 
+                        title="Unduh Format / Template Excel untuk Import Karyawan"
+                        style="border-radius: 8px;">
+                        <i class="fa fa-download mr-1"></i> Format Excel
+                    </a>
+                    <button type="button" class="btn btn-success font-weight-bold shadow-sm" 
+                        id="btnOpenModalImport" 
+                        onclick="openImportModal()"
+                        style="border-radius: 8px;">
+                        <i class="fa fa-upload mr-1"></i> Upload Excel
+                    </button>
                     <a href="{{ route('karyawan.create') }}" class="btn text-white shadow-sm font-weight-bold"
                         style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px;">
-                        <i class="fa fa-plus-circle mr-1"></i> TAMBAH BARU
+                        <i class="fa fa-plus-circle mr-1"></i> Tambah Baru
                     </a>
                 </div>
             </div>
         </div>
+
+        @if (session('success'))
+            <div class="alert alert-success border-0 shadow-sm d-flex align-items-center mb-3" style="border-radius: 10px;">
+                <i class="fa fa-check-circle fa-lg mr-2"></i>
+                <div>{{ session('success') }}</div>
+            </div>
+        @endif
+        @if (session('warning'))
+            <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center mb-3" style="border-radius: 10px;">
+                <i class="fa fa-exclamation-triangle fa-lg mr-2"></i>
+                <div>{{ session('warning') }}</div>
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger border-0 shadow-sm d-flex align-items-center mb-3" style="border-radius: 10px;">
+                <i class="fa fa-exclamation-circle fa-lg mr-2"></i>
+                <div>{{ session('error') }}</div>
+            </div>
+        @endif
 
         <!-- Baris 1: Status Keaktifan Akun User (2 di atas) -->
         <div class="row mb-3">
@@ -318,6 +355,73 @@
             </div>
         </div>
     </div>
+
+    {{-- MODAL UPLOAD / IMPORT EXCEL KARYAWAN --}}
+    <div id="modalImportKaryawan" class="modal-import-backdrop" onclick="handleBackdropClick(event)">
+        <div class="modal-import-dialog" onclick="event.stopPropagation()">
+            <form method="POST" action="{{ route('karyawan.import') }}" enctype="multipart/form-data">
+                @csrf
+                <div class="d-flex justify-content-between align-items-center p-3 px-4 border-bottom bg-light">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle p-2 bg-success text-white mr-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; border-radius: 10px;">
+                            <i class="fa fa-file-excel"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 font-weight-bold text-dark">Upload Excel Data Karyawan</h6>
+                            <small class="text-muted">Import massal data karyawan baru &amp; pembaruan data</small>
+                        </div>
+                    </div>
+                    <button type="button" class="close text-muted" onclick="closeImportModal()" style="font-size: 1.5rem; line-height: 1; outline: none; border: none; background: transparent;" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+
+                <div class="p-4">
+                    <div class="alert alert-info border-0 shadow-sm small mb-3" style="border-radius: 10px; background: #eff6ff; color: #1e40af;">
+                        <div class="d-flex align-items-start">
+                            <i class="fa fa-info-circle fa-lg mr-2 mt-1 text-primary"></i>
+                            <div>
+                                <strong>Petunjuk:</strong> Unduh file template <code>.xlsx</code> yang sudah memuat contoh kolom format import, lengkapi data karyawan, lalu unggah file tersebut di bawah ini.
+                                <div class="mt-2">
+                                    <a href="{{ route('karyawan.template') }}" class="btn btn-sm btn-outline-primary font-weight-bold shadow-sm">
+                                        <i class="fa fa-download mr-1"></i> Unduh Format Excel (Template)
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger small mb-3">{{ $errors->first() }}</div>
+                    @endif
+
+                    <div class="form-group mb-3">
+                        <label class="font-weight-bold small text-dark mb-1">Default Status Akun User <span class="text-danger">*</span></label>
+                        <select name="default_status" class="form-control font-weight-bold" style="border-radius: 8px;">
+                            <option value="aktif" selected>Aktif (User dapat langsung login ke portal)</option>
+                            <option value="nonaktif">Non-aktif (Akun dinonaktifkan sementara)</option>
+                        </select>
+                        <small class="text-muted">Bila di kolom <code>status_akun</code> Excel diisi, nilai pada file Excel yang akan diprioritaskan.</small>
+                    </div>
+
+                    <div class="form-group mb-0">
+                        <label class="font-weight-bold small text-dark mb-1">Pilih File Excel (.xlsx, .xls, .csv) <span class="text-danger">*</span></label>
+                        <input type="file" name="file" class="form-control-file border p-2 w-100" accept=".xlsx,.xls,.csv" required style="border-radius: 8px; background: #f8fafc;">
+                        <small class="text-muted d-block mt-1">Maksimal ukuran file: 10 MB. Mendukung file .xlsx, .xls, dan .csv.</small>
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light p-3 px-4 d-flex justify-content-end" style="border-top: 1px solid #f1f5f9;">
+                    <button type="button" class="btn btn-secondary font-weight-bold px-3" onclick="closeImportModal()" style="border-radius: 8px;">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn btn-success font-weight-bold px-4 shadow-sm" style="border-radius: 8px;">
+                        <i class="fa fa-upload mr-1"></i> Mulai Import
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
 
 @push('css')
@@ -357,6 +461,40 @@
         color: #ffffff !important;
         border-color: #ea580c !important;
         box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);
+    }
+
+    /* Modal Upload / Import Karyawan */
+    .modal-import-backdrop {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(4px);
+        z-index: 99999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        overflow-y: auto;
+    }
+    .modal-import-backdrop.show {
+        display: flex !important;
+    }
+    .modal-import-dialog {
+        position: relative;
+        width: 100%;
+        max-width: 540px;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        animation: modalScaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        margin: auto;
+    }
+    @keyframes modalScaleIn {
+        from { opacity: 0; transform: scale(0.96) translateY(-8px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
     }
 </style>
 @endpush
@@ -450,6 +588,34 @@
         var statusParam = urlParams.get('status');
         if (statusParam && ['all', 'aktif', 'nonaktif', 'tetap', 'kontrak', 'honor'].includes(statusParam.toLowerCase())) {
             applyFilter(statusParam.toLowerCase());
+        }
+    });
+
+    function openImportModal() {
+        var modal = document.getElementById('modalImportKaryawan');
+        if (modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeImportModal() {
+        var modal = document.getElementById('modalImportKaryawan');
+        if (modal) {
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    }
+
+    function handleBackdropClick(event) {
+        if (event.target === document.getElementById('modalImportKaryawan')) {
+            closeImportModal();
+        }
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeImportModal();
         }
     });
 </script>

@@ -15,6 +15,7 @@ use App\Models\Admin\Presensi\Presensi;
 use App\Services\Admin\Presensi\PresensiService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class PresensiController extends Controller
@@ -206,47 +207,17 @@ class PresensiController extends Controller
      */
     public function matriks(Request $request): View
     {
-        $bulanList = Bulan::with('tahunAjaran')->orderByDesc('id')->get();
-        $kategoriList = Kategori::orderBy('nama_kategori')->get();
+        $data = $this->service->getMatriksPageData($request->all());
 
-        $selectedBulanId = (int) $request->input(
-            'bulan_id',
-            $bulanList->firstWhere('status', true)?->id ?? $bulanList->first()?->id ?? 0
-        );
+        return view('admin.presensi.matriks', $data);
+    }
 
-        $selectedBulan = $bulanList->firstWhere('id', $selectedBulanId);
-        $selectedKategoriId = $request->input('kepegawaian_master_kategori_id');
-        $onlyWorkdays = $request->has('only_workdays') ? $request->boolean('only_workdays') : true;
-
-        $matriksData = $selectedBulanId > 0
-            ? $this->service->getMatriksBulanan(
-                bulanId: $selectedBulanId,
-                kategoriId: $selectedKategoriId ? (int) $selectedKategoriId : null,
-                onlyWorkdays: $onlyWorkdays
-            )
-            : [
-                'bulan'         => null,
-                'daftarTanggal' => collect(),
-                'pegawaiRows'   => collect(),
-                'columnTotals'  => [],
-                'summary'       => [
-                    'total_pegawai'                      => 0,
-                    'total_pegawai_aktif'                => 0,
-                    'total_pegawai_belum_absen_hari_ini' => 0,
-                    'start_date'                         => null,
-                    'end_date'                           => null,
-                    'total_hari_tampil'                  => 0,
-                ],
-            ];
-
-        return view('admin.presensi.matriks', array_merge($matriksData, [
-            'bulanList'          => $bulanList,
-            'kategoriList'       => $kategoriList,
-            'selectedBulan'      => $selectedBulan,
-            'selectedBulanId'    => $selectedBulanId,
-            'selectedKategoriId' => $selectedKategoriId,
-            'onlyWorkdays'       => $onlyWorkdays,
-        ]));
+    /**
+     * Cetak atau Unduh Dokumen Matriks Presensi Harian dalam format PDF menggunakan DomPDF.
+     */
+    public function matriksPdf(Request $request): Response
+    {
+        return $this->service->generateMatriksPdf($request->all());
     }
 
     /**

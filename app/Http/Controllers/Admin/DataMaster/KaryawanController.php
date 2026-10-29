@@ -9,8 +9,15 @@ use App\Models\Admin\DataMaster\Karyawan;
 use App\Models\Admin\DataMaster\Kategori;
 use App\Models\Admin\DataMaster\JamKerja;
 use App\Services\Admin\DataMaster\KaryawanService;
+use App\Exports\KaryawanExport;
+use App\Exports\KaryawanTemplateExport;
+use App\Imports\KaryawanImport;
+use Exception;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class KaryawanController extends Controller
 {
@@ -99,6 +106,52 @@ class KaryawanController extends Controller
 
         return redirect()->route('karyawan.index')
             ->with('success', 'Karyawan berhasil dihapus');
+    }
+
+    public function export(Request $request)
+    {
+        $unit = $request->query('unit');
+        $filename = $unit
+            ? 'data-karyawan-unit-' . Str::slug($unit) . '.xlsx'
+            : 'data-karyawan-' . date('Y-m-d') . '.xlsx';
+
+        return Excel::download(new KaryawanExport($unit), $filename);
+    }
+
+    public function template()
+    {
+        return Excel::download(new KaryawanTemplateExport, 'template-import-karyawan.xlsx');
+    }
+
+    public function import(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'file'           => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:10240'],
+            'default_status' => ['nullable', 'in:aktif,nonaktif'],
+        ], [
+            'file.required' => 'File Excel wajib dipilih.',
+            'file.mimes'    => 'File harus berformat .xlsx, .xls, atau .csv.',
+            'file.max'      => 'Ukuran file maksimal 10 MB.',
+        ]);
+
+        $defaultActive = $request->input('default_status', 'aktif') === 'aktif';
+        $import        = new KaryawanImport($defaultActive);
+
+        try {
+            Excel::import($import, $request->file('file'));
+        } catch (Exception $e) {
+            return back()->with('error', 'Import gagal: ' . $e->getMessage());
+        }
+
+        $msg = "Import selesai ({$import->created} karyawan baru ditambahkan, {$import->updated} data diperbarui).";
+        if (! empty($import->errors)) {
+            $msg .= ' Catatan: ' . implode(' | ', array_slice($import->errors, 0, 5))
+                . (count($import->errors) > 5 ? ' ...(+' . (count($import->errors) - 5) . ' lainnya)' : '');
+        }
+
+        return redirect()
+            ->route('karyawan.index')
+            ->with(! empty($import->errors) ? 'warning' : 'success', $msg);
     }
 
     private function formOptions(): array

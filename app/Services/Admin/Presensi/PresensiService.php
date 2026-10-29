@@ -3,13 +3,17 @@
 namespace App\Services\Admin\Presensi;
 
 use App\Models\Admin\DataMaster\Bulan;
+use App\Models\Admin\DataMaster\Kategori;
 use App\Models\Admin\DataMaster\Karyawan;
 use App\Models\Admin\DataMaster\TahunAjaran;
 use App\Models\Admin\Presensi\Presensi;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class PresensiService
 {
@@ -612,6 +616,120 @@ class PresensiService
     }
 
     /**
+     * Mempersiapkan seluruh data Matriks Presensi Harian (lengkap dengan filter & master data).
+     * Digunakan bersama oleh Controller untuk Web View dan PDF Export sehingga tidak ada duplikasi kode.
+     */
+    public function getMatriksPageData(array $params): array
+    {
+        $bulanList = Bulan::with('tahunAjaran')->orderByDesc('id')->get();
+        $kategoriList = Kategori::orderBy('nama_kategori')->get();
+
+        $selectedBulanId = (int) ($params['bulan_id'] ?? ($bulanList->firstWhere('status', true)?->id ?? $bulanList->first()?->id ?? 0));
+        $selectedBulan = $bulanList->firstWhere('id', $selectedBulanId);
+        $selectedKategoriId = $params['kepegawaian_master_kategori_id'] ?? null;
+        $onlyWorkdays = isset($params['only_workdays'])
+            ? filter_var($params['only_workdays'], FILTER_VALIDATE_BOOLEAN)
+            : true;
+
+        $kategori = $selectedKategoriId ? $kategoriList->firstWhere('id', $selectedKategoriId) : null;
+
+        $matriksData = $selectedBulanId > 0
+            ? $this->getMatriksBulanan(
+                bulanId: $selectedBulanId,
+                kategoriId: $selectedKategoriId ? (int) $selectedKategoriId : null,
+                onlyWorkdays: $onlyWorkdays
+            )
+            : $this->emptyMatriksData();
+
+        // Filter cepat berdasarkan status (jika ada)
+        $filterStatus = (string) ($params['filter_status'] ?? 'all');
+        if ($filterStatus === 'belum_absen_hari_ini') {
+            $matriksData['pegawaiRows'] = $matriksData['pegawaiRows']->filter(fn ($r) => $r['belum_absen_hari_ini']);
+        } elseif ($filterStatus === 'ada_belum_absen') {
+            $matriksData['pegawaiRows'] = $matriksData['pegawaiRows']->filter(fn ($r) => ($r['totals']['belum_absen'] ?? 0) > 0);
+        } elseif ($filterStatus === 'aktif_only') {
+            $matriksData['pegawaiRows'] = $matriksData['pegawaiRows']->filter(fn ($r) => $r['user_is_active']);
+        }
+
+        // Filter pencarian nama pegawai (jika ada)
+        $search = $params['search'] ?? null;
+        if (! empty($search)) {
+            $matriksData['pegawaiRows'] = $matriksData['pegawaiRows']->filter(
+                fn ($r) => str_contains(strtolower($r['karyawan']->nama_lengkap), strtolower($search))
+            );
+        }
+
+        return array_merge($matriksData, [
+            'bulanList'          => $bulanList,
+            'kategoriList'       => $kategoriList,
+            'selectedBulan'      => $selectedBulan,
+            'selectedBulanId'    => $selectedBulanId,
+            'selectedKategori'   => $kategori,
+            'selectedKategoriId' => $selectedKategoriId,
+            'onlyWorkdays'       => $onlyWorkdays,
+            'filterStatus'       => $filterStatus,
+            'search'             => $search,
+        ]);
+    }
+
+    /**
+     * Menghasilkan response Dokumen PDF Matriks Presensi Harian (Stream atau Download).
+     */
+    public function generateMatriksPdf(array $params): Response
+    {
+        $data = $this->getMatriksPageData($params);
+
+        $logoPath = public_path('storage/logo/samping.png');
+        $logoBase64 = file_exists($logoPath)
+            ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath))
+            : null;
+
+        $pdf = Pdf::loadView('admin.presensi.matriks_pdf', array_merge($data, [
+            'paperSize'  => 'a3',
+            'logoBase64' => $logoBase64,
+            'waktuCetak' => now(),
+        ]))
+        ->setPaper('a3', 'landscape')
+        ->setOption([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled'      => true,
+            'isPhpEnabled'         => true,
+            'defaultFont'          => 'sans-serif',
+        ]);
+
+        $bulanSlug = $data['selectedBulan']?->nama_bulan ? Str::slug($data['selectedBulan']->nama_bulan) : 'semua-bulan';
+        $kategoriSlug = $data['selectedKategori'] ? '-' . Str::slug($data['selectedKategori']->nama_kategori) : '';
+        $filename = "Matriks-Presensi-{$bulanSlug}{$kategoriSlug}.pdf";
+
+        if (! empty($params['download'])) {
+            return $pdf->download($filename);
+        }
+
+        return $pdf->stream($filename);
+    }
+
+    /**
+     * Struktur data default ketika belum ada bulan yang dipilih.
+     */
+    public function emptyMatriksData(): array
+    {
+        return [
+            'bulan'         => null,
+            'daftarTanggal' => collect(),
+            'pegawaiRows'   => collect(),
+            'columnTotals'  => [],
+            'summary'       => [
+                'total_pegawai'                      => 0,
+                'total_pegawai_aktif'                => 0,
+                'total_pegawai_belum_absen_hari_ini' => 0,
+                'start_date'                         => null,
+                'end_date'                           => null,
+                'total_hari_tampil'                  => 0,
+            ],
+        ];
+    }
+
+    /**
      * Mengambil matriks kehadiran harian (Grid View Tanggal x Pegawai)
      * untuk monitoring kehadiran dan mendeteksi pegawai yang belum absen.
      */
@@ -667,7 +785,7 @@ class PresensiService
 
         // Ambil seluruh karyawan
         $karyawanList = Karyawan::query()
-            ->select('nipy', 'nama_lengkap', 'gelar', 'kepegawaian_master_kategori_id', 'unit')
+            ->select('nipy', 'nama_lengkap', 'gelar', 'golongan', 'kepegawaian_master_kategori_id', 'unit')
             ->with([
                 'kategori:id,nama_kategori',
                 'user:id,no_induk,is_active',
@@ -703,13 +821,37 @@ class PresensiService
         $totalPegawaiBelumAbsenHariIni = 0;
         $todayDateStr = $today->format('Y-m-d');
 
+        // Ambil data keterlambatan bulan sebelumnya untuk mendeteksi kriteria Merah (5x terlambat dalam 2 bulan berturut-turut)
+        $prevStartDate = $startDate->copy()->subMonth();
+        $prevEndDate = $endDate->copy()->subMonth();
+
+        $prevBulan = Bulan::where('id', '!=', $bulan->id)
+            ->where('id', '<', $bulan->id)
+            ->orderByDesc('id')
+            ->first();
+
+        $prevMonthTerlambatCounts = Presensi::query()
+            ->where(function ($q) use ($prevBulan, $prevStartDate, $prevEndDate) {
+                if ($prevBulan) {
+                    $q->where('kepegawaian_master_bulan_id', $prevBulan->id);
+                } else {
+                    $q->whereBetween('tanggal', [$prevStartDate->format('Y-m-d'), $prevEndDate->format('Y-m-d')]);
+                }
+            })
+            ->where('status', 'terlambat')
+            ->groupBy('karyawan_nipy')
+            ->selectRaw('karyawan_nipy, COUNT(*) as total_terlambat')
+            ->pluck('total_terlambat', 'karyawan_nipy')
+            ->all();
+
         // Bangun baris data per pegawai
         $pegawaiRows = $karyawanList->map(function ($karyawan) use (
             $daftarTanggal,
             $presensiList,
             &$columnTotals,
             &$totalPegawaiBelumAbsenHariIni,
-            $todayDateStr
+            $todayDateStr,
+            $prevMonthTerlambatCounts
         ) {
             $records = [];
             $totals = [
@@ -721,6 +863,7 @@ class PresensiService
                 'tugas'              => 0,
                 'alpa'               => 0,
                 'belum_absen'        => 0,
+                'pulang_cepat'       => 0,
                 'total_hadir_semua'  => 0,
                 'total_tercatat'     => 0,
                 'persen_kehadiran'   => 0,
@@ -740,6 +883,9 @@ class PresensiService
                     }
                     if (in_array($status, ['hadir', 'terlambat'])) {
                         $totals['total_hadir_semua']++;
+                    }
+                    if (($presensi->pulang_cepat_menit ?? 0) > 0) {
+                        $totals['pulang_cepat']++;
                     }
                     $totals['total_tercatat']++;
 
@@ -792,13 +938,114 @@ class PresensiService
                 ? round(($totals['total_hadir_semua'] / $totalHariEfektif) * 100, 1)
                 : 0;
 
+            // Kumpulkan tanggal-tanggal keterlambatan untuk mendeteksi 3x terlambat dalam 7 hari
+            $terlambatDates = [];
+            foreach ($daftarTanggal as $tgl) {
+                $dateStr = $tgl['date_string'];
+                $rec = $records[$dateStr] ?? null;
+                if (($rec['status'] ?? '') === 'terlambat') {
+                    $terlambatDates[] = Carbon::parse($dateStr);
+                }
+            }
+
+            $has3LateIn7Days = false;
+            $countLate = count($terlambatDates);
+            if ($countLate >= 3) {
+                for ($i = 0; $i <= $countLate - 3; $i++) {
+                    if ($terlambatDates[$i]->diffInDays($terlambatDates[$i + 2]) <= 6) {
+                        $has3LateIn7Days = true;
+                        break;
+                    }
+                }
+            }
+
+            $currLateCount = $totals['terlambat'];
+            $prevLateCount = $prevMonthTerlambatCounts[$karyawan->nipy] ?? 0;
+
+            // Penentuan Keterangan & Warna Nomor Pegawai:
+            // 1. Hitam = Tidak ada data presensi
+            if ($totals['total_tercatat'] === 0) {
+                $statusNomor = [
+                    'code'       => 'hitam',
+                    'bg_color'   => '#000000',
+                    'text_color' => '#ffffff',
+                    'border'     => '#000000',
+                    'label'      => 'Hitam',
+                    'desc'       => 'Tidak ada data presensi',
+                ];
+            }
+            // 2. Merah = 5 Kali Terlambat dalam 2 bulan berturut-turut
+            elseif ($currLateCount >= 5 && $prevLateCount >= 5) {
+                $statusNomor = [
+                    'code'       => 'merah',
+                    'bg_color'   => '#ff0000',
+                    'text_color' => '#ffffff',
+                    'border'     => '#b91c1c',
+                    'label'      => 'Merah',
+                    'desc'       => '5 Kali Terlambat dalam 2 bulan berturut-turut',
+                ];
+            }
+            // 3. Hijau = 5 Kali Terlambat dalam 1 bulan
+            elseif ($currLateCount >= 5) {
+                $statusNomor = [
+                    'code'       => 'hijau',
+                    'bg_color'   => '#22c55e',
+                    'text_color' => '#ffffff',
+                    'border'     => '#16a34a',
+                    'label'      => 'Hijau',
+                    'desc'       => '5 Kali Terlambat dalam 1 bulan',
+                ];
+            }
+            // 4. Biru = 3 Kali Terlambat dalam 7 hari
+            elseif ($has3LateIn7Days) {
+                $statusNomor = [
+                    'code'       => 'biru',
+                    'bg_color'   => '#3b82f6',
+                    'text_color' => '#ffffff',
+                    'border'     => '#2563eb',
+                    'label'      => 'Biru',
+                    'desc'       => '3 Kali Terlambat dalam 7 hari',
+                ];
+            }
+            // 5. Kuning = Reward (Tidak ada keterlambatan) semua nol kecuali cuti tidak dihitung
+            elseif (
+                $currLateCount === 0 &&
+                $totals['izin'] === 0 &&
+                $totals['sakit'] === 0 &&
+                $totals['alpa'] === 0 &&
+                $totals['belum_absen'] === 0 &&
+                $totals['pulang_cepat'] === 0 &&
+                $totals['total_hadir_semua'] > 0
+            ) {
+                $statusNomor = [
+                    'code'       => 'kuning',
+                    'bg_color'   => '#ffff00',
+                    'text_color' => '#000000',
+                    'border'     => '#ca8a04',
+                    'label'      => 'Kuning',
+                    'desc'       => 'Reward (Tidak ada keterlambatan) semua nol kecuali cuti tidak dihitung',
+                ];
+            }
+            // 6. Putih = Normal
+            else {
+                $statusNomor = [
+                    'code'       => 'putih',
+                    'bg_color'   => '#ffffff',
+                    'text_color' => '#1e293b',
+                    'border'     => '#cbd5e1',
+                    'label'      => 'Putih',
+                    'desc'       => 'Normal',
+                ];
+            }
+
             return [
-                'karyawan'          => $karyawan,
-                'status_pegawai'    => $karyawan->status_pegawai,
-                'user_is_active'    => (bool) ($karyawan->user?->is_active ?? false),
+                'karyawan'             => $karyawan,
+                'status_pegawai'       => $karyawan->status_pegawai,
+                'user_is_active'       => (bool) ($karyawan->user?->is_active ?? false),
                 'belum_absen_hari_ini' => $belumAbsenHariIni,
-                'records'           => $records,
-                'totals'            => $totals,
+                'records'              => $records,
+                'totals'               => $totals,
+                'status_nomor'         => $statusNomor,
             ];
         });
 
