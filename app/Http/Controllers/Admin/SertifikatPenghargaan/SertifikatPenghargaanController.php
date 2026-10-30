@@ -205,6 +205,20 @@ class SertifikatPenghargaanController extends Controller
     }
 
     /**
+     * Menampilkan preview berkas fisik sertifikat penghargaan secara inline.
+     */
+    public function preview(int $id): Response
+    {
+        try {
+            $penghargaan = $this->service->getById($id);
+
+            return $this->service->previewBerkas($penghargaan);
+        } catch (Exception $e) {
+            abort(404, $e->getMessage());
+        }
+    }
+
+    /**
      * Mengunduh berkas fisik sertifikat penghargaan.
      */
     public function download(int $id, Request $request): Response

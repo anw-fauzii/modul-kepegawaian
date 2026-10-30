@@ -18,7 +18,7 @@ class SertifikatPenghargaanService
     /**
      * Nama disk storage untuk penyimpanan berkas sertifikat penghargaan.
      */
-    protected const DISK = 'public';
+    protected const DISK = 'private';
 
     /**
      * Direktori basis penyimpanan berkas sertifikat penghargaan di storage.
@@ -187,11 +187,31 @@ class SertifikatPenghargaanService
     }
 
     /**
+     * Menampilkan preview berkas fisik sertifikat secara inline (untuk iframe/img).
+     */
+    public function previewBerkas(SertifikatPenghargaan $penghargaan): StreamedResponse|BinaryFileResponse
+    {
+        if (empty($penghargaan->berkas)) {
+            abort(404, 'Berkas fisik dokumen sertifikat tidak ditemukan.');
+        }
+
+        $disk = Storage::disk(self::DISK)->exists($penghargaan->berkas) ? self::DISK : 'public';
+
+        if (! Storage::disk($disk)->exists($penghargaan->berkas)) {
+            abort(404, 'Berkas fisik dokumen sertifikat tidak ditemukan di server.');
+        }
+
+        return Storage::disk($disk)->response($penghargaan->berkas);
+    }
+
+    /**
      * Mengunduh berkas fisik sertifikat dengan nama file yang rapi.
      */
     public function downloadBerkas(SertifikatPenghargaan $penghargaan): StreamedResponse|BinaryFileResponse
     {
-        if (empty($penghargaan->berkas) || ! Storage::disk(self::DISK)->exists($penghargaan->berkas)) {
+        $disk = (! empty($penghargaan->berkas) && Storage::disk(self::DISK)->exists($penghargaan->berkas)) ? self::DISK : 'public';
+
+        if (empty($penghargaan->berkas) || ! Storage::disk($disk)->exists($penghargaan->berkas)) {
             throw new Exception('Berkas fisik dokumen sertifikat tidak ditemukan di server.');
         }
 
@@ -203,7 +223,7 @@ class SertifikatPenghargaanService
 
         $downloadFilename = "Sertifikat_{$cleanJudul}_{$cleanNama}_{$penghargaan->tahun}.{$extension}";
 
-        return Storage::disk(self::DISK)->download($penghargaan->berkas, $downloadFilename);
+        return Storage::disk($disk)->download($penghargaan->berkas, $downloadFilename);
     }
 
     /**
@@ -266,8 +286,13 @@ class SertifikatPenghargaanService
      */
     protected function deletePhysicalFile(?string $path): void
     {
-        if (! empty($path) && Storage::disk(self::DISK)->exists($path)) {
-            Storage::disk(self::DISK)->delete($path);
+        if (! empty($path)) {
+            if (Storage::disk(self::DISK)->exists($path)) {
+                Storage::disk(self::DISK)->delete($path);
+            }
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
             Log::info("Berkas fisik sertifikat dihapus dari storage: {$path}");
         }
     }

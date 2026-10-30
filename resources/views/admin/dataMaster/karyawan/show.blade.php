@@ -269,6 +269,10 @@
                                 <dd class="kd-strong">{{ $karyawan->jenjangPendidikan?->nama_jenjang_pendidikan ?? '-' }}</dd>
                             </div>
                             <div>
+                                <dt>Perguruan</dt>
+                                <dd>{{ $karyawan->perguruan ?: '-' }}</dd>
+                            </div>
+                            <div>
                                 <dt>Prodi</dt>
                                 <dd>{{ $karyawan->prodi ?: '-' }}</dd>
                             </div>

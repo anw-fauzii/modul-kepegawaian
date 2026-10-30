@@ -51,6 +51,7 @@ class KaryawanRequest extends FormRequest
                 'required',
                 Rule::exists('akademik_pelengkap_jenjang_pendidikan', 'id'),
             ],
+            'perguruan'     => ['nullable', 'string', 'max:255'],
             'prodi'         => ['nullable', 'string', 'max:255'],
             'tahun_lulus'   => ['required', 'digits:4'],
             'whatsapp'      => ['nullable', 'string', 'max:20'],

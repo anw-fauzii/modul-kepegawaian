@@ -18,7 +18,7 @@ class RapotKinerjaService
     /**
      * Nama disk storage untuk penyimpanan berkas rapot kinerja.
      */
-    protected const DISK = 'public';
+    protected const DISK = 'private';
 
     /**
      * Direktori basis penyimpanan berkas rapot kinerja.
@@ -189,11 +189,31 @@ class RapotKinerjaService
     }
 
     /**
+     * Menampilkan preview berkas Rapot Kinerja secara inline (untuk iframe/img).
+     */
+    public function previewBerkas(RapotKinerja $rapot): StreamedResponse|BinaryFileResponse
+    {
+        if (empty($rapot->berkas)) {
+            abort(404, 'Berkas dokumen fisik Rapot Kinerja tidak ditemukan.');
+        }
+
+        $disk = Storage::disk(self::DISK)->exists($rapot->berkas) ? self::DISK : 'public';
+
+        if (! Storage::disk($disk)->exists($rapot->berkas)) {
+            abort(404, 'Berkas dokumen fisik Rapot Kinerja tidak ditemukan di server.');
+        }
+
+        return Storage::disk($disk)->response($rapot->berkas);
+    }
+
+    /**
      * Download berkas Rapot Kinerja dengan penamaan file terstruktur.
      */
     public function downloadBerkas(RapotKinerja $rapot): StreamedResponse|BinaryFileResponse
     {
-        if (empty($rapot->berkas) || ! Storage::disk(self::DISK)->exists($rapot->berkas)) {
+        $disk = (! empty($rapot->berkas) && Storage::disk(self::DISK)->exists($rapot->berkas)) ? self::DISK : 'public';
+
+        if (empty($rapot->berkas) || ! Storage::disk($disk)->exists($rapot->berkas)) {
             throw new Exception('Berkas dokumen fisik Rapot Kinerja tidak ditemukan di server.');
         }
 
@@ -205,7 +225,7 @@ class RapotKinerjaService
 
         $downloadFilename = "Rapot_Kinerja_{$cleanNama}_{$cleanTahun}.{$extension}";
 
-        return Storage::disk(self::DISK)->download($rapot->berkas, $downloadFilename);
+        return Storage::disk($disk)->download($rapot->berkas, $downloadFilename);
     }
 
     /**
@@ -261,8 +281,13 @@ class RapotKinerjaService
 
     protected function deletePhysicalFile(?string $path): void
     {
-        if (! empty($path) && Storage::disk(self::DISK)->exists($path)) {
-            Storage::disk(self::DISK)->delete($path);
+        if (! empty($path)) {
+            if (Storage::disk(self::DISK)->exists($path)) {
+                Storage::disk(self::DISK)->delete($path);
+            }
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
             Log::info("Berkas fisik rapot dihapus dari storage: {$path}");
         }
     }

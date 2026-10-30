@@ -37,16 +37,10 @@
 
                 <div class="page-title-actions d-flex flex-wrap align-items-center" style="gap: 8px;">
                     <a href="{{ route('karyawan.export', isset($unitAktif) ? ['unit' => $unitAktif] : []) }}" 
-                        class="btn btn-outline-success font-weight-bold shadow-sm" 
-                        title="Export Seluruh Data Karyawan ke File Excel"
-                        style="border-radius: 8px;">
-                        <i class="fa fa-file-excel mr-1"></i> Export Excel
-                    </a>
-                    <a href="{{ route('karyawan.template') }}" 
                         class="btn btn-outline-primary font-weight-bold shadow-sm" 
-                        title="Unduh Format / Template Excel untuk Import Karyawan"
+                        title="Export seluruh data karyawan ke dalam format Excel (.xlsx)."
                         style="border-radius: 8px;">
-                        <i class="fa fa-download mr-1"></i> Format Excel
+                        <i class="fa fa-download mr-1"></i> Export Excel
                     </a>
                     <button type="button" class="btn btn-success font-weight-bold shadow-sm" 
                         id="btnOpenModalImport" 
@@ -81,33 +75,10 @@
             </div>
         @endif
 
-        <!-- Baris 1: Status Keaktifan Akun User (2 di atas) -->
+        <!-- Baris 1: Status Keaktifan Akun User -->
         <div class="row mb-3">
             <div class="col-md-4 mb-2">
-                <div class="card stat-filter-card shadow-sm border-0 card-active" data-filter="all"
-                    style="cursor: pointer; border-radius: 12px; transition: all 0.2s ease;">
-                    <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="text-uppercase font-weight-bold"
-                                style="font-size: 0.72rem; letter-spacing: 0.5px; color: #059669;">
-                                Semua Karyawan Terdaftar
-                            </div>
-                            <div class="font-weight-bold my-1" style="font-size: 1.6rem; color: #059669; line-height: 1.2;">
-                                {{ $countTotal }}
-                            </div>
-                            <span class="badge badge-success px-2 py-0 font-weight-bold" style="font-size: 0.7rem; border-radius: 4px;">
-                                Karyawan Terdaftar
-                            </span>
-                        </div>
-                        <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm text-white"
-                            style="width: 44px; height: 44px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); flex-shrink: 0;">
-                            <i class="pe-7s-users" style="font-size: 1.5rem; font-weight: bold;"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-2">
-                <div class="card stat-filter-card shadow-sm border-0" data-filter="aktif"
+                <div class="card stat-filter-card shadow-sm border-0 card-active" data-filter="aktif"
                     style="cursor: pointer; border-radius: 12px; transition: all 0.2s ease;">
                     <div class="card-body p-3 d-flex align-items-center justify-content-between">
                         <div>
@@ -119,7 +90,7 @@
                                 {{ $countAktif }}
                             </div>
                             <span class="badge badge-success px-2 py-0 font-weight-bold" style="font-size: 0.7rem; border-radius: 4px;">
-                                User is_active: True
+                                Pegawai Aktif
                             </span>
                         </div>
                         <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm text-white"
@@ -143,12 +114,36 @@
                                 {{ $countNonAktif }}
                             </div>
                             <span class="badge badge-danger px-2 py-0 font-weight-bold" style="font-size: 0.7rem; border-radius: 4px;">
-                                User is_active: False
+                                Pegawai Resign
                             </span>
                         </div>
                         <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm text-white"
                             style="width: 44px; height: 44px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); flex-shrink: 0;">
                             <i class="pe-7s-close-circle" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-2">
+                <div class="card stat-filter-card shadow-sm border-0" data-filter="all"
+                    style="cursor: pointer; border-radius: 12px; transition: all 0.2s ease;">
+                    <div class="card-body p-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="text-uppercase font-weight-bold"
+                                style="font-size: 0.72rem; letter-spacing: 0.5px; color: #475569;">
+                                Semua Karyawan Terdaftar
+                            </div>
+                            <div class="font-weight-bold my-1" style="font-size: 1.6rem; color: #334155; line-height: 1.2;">
+                                {{ $countTotal }}
+                            </div>
+                            <span class="badge badge-secondary px-2 py-0 font-weight-bold" style="font-size: 0.7rem; border-radius: 4px;">
+                                Total Terdaftar
+                            </span>
+                        </div>
+                        <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm text-white"
+                            style="width: 44px; height: 44px; background: linear-gradient(135deg, #64748b 0%, #475569 100%); flex-shrink: 0;">
+                            <i class="pe-7s-users" style="font-size: 1.5rem; font-weight: bold;"></i>
                         </div>
                     </div>
                 </div>
@@ -240,7 +235,6 @@
                         <thead>
                             <tr style="background: #f8fafc;">
                                 <th style="width: 5%; text-align: center;">No</th>
-                                <th>NIPY</th>
                                 <th>Nama Lengkap</th>
                                 <th>Jabatan</th>
                                 <th>Golongan</th>
@@ -260,11 +254,6 @@
                                 @endphp
                                 <tr data-status="{{ $statusPegawai }}" data-active="{{ $isActive ? '1' : '0' }}">
                                     <td class="text-center font-weight-bold text-muted row-number">{{ $no++ }}</td>
-                                    <td>
-                                        <span class="font-weight-bold text-dark" style="font-family: monospace; font-size: 0.9rem;">
-                                            {{ $item->nipy }}
-                                        </span>
-                                    </td>
                                     <td>
                                         <div class="d-flex align-items-center" style="gap: 10px;">
                                         @if ($item->foto_url)
@@ -297,14 +286,15 @@
                                                 </span>
                                             @endif
                                         </div>
-                                        @if ($item->unit)
-                                            <small class="text-muted">
-                                                <i class="pe-7s-map-marker text-danger"></i> {{ $item->unit }}
-                                                @if ($item->kategori)
-                                                    &bull; {{ $item->kategori->nama_kategori }}
-                                                @endif
-                                            </small>
-                                        @endif
+                                        <small class="text-muted">
+                                            {{$item->nipy}}
+                                            @if ($item->unit)
+                                                &nbsp; | &nbsp; <i class="pe-7s-map-marker text-danger"></i> {{ $item->unit }}
+                                            @endif
+                                            @if ($item->perguruan)
+                                                &nbsp; | &nbsp; <i class="pe-7s-study text-info"></i> {{ $item->perguruan }}
+                                            @endif
+                                        </small>
                                         </div>
                                         </div>
                                     </td>
@@ -502,17 +492,16 @@
 @section('js')
 <script>
     $(document).ready(function() {
-        var table = $('#myTable3').DataTable();
-        var currentFilter = 'all';
+        var urlParams = new URLSearchParams(window.location.search);
+        var statusParam = urlParams.get('status');
+        var initialFilter = (statusParam && ['all', 'aktif', 'nonaktif', 'tetap', 'kontrak', 'honor'].includes(statusParam.toLowerCase()))
+            ? statusParam.toLowerCase()
+            : 'aktif';
 
-        // Sesuaikan teks bawaan DataTables
-        if (table.settings() && table.settings()[0]) {
-            table.settings()[0].oLanguage.sZeroRecords = "Tidak ada data karyawan untuk kategori ini.";
-            table.settings()[0].oLanguage.sEmptyTable = "Belum ada data karyawan.";
-        }
+        var currentFilter = initialFilter;
 
         var labels = {
-            'all': 'Semua Karyawan (Total: {{ $countTotal }})',
+            'all': 'Semua Karyawan Terdaftar (Total: {{ $countTotal }})',
             'aktif': 'Pegawai Aktif (is_active: True)',
             'nonaktif': 'Pegawai Non-Aktif (is_active: False)',
             'tetap': 'Pegawai Tetap Aktif (is_active: True, Akhiran -1)',
@@ -520,7 +509,7 @@
             'honor': 'Pegawai Honor Aktif (is_active: True, Akhiran -3)'
         };
 
-        // Filter pencarian kustom DataTables
+        // Filter pencarian kustom DataTables - daftarkan sebelum inisialisasi DataTable agar filter langsung bekerja pada render pertama
         $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
             if (settings.nTable.id !== 'myTable3') return true;
             if (currentFilter === 'all') return true;
@@ -546,6 +535,14 @@
             return true;
         });
 
+        var table = $('#myTable3').DataTable();
+
+        // Sesuaikan teks bawaan DataTables
+        if (table.settings() && table.settings()[0]) {
+            table.settings()[0].oLanguage.sZeroRecords = "Tidak ada data karyawan untuk kategori ini.";
+            table.settings()[0].oLanguage.sEmptyTable = "Belum ada data karyawan.";
+        }
+
         // Penomoran otomatis kolom No saat pagination / filter / draw
         table.on('order.dt search.dt draw.dt', function() {
             var info = table.page.info();
@@ -557,7 +554,7 @@
         function applyFilter(filter) {
             currentFilter = filter;
 
-            // Sinkronkan tab pills
+            // Sinkronkan tab pills (jika ada)
             $('.status-filter-btn').removeClass('active');
             $('.status-filter-btn[data-filter="' + filter + '"]').addClass('active');
 
@@ -566,13 +563,16 @@
             $('.stat-filter-card[data-filter="' + filter + '"]').addClass('card-active');
 
             // Update keterangan filter aktif
-            $('#filterStatusLabel').text(labels[filter] || 'Semua Karyawan (Total: {{ $countTotal }})');
+            $('#filterStatusLabel').text(labels[filter] || 'Pegawai Aktif');
 
             // Redraw DataTable murni tanpa manipulasi DOM manual
             table.draw();
         }
 
-        // Event klik tab
+        // Jalankan filter awal (default: aktif atau dari query param ?status=)
+        applyFilter(initialFilter);
+
+        // Event klik tab (jika ada)
         $('.status-filter-btn').on('click', function(e) {
             e.preventDefault();
             applyFilter($(this).data('filter'));
@@ -582,13 +582,6 @@
         $('.stat-filter-card').on('click', function() {
             applyFilter($(this).data('filter'));
         });
-
-        // Ambil query param ?status= jika ada
-        var urlParams = new URLSearchParams(window.location.search);
-        var statusParam = urlParams.get('status');
-        if (statusParam && ['all', 'aktif', 'nonaktif', 'tetap', 'kontrak', 'honor'].includes(statusParam.toLowerCase())) {
-            applyFilter(statusParam.toLowerCase());
-        }
     });
 
     function openImportModal() {

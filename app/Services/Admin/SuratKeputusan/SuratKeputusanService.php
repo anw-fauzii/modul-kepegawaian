@@ -18,7 +18,7 @@ class SuratKeputusanService
     /**
      * Nama disk storage yang digunakan untuk menyimpan berkas dokumen SK.
      */
-    protected const DISK = 'public';
+    protected const DISK = 'private';
 
     /**
      * Direktori basis penyimpanan berkas SK pada storage disk.
@@ -207,11 +207,31 @@ class SuratKeputusanService
     }
 
     /**
+     * Menampilkan preview berkas SK secara inline (untuk iframe/img).
+     */
+    public function previewBerkas(SuratKeputusan $sk): StreamedResponse|BinaryFileResponse
+    {
+        if (empty($sk->berkas)) {
+            abort(404, 'Berkas dokumen fisik Surat Keputusan tidak ditemukan.');
+        }
+
+        $disk = Storage::disk(self::DISK)->exists($sk->berkas) ? self::DISK : 'public';
+
+        if (! Storage::disk($disk)->exists($sk->berkas)) {
+            abort(404, 'Berkas dokumen fisik Surat Keputusan tidak ditemukan di server.');
+        }
+
+        return Storage::disk($disk)->response($sk->berkas);
+    }
+
+    /**
      * Mengunduh berkas SK dengan nama file yang rapi dan terstandarisasi.
      */
     public function downloadBerkas(SuratKeputusan $sk): StreamedResponse|BinaryFileResponse
     {
-        if (empty($sk->berkas) || ! Storage::disk(self::DISK)->exists($sk->berkas)) {
+        $disk = (! empty($sk->berkas) && Storage::disk(self::DISK)->exists($sk->berkas)) ? self::DISK : 'public';
+
+        if (empty($sk->berkas) || ! Storage::disk($disk)->exists($sk->berkas)) {
             throw new Exception('Berkas dokumen fisik Surat Keputusan tidak ditemukan di server.');
         }
 
@@ -225,7 +245,7 @@ class SuratKeputusanService
 
         $downloadFilename = "SK_{$cleanJabatan}_{$cleanNama}_{$cleanTahun}.{$extension}";
 
-        return Storage::disk(self::DISK)->download($sk->berkas, $downloadFilename);
+        return Storage::disk($disk)->download($sk->berkas, $downloadFilename);
     }
 
     /**
@@ -299,8 +319,13 @@ class SuratKeputusanService
      */
     protected function deletePhysicalFile(?string $path): void
     {
-        if (! empty($path) && Storage::disk(self::DISK)->exists($path)) {
-            Storage::disk(self::DISK)->delete($path);
+        if (! empty($path)) {
+            if (Storage::disk(self::DISK)->exists($path)) {
+                Storage::disk(self::DISK)->delete($path);
+            }
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
             Log::info("Berkas fisik dihapus dari storage: {$path}");
         }
     }

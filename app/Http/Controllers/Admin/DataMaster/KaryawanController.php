@@ -17,6 +17,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class KaryawanController extends Controller
@@ -24,6 +25,23 @@ class KaryawanController extends Controller
     public function __construct(
         protected KaryawanService $service
     ) {}
+
+    public function foto(Karyawan $karyawan)
+    {
+        if (! $karyawan->foto) {
+            abort(404);
+        }
+
+        if (Storage::disk('private')->exists($karyawan->foto)) {
+            return Storage::disk('private')->response($karyawan->foto);
+        }
+
+        if (Storage::disk('public')->exists($karyawan->foto)) {
+            return Storage::disk('public')->response($karyawan->foto);
+        }
+
+        abort(404);
+    }
 
     public function index(): View
     {

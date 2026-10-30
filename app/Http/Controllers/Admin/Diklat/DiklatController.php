@@ -210,6 +210,14 @@ class DiklatController extends Controller
     }
 
     /**
+     * Menampilkan preview berkas sertifikat Diklat secara inline.
+     */
+    public function preview(int $id): BinaryFileResponse|StreamedResponse
+    {
+        return $this->service->previewBerkas($id);
+    }
+
+    /**
      * Mengunduh berkas fisik sertifikat / bukti diklat.
      */
     public function download(int $id): BinaryFileResponse|StreamedResponse

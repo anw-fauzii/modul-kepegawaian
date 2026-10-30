@@ -33,7 +33,6 @@ class KaryawanService
                 if (! empty($kategoriIds)) {
                     $query->whereIn('kepegawaian_master_kategori_id', $kategoriIds);
                 }
-                $query->orWhere('unit', 'LIKE', '%' . $unit . '%');
             })
             ->orderBy('nama_lengkap')
             ->get();
@@ -42,7 +41,7 @@ class KaryawanService
     public function store(array $data): Karyawan
     {
         if (($data['foto'] ?? null) instanceof UploadedFile) {
-            $data['foto'] = $data['foto']->store('karyawan/foto', 'public');
+            $data['foto'] = $data['foto']->store('karyawan/foto', 'private');
         } else {
             unset($data['foto']);
         }
@@ -68,7 +67,7 @@ class KaryawanService
         $oldFoto = null;
         if (($data['foto'] ?? null) instanceof UploadedFile) {
             $oldFoto = $karyawan->foto;
-            $data['foto'] = $data['foto']->store('karyawan/foto', 'public');
+            $data['foto'] = $data['foto']->store('karyawan/foto', 'private');
         } else {
             unset($data['foto']);
         }
@@ -82,7 +81,12 @@ class KaryawanService
         });
 
         if ($oldFoto) {
-            Storage::disk('public')->delete($oldFoto);
+            if (Storage::disk('private')->exists($oldFoto)) {
+                Storage::disk('private')->delete($oldFoto);
+            }
+            if (Storage::disk('public')->exists($oldFoto)) {
+                Storage::disk('public')->delete($oldFoto);
+            }
         }
 
         Cache::forget(SidebarComposer::CACHE_KEY);
@@ -101,7 +105,12 @@ class KaryawanService
         });
 
         if ($karyawan->foto) {
-            Storage::disk('public')->delete($karyawan->foto);
+            if (Storage::disk('private')->exists($karyawan->foto)) {
+                Storage::disk('private')->delete($karyawan->foto);
+            }
+            if (Storage::disk('public')->exists($karyawan->foto)) {
+                Storage::disk('public')->delete($karyawan->foto);
+            }
         }
 
         Cache::forget(SidebarComposer::CACHE_KEY);

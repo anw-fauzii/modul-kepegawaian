@@ -69,7 +69,7 @@ class RapotKinerja extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->berkas);
+        return route('rapot-kinerja.preview', $this->id);
     }
 
     /**

@@ -75,7 +75,7 @@ class SuratKeputusan extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->berkas);
+        return route('surat-keputusan.preview', $this->id);
     }
 
     /**

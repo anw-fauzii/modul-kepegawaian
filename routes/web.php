@@ -23,6 +23,7 @@ Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     Route::get('/data-master/karyawan/export', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'export'])->name('karyawan.export');
     Route::post('/data-master/karyawan/import', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'import'])->name('karyawan.import');
     Route::get('/data-master/karyawan/unit/{unit}', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'byUnit'])->name('karyawan.unit');
+    Route::get('/data-master/karyawan/{karyawan}/foto', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'foto'])->name('karyawan.foto');
     Route::resource('/data-master/karyawan', App\Http\Controllers\Admin\DataMaster\KaryawanController::class);
 
     // Modul Presensi Karyawan
@@ -48,23 +49,28 @@ Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     Route::resource('/fasilitas', App\Http\Controllers\Admin\Fasilitas\FasilitasController::class);
 
     // Modul Surat Keputusan (SK) Karyawan
+    Route::get('/surat-keputusan/{surat_keputusan}/preview', [App\Http\Controllers\Admin\SuratKeputusan\SuratKeputusanController::class, 'preview'])->name('surat-keputusan.preview');
     Route::get('/surat-keputusan/{surat_keputusan}/download', [App\Http\Controllers\Admin\SuratKeputusan\SuratKeputusanController::class, 'download'])->name('surat-keputusan.download');
     Route::resource('/surat-keputusan', App\Http\Controllers\Admin\SuratKeputusan\SuratKeputusanController::class);
 
     // Modul Rapot Kinerja Karyawan
+    Route::get('/rapot-kinerja/{rapot_kinerja}/preview', [App\Http\Controllers\Admin\RapotKinerja\RapotKinerjaController::class, 'preview'])->name('rapot-kinerja.preview');
     Route::get('/rapot-kinerja/{rapot_kinerja}/download', [App\Http\Controllers\Admin\RapotKinerja\RapotKinerjaController::class, 'download'])->name('rapot-kinerja.download');
     Route::resource('/rapot-kinerja', App\Http\Controllers\Admin\RapotKinerja\RapotKinerjaController::class);
 
     // Modul Tupoksi (Tugas Pokok dan Fungsi) Karyawan
+    Route::get('/tupoksi/{tupoksi}/preview', [App\Http\Controllers\Admin\Tupoksi\TupoksiController::class, 'preview'])->name('tupoksi.preview');
     Route::get('/tupoksi/{tupoksi}/download', [App\Http\Controllers\Admin\Tupoksi\TupoksiController::class, 'download'])->name('tupoksi.download');
     Route::resource('/tupoksi', App\Http\Controllers\Admin\Tupoksi\TupoksiController::class);
 
     // Modul Diklat (Pendidikan dan Pelatihan) Karyawan
     Route::get('/diklat/kegiatan-detail/{id}', [App\Http\Controllers\Admin\Diklat\DiklatController::class, 'getKegiatanDetail'])->name('diklat.kegiatan-detail');
+    Route::get('/diklat/{diklat}/preview', [App\Http\Controllers\Admin\Diklat\DiklatController::class, 'preview'])->name('diklat.preview');
     Route::get('/diklat/{diklat}/download', [App\Http\Controllers\Admin\Diklat\DiklatController::class, 'download'])->name('diklat.download');
     Route::resource('/diklat', App\Http\Controllers\Admin\Diklat\DiklatController::class);
 
     // Modul Sertifikat Penghargaan Karyawan
+    Route::get('/sertifikat-penghargaan/{sertifikat_penghargaan}/preview', [App\Http\Controllers\Admin\SertifikatPenghargaan\SertifikatPenghargaanController::class, 'preview'])->name('sertifikat-penghargaan.preview');
     Route::get('/sertifikat-penghargaan/{sertifikat_penghargaan}/download', [App\Http\Controllers\Admin\SertifikatPenghargaan\SertifikatPenghargaanController::class, 'download'])->name('sertifikat-penghargaan.download');
     Route::resource('/sertifikat-penghargaan', App\Http\Controllers\Admin\SertifikatPenghargaan\SertifikatPenghargaanController::class);
 

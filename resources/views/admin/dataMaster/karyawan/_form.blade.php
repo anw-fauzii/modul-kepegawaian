@@ -216,8 +216,15 @@
             </div>
         </div>
 
+        @include('admin.dataMaster.karyawan._input', ['name' => 'perguruan', 'label' => 'Perguruan / Kampus (opsional)', 'type' => 'text', 'col' => 3])
         @include('admin.dataMaster.karyawan._input', ['name' => 'prodi', 'label' => 'Program Studi (opsional)', 'type' => 'text', 'col' => 3])
         @include('admin.dataMaster.karyawan._input', ['name' => 'tahun_lulus', 'label' => 'Tahun Lulus', 'type' => 'text', 'col' => 3, 'maxlength' => 4])
+    </div>
+
+    <div class="form-row">
+        @include('admin.dataMaster.karyawan._input', ['name' => 'whatsapp', 'label' => 'No. WhatsApp (opsional)', 'type' => 'text', 'col' => 3])
+        @include('admin.dataMaster.karyawan._input', ['name' => 'nuptk', 'label' => 'NUPTK (opsional)', 'type' => 'text', 'col' => 3])
+        @include('admin.dataMaster.karyawan._input', ['name' => 'email', 'label' => 'Email (opsional)', 'type' => 'text', 'col' => 3])
         <div class="col-md-3">
             <div class="position-relative form-group">
                 <label class="d-block font-weight-bold" style="font-size: 0.85rem; color: #475569;">
@@ -233,12 +240,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="form-row">
-        @include('admin.dataMaster.karyawan._input', ['name' => 'whatsapp', 'label' => 'No. WhatsApp (opsional)', 'type' => 'text', 'col' => 4])
-        @include('admin.dataMaster.karyawan._input', ['name' => 'nuptk', 'label' => 'NUPTK (opsional)', 'type' => 'text', 'col' => 4])
-        @include('admin.dataMaster.karyawan._input', ['name' => 'email', 'label' => 'Email (opsional)', 'type' => 'text', 'col' => 4])
     </div>
 </div>
 

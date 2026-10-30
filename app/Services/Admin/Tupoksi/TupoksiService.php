@@ -18,7 +18,7 @@ class TupoksiService
     /**
      * Nama disk storage untuk penyimpanan berkas tupoksi.
      */
-    protected const DISK = 'public';
+    protected const DISK = 'private';
 
     /**
      * Direktori basis penyimpanan berkas tupoksi.
@@ -201,13 +201,35 @@ class TupoksiService
     }
 
     /**
+     * Menampilkan preview berkas dokumen Tupoksi secara inline.
+     */
+    public function previewBerkas(int $id): BinaryFileResponse|StreamedResponse
+    {
+        $tupoksi = Tupoksi::findOrFail($id);
+
+        if (empty($tupoksi->berkas)) {
+            abort(404, 'Berkas dokumen Tupoksi tidak ditemukan.');
+        }
+
+        $disk = Storage::disk(self::DISK)->exists($tupoksi->berkas) ? self::DISK : 'public';
+
+        if (! Storage::disk($disk)->exists($tupoksi->berkas)) {
+            abort(404, 'Berkas dokumen Tupoksi tidak ditemukan di storage server.');
+        }
+
+        return Storage::disk($disk)->response($tupoksi->berkas);
+    }
+
+    /**
      * Mengunduh berkas fisik dokumen Tupoksi.
      */
     public function downloadBerkas(int $id): BinaryFileResponse|StreamedResponse
     {
         $tupoksi = Tupoksi::findOrFail($id);
 
-        if (empty($tupoksi->berkas) || ! Storage::disk(self::DISK)->exists($tupoksi->berkas)) {
+        $disk = (! empty($tupoksi->berkas) && Storage::disk(self::DISK)->exists($tupoksi->berkas)) ? self::DISK : 'public';
+
+        if (empty($tupoksi->berkas) || ! Storage::disk($disk)->exists($tupoksi->berkas)) {
             abort(404, 'Berkas dokumen Tupoksi tidak ditemukan di storage server.');
         }
 
@@ -216,7 +238,7 @@ class TupoksiService
         $cleanJabatan = Str::slug($tupoksi->jabatan);
         $downloadName = "TUPOKSI_{$cleanNipy}_{$cleanJabatan}.{$extension}";
 
-        return Storage::disk(self::DISK)->download($tupoksi->berkas, $downloadName);
+        return Storage::disk($disk)->download($tupoksi->berkas, $downloadName);
     }
 
     /**
@@ -262,9 +284,14 @@ class TupoksiService
      */
     protected function deleteFilePhysically(?string $path): void
     {
-        if ($path && Storage::disk(self::DISK)->exists($path)) {
+        if ($path) {
             try {
-                Storage::disk(self::DISK)->delete($path);
+                if (Storage::disk(self::DISK)->exists($path)) {
+                    Storage::disk(self::DISK)->delete($path);
+                }
+                if (Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
+                }
             } catch (Exception $e) {
                 Log::warning("Gagal menghapus file fisik di '{$path}': " . $e->getMessage());
             }

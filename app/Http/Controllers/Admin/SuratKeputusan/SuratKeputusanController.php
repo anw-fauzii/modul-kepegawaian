@@ -224,6 +224,20 @@ class SuratKeputusanController extends Controller
     }
 
     /**
+     * Menampilkan preview berkas fisik Surat Keputusan secara inline.
+     */
+    public function preview(int $id): Response
+    {
+        try {
+            $suratKeputusan = $this->service->getById($id);
+
+            return $this->service->previewBerkas($suratKeputusan);
+        } catch (Exception $e) {
+            abort(404, $e->getMessage());
+        }
+    }
+
+    /**
      * Mengunduh berkas fisik Surat Keputusan.
      */
     public function download(int $id, Request $request): Response

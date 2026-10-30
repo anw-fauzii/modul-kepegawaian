@@ -120,6 +120,7 @@ class KaryawanImport implements ToCollection, WithHeadingRow
             $unit        = trim((string) ($row['unit'] ?? '')) ?: 'Yayasan Prima Insani';
             $jabatan     = trim((string) ($row['jabatan'] ?? '')) ?: 'Staff';
             $golongan    = trim((string) ($row['golongan'] ?? '')) ?: null;
+            $perguruan   = trim((string) ($row['perguruan'] ?? $row['perguruan_tinggi'] ?? $row['universitas'] ?? $row['kampus'] ?? '')) ?: null;
             $prodi       = trim((string) ($row['prodi'] ?? $row['jurusan'] ?? '')) ?: null;
             $tahunLulus  = substr(trim((string) ($row['tahun_lulus'] ?? date('Y'))) ?: date('Y'), 0, 4);
             $whatsapp    = trim((string) ($row['whatsapp'] ?? $row['no_wa'] ?? '')) ?: null;
@@ -130,7 +131,7 @@ class KaryawanImport implements ToCollection, WithHeadingRow
                     $nipy, $nama, $email, $isActive,
                     $nik, $gelar, $jk, $tempatLahir, $tglLahir, $alamat, $rt, $rw,
                     $kelurahan, $kecamatan, $kabupaten, $kategoriId, $unit, $jabatan,
-                    $golongan, $jamKerjaId, $mulaiTugas, $jenjangId, $prodi, $tahunLulus,
+                    $golongan, $jamKerjaId, $mulaiTugas, $jenjangId, $perguruan, $prodi, $tahunLulus,
                     $whatsapp, $nuptk, $sertifikasi
                 ) {
                     // 1. Upsert User Account
@@ -190,6 +191,7 @@ class KaryawanImport implements ToCollection, WithHeadingRow
                         'kepegawaian_master_jam_kerja_id'         => $jamKerjaId,
                         'mulai_tugas'                             => $mulaiTugas,
                         'akademik_pelengkap_jenjang_pendidikan_id' => $jenjangId,
+                        'perguruan'                               => $perguruan,
                         'prodi'                                   => $prodi,
                         'tahun_lulus'                             => $tahunLulus,
                         'whatsapp'                                => $whatsapp,

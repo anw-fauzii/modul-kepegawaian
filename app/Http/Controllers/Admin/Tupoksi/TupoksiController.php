@@ -214,6 +214,14 @@ class TupoksiController extends Controller
     }
 
     /**
+     * Menampilkan preview berkas fisik Tupoksi secara inline.
+     */
+    public function preview(int $id): BinaryFileResponse|StreamedResponse
+    {
+        return $this->service->previewBerkas($id);
+    }
+
+    /**
      * Mengunduh berkas fisik Tupoksi.
      */
     public function download(int $id): BinaryFileResponse|StreamedResponse

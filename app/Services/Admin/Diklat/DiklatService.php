@@ -20,7 +20,7 @@ class DiklatService
     /**
      * Nama disk storage untuk penyimpanan berkas sertifikat diklat.
      */
-    protected const DISK = 'public';
+    protected const DISK = 'private';
 
     /**
      * Direktori basis penyimpanan berkas diklat.
@@ -211,13 +211,35 @@ class DiklatService
     }
 
     /**
+     * Menampilkan preview berkas sertifikat Diklat secara inline.
+     */
+    public function previewBerkas(int $id): BinaryFileResponse|StreamedResponse
+    {
+        $diklat = Diklat::findOrFail($id);
+
+        if (empty($diklat->berkas)) {
+            abort(404, 'Berkas sertifikat diklat tidak ditemukan.');
+        }
+
+        $disk = Storage::disk(self::DISK)->exists($diklat->berkas) ? self::DISK : 'public';
+
+        if (! Storage::disk($disk)->exists($diklat->berkas)) {
+            abort(404, 'Berkas sertifikat diklat tidak ditemukan di storage server.');
+        }
+
+        return Storage::disk($disk)->response($diklat->berkas);
+    }
+
+    /**
      * Mengunduh berkas sertifikat / bukti fisik diklat.
      */
     public function downloadBerkas(int $id): BinaryFileResponse|StreamedResponse
     {
         $diklat = Diklat::findOrFail($id);
 
-        if (empty($diklat->berkas) || ! Storage::disk(self::DISK)->exists($diklat->berkas)) {
+        $disk = (! empty($diklat->berkas) && Storage::disk(self::DISK)->exists($diklat->berkas)) ? self::DISK : 'public';
+
+        if (empty($diklat->berkas) || ! Storage::disk($disk)->exists($diklat->berkas)) {
             abort(404, 'Berkas sertifikat diklat tidak ditemukan di storage server.');
         }
 
@@ -226,7 +248,7 @@ class DiklatService
         $cleanNama = Str::slug($diklat->nama_kegiatan);
         $downloadName = "SERTIFIKAT_DIKLAT_{$cleanNipy}_{$cleanNama}.{$extension}";
 
-        return Storage::disk(self::DISK)->download($diklat->berkas, $downloadName);
+        return Storage::disk($disk)->download($diklat->berkas, $downloadName);
     }
 
     /**
@@ -281,9 +303,14 @@ class DiklatService
      */
     protected function deleteFilePhysically(?string $path): void
     {
-        if ($path && Storage::disk(self::DISK)->exists($path)) {
+        if ($path) {
             try {
-                Storage::disk(self::DISK)->delete($path);
+                if (Storage::disk(self::DISK)->exists($path)) {
+                    Storage::disk(self::DISK)->delete($path);
+                }
+                if (Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
+                }
             } catch (Exception $e) {
                 Log::warning("Gagal menghapus file fisik di '{$path}': " . $e->getMessage());
             }

@@ -222,6 +222,20 @@ class RapotKinerjaController extends Controller
     }
 
     /**
+     * Menampilkan preview berkas fisik Rapot Kinerja secara inline.
+     */
+    public function preview(int $id): Response
+    {
+        try {
+            $rapot = $this->service->getById($id);
+
+            return $this->service->previewBerkas($rapot);
+        } catch (Exception $e) {
+            abort(404, $e->getMessage());
+        }
+    }
+
+    /**
      * Mengunduh berkas fisik Rapot Kinerja.
      */
     public function download(int $id, Request $request): Response

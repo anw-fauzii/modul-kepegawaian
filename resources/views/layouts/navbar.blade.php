@@ -46,7 +46,10 @@
                 class="flex items-center gap-3 rounded-xl p-1.5 text-left hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500/30"
                 aria-expanded="false" aria-haspopup="true">
                 <div class="relative">
-                    @if (Auth::user() && Auth::user()->foto)
+                    @if (Auth::user() && Auth::user()->karyawan && Auth::user()->karyawan->foto_url)
+                        <img class="h-9 w-9 rounded-full object-cover ring-2 ring-orange-500/20"
+                            src="{{ Auth::user()->karyawan->foto_url }}" alt="Foto {{ Auth::user()->name }}">
+                    @elseif (Auth::user() && Auth::user()->foto)
                         <img class="h-9 w-9 rounded-full object-cover ring-2 ring-orange-500/20"
                             src="{{ asset('storage/' . Auth::user()->foto) }}" alt="Foto {{ Auth::user()->name }}">
                     @else

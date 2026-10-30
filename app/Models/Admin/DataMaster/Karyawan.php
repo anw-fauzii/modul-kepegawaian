@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'unit',
     'mulai_tugas',
     'akademik_pelengkap_jenjang_pendidikan_id',
+    'perguruan',
     'prodi',
     'tahun_lulus',
     'whatsapp',
@@ -39,7 +40,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'nik',
     'kepegawaian_master_jam_kerja_id',
     'foto',
-
 ])]
 #[Table('kepegawaian_master_karyawan')]
 class Karyawan extends Model
@@ -80,7 +80,7 @@ class Karyawan extends Model
 
     protected function fotoUrl(): Attribute
     {
-        return Attribute::get(fn () => $this->foto ? asset('storage/' . $this->foto) : null);
+        return Attribute::get(fn () => $this->foto ? route('karyawan.foto', $this->nipy) : null);
     }
 
     protected function email(): Attribute
