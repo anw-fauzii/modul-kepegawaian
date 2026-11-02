@@ -322,7 +322,7 @@
                     </div>
 
                     <!-- Status Presensi -->
-                    <div class="col-lg-3 col-md-4 mb-2">
+                    <div class="col-lg-2 col-md-3 mb-2">
                         <label class="form-filter-label">
                             <i class="fa fa-tag mr-1 text-success"></i> Status Kehadiran
                         </label>
@@ -344,8 +344,20 @@
                         </select>
                     </div>
 
+                    <!-- Status Shaum -->
+                    <div class="col-lg-2 col-md-3 mb-2">
+                        <label class="form-filter-label">
+                            <i class="fa fa-moon mr-1 text-success"></i> Status Shaum
+                        </label>
+                        <select name="shaum" class="form-control form-filter-control">
+                            <option value="">Semua</option>
+                            <option value="1" {{ request('shaum') === '1' ? 'selected' : '' }}>Shaum</option>
+                            <option value="0" {{ request('shaum') === '0' ? 'selected' : '' }}>Tidak Shaum</option>
+                        </select>
+                    </div>
+
                     <!-- Search Box (Nama / NIPY) -->
-                    <div class="col-lg-6 col-md-5 mb-2">
+                    <div class="col-lg-5 col-md-4 mb-2">
                         <label class="form-filter-label">
                             <i class="fa fa-search mr-1 text-secondary"></i> Cari Nama atau NIPY
                         </label>
@@ -357,7 +369,7 @@
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="col-lg-3 col-md-3 mb-2 d-flex align-items-end">
+                    <div class="col-lg-3 col-md-2 mb-2 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary font-weight-bold mr-2 shadow-sm flex-grow-1"
                             style="border-radius: 8px; height: 38px;">
                             <i class="fa fa-filter mr-1"></i> Terapkan Filter
@@ -377,8 +389,13 @@
                     </span>
 
                     <a href="{{ route('presensi.index', ['tanggal_mulai' => $todayDate, 'tanggal_selesai' => $todayDate]) }}"
-                        class="quick-pill {{ request('tanggal_mulai') == $todayDate && request('tanggal_selesai') == $todayDate ? 'active' : '' }}">
+                        class="quick-pill {{ request('tanggal_mulai') == $todayDate && request('tanggal_selesai') == $todayDate && !request('shaum') ? 'active' : '' }}">
                         <i class="fa fa-calendar-day mr-1"></i> Presensi Hari Ini
+                    </a>
+
+                    <a href="{{ route('presensi.index', ['shaum' => '1', 'tanggal_mulai' => $todayDate, 'tanggal_selesai' => $todayDate]) }}"
+                        class="quick-pill {{ request('shaum') === '1' ? 'active' : '' }}">
+                        <i class="fa fa-moon mr-1 text-success"></i> Shaum Hari Ini
                     </a>
 
                     @if ($activeBulan)
@@ -519,6 +536,12 @@
                     </span>
                 @endif
 
+                @if (request()->filled('shaum'))
+                    <span class="badge badge-soft-success py-1 px-2 mr-2 mb-1" style="font-size: 11.5px;">
+                        <i class="fa fa-moon mr-1"></i> Shaum: {{ request('shaum') == '1' ? 'Ya' : 'Tidak' }}
+                    </span>
+                @endif
+
                 @if (request('search'))
                     <span class="badge badge-soft-dark py-1 px-2 mr-2 mb-1" style="font-size: 11.5px;">
                         Kata Kunci: "{{ request('search') }}"
@@ -542,14 +565,15 @@
                         <thead>
                             <tr>
                                 <th style="width: 4%; text-align: center;">No</th>
-                                <th style="width: 12%;">Tanggal</th>
-                                <th style="width: 23%;">Pegawai</th>
-                                <th style="width: 11%;">Kategori</th>
-                                <th style="width: 11%;">Periode Bulan</th>
-                                <th style="width: 10%;">Jam Masuk</th>
-                                <th style="width: 10%;">Jam Pulang</th>
+                                <th style="width: 11%;">Tanggal</th>
+                                <th style="width: 21%;">Pegawai</th>
+                                <th style="width: 10%;">Kategori</th>
+                                <th style="width: 10%;">Periode Bulan</th>
+                                <th style="width: 9%;">Jam Masuk</th>
+                                <th style="width: 9%;">Jam Pulang</th>
                                 <th style="width: 8%;">Durasi</th>
-                                <th style="width: 11%;">Status</th>
+                                <th style="width: 10%;">Status</th>
+                                <th style="width: 9%; text-align: center;">Shaum</th>
                                 <th style="width: 8%; text-align: center;">Aksi</th>
                             </tr>
                         </thead>
@@ -688,6 +712,22 @@
                                         @endif
                                     </td>
                                     <td class="text-center">
+                                        <form action="{{ route('presensi.toggle-shaum', $item->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm p-0 border-0 bg-transparent" title="Klik untuk mengubah status shaum/puasa">
+                                                @if ($item->shaum)
+                                                    <span class="badge-status badge-soft-success py-1 px-2 font-weight-bold" style="cursor: pointer; font-size: 11px;">
+                                                        <i class="fa fa-moon mr-1"></i> Shaum
+                                                    </span>
+                                                @else
+                                                    <span class="badge-status badge-soft-secondary py-1 px-2" style="cursor: pointer; opacity: 0.75; font-size: 11px;">
+                                                        <i class="fa fa-utensils mr-1"></i> Tidak
+                                                    </span>
+                                                @endif
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td class="text-center">
                                         <div class="d-flex justify-content-center align-items-center">
                                             <a href="{{ route('presensi.edit', $item->id) }}"
                                                 class="btn btn-sm btn-outline-primary shadow-sm mx-1"
@@ -712,7 +752,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10" class="text-center py-5">
+                                    <td colspan="11" class="text-center py-5">
                                         <div class="text-muted mb-2">
                                             <i class="fa fa-search fa-3x text-secondary opacity-5 mb-3" style="display: block;"></i>
                                             <h6 class="font-weight-bold text-dark">Data Tidak Ditemukan</h6>

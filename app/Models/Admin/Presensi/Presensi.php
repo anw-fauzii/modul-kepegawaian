@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'pulang_cepat_menit',
     'izin_pulang_cepat',
     'catatan',
+    'shaum',
 ])]
 #[Table('kepegawaian_presensi')]
 class Presensi extends Model
@@ -41,6 +42,7 @@ class Presensi extends Model
             'izin_terlambat'      => 'boolean',
             'pulang_cepat_menit'  => 'integer',
             'izin_pulang_cepat'   => 'boolean',
+            'shaum'               => 'boolean',
         ];
     }
 
@@ -119,6 +121,26 @@ class Presensi extends Model
         });
     }
 
+    protected function shaumBadge(): Attribute
+    {
+        return Attribute::get(function () {
+            if ($this->shaum) {
+                return [
+                    'label' => 'Shaum',
+                    'class' => 'badge-soft-success',
+                    'color' => '#10b981',
+                    'icon'  => 'fa fa-moon',
+                ];
+            }
+            return [
+                'label' => 'Tidak Shaum',
+                'class' => 'badge-soft-secondary',
+                'color' => '#94a3b8',
+                'icon'  => 'fa fa-utensils',
+            ];
+        });
+    }
+
     /* -------------------------------------------------------------------------- */
     /*                              SCOPES (Query Optimization)                  */
     /* -------------------------------------------------------------------------- */
@@ -130,6 +152,9 @@ class Presensi extends Model
             ->when($filters['tanggal_mulai'] ?? null, fn ($q, $start) => $q->whereDate('tanggal', '>=', $start))
             ->when($filters['tanggal_selesai'] ?? null, fn ($q, $end) => $q->whereDate('tanggal', '<=', $end))
             ->when($filters['status'] ?? null, fn ($q, $status) => $q->where('status', $status))
+            ->when(isset($filters['shaum']) && $filters['shaum'] !== '', function ($q) use ($filters) {
+                $q->where('shaum', filter_var($filters['shaum'], FILTER_VALIDATE_BOOLEAN));
+            })
             ->when($filters['kepegawaian_master_kategori_id'] ?? null, function ($q, $kategoriId) {
                 $q->whereHas('karyawan', fn ($kq) => $kq->where('kepegawaian_master_kategori_id', $kategoriId));
             })
@@ -144,6 +169,11 @@ class Presensi extends Model
     public function scopeToday(Builder $query): Builder
     {
         return $query->whereDate('tanggal', Carbon::today());
+    }
+
+    public function scopeShaum(Builder $query): Builder
+    {
+        return $query->where('shaum', true);
     }
 
     public function scopeByBulan(Builder $query, int $bulanId): Builder

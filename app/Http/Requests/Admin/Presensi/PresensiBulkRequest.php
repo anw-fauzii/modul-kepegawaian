@@ -25,6 +25,7 @@ class PresensiBulkRequest extends FormRequest
             'items.*.jam_pulang'             => ['nullable', 'date_format:H:i'],
             'items.*.izin_terlambat'         => ['nullable'],
             'items.*.izin_pulang_cepat'      => ['nullable'],
+            'items.*.shaum'                  => ['nullable'],
             'items.*.catatan'                => ['nullable', 'string', 'max:500'],
         ];
     }

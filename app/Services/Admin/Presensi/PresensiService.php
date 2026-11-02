@@ -37,6 +37,7 @@ class PresensiService
                 'pulang_cepat_menit',
                 'izin_pulang_cepat',
                 'catatan',
+                'shaum',
                 'created_at',
             ])
             ->with([
@@ -142,6 +143,7 @@ class PresensiService
                         'izin_terlambat'                  => ! empty($item['izin_terlambat']),
                         'pulang_cepat_menit'              => $calculated['pulang_cepat_menit'],
                         'izin_pulang_cepat'               => ! empty($item['izin_pulang_cepat']),
+                        'shaum'                           => ! empty($item['shaum']),
                         'catatan'                         => $item['catatan'] ?? null,
                     ]
                 );
@@ -188,6 +190,7 @@ class PresensiService
                     'izin_terlambat'                  => (bool) ($data['izin_terlambat'] ?? false),
                     'pulang_cepat_menit'              => $calculated['pulang_cepat_menit'],
                     'izin_pulang_cepat'               => (bool) ($data['izin_pulang_cepat'] ?? false),
+                    'shaum'                           => (bool) ($data['shaum'] ?? false),
                     'catatan'                         => $data['catatan'] ?? null,
                 ]
             );
@@ -226,9 +229,65 @@ class PresensiService
                 'izin_terlambat'                  => (bool) ($data['izin_terlambat'] ?? false),
                 'pulang_cepat_menit'              => $calculated['pulang_cepat_menit'],
                 'izin_pulang_cepat'               => (bool) ($data['izin_pulang_cepat'] ?? false),
+                'shaum'                           => (bool) ($data['shaum'] ?? false),
                 'catatan'                         => $data['catatan'] ?? null,
             ]);
         });
+    }
+
+    /**
+     * Memperbarui status shaum (puasa) pada catatan presensi.
+     */
+    public function updateShaum(Presensi $presensi, bool $shaum): Presensi
+    {
+        return DB::transaction(function () use ($presensi, $shaum) {
+            $presensi->update(['shaum' => $shaum]);
+            return $presensi->fresh();
+        });
+    }
+
+    /**
+     * Toggle status shaum (true <-> false) pada catatan presensi.
+     */
+    public function toggleShaum(Presensi $presensi): Presensi
+    {
+        return DB::transaction(function () use ($presensi) {
+            $presensi->update(['shaum' => ! $presensi->shaum]);
+            return $presensi->fresh();
+        });
+    }
+
+    /**
+     * Memperbarui status shaum hari ini untuk pegawai yang sudah absen.
+     * Akan melempar \DomainException jika pegawai belum memiliki presensi hari ini.
+     */
+    public function updateShaumTodayByNipy(string $nipy, bool $shaum): Presensi
+    {
+        $presensi = Presensi::where('karyawan_nipy', $nipy)
+            ->whereDate('tanggal', Carbon::today())
+            ->first();
+
+        if (! $presensi) {
+            throw new \DomainException('Presensi hari ini belum tercatat. Anda harus melakukan presensi terlebih dahulu sebelum mengisi status shaum.');
+        }
+
+        return $this->updateShaum($presensi, $shaum);
+    }
+
+    /**
+     * Toggle status shaum hari ini untuk pegawai yang sudah absen.
+     */
+    public function toggleShaumTodayByNipy(string $nipy): Presensi
+    {
+        $presensi = Presensi::where('karyawan_nipy', $nipy)
+            ->whereDate('tanggal', Carbon::today())
+            ->first();
+
+        if (! $presensi) {
+            throw new \DomainException('Presensi hari ini belum tercatat. Anda harus melakukan presensi terlebih dahulu sebelum mengisi status shaum.');
+        }
+
+        return $this->toggleShaum($presensi);
     }
 
     /**
@@ -260,6 +319,7 @@ class PresensiService
                 'presensi as total_cuti' => fn ($q) => $q->where('kepegawaian_master_bulan_id', $bulanId)->where('status', 'cuti'),
                 'presensi as total_tugas' => fn ($q) => $q->where('kepegawaian_master_bulan_id', $bulanId)->where('status', 'tugas'),
                 'presensi as total_alpa' => fn ($q) => $q->where('kepegawaian_master_bulan_id', $bulanId)->where('status', 'alpa'),
+                'presensi as total_shaum' => fn ($q) => $q->where('kepegawaian_master_bulan_id', $bulanId)->where('shaum', true),
             ])
             ->withSum([
                 'presensi as akumulasi_keterlambatan_menit' => fn ($q) => $q->where('kepegawaian_master_bulan_id', $bulanId)->where('izin_terlambat', false),
@@ -815,6 +875,7 @@ class PresensiService
                 'tugas'       => 0,
                 'alpa'        => 0,
                 'belum_absen' => 0,
+                'shaum'       => 0,
             ];
         }
 
@@ -867,6 +928,7 @@ class PresensiService
                 'total_hadir_semua'  => 0,
                 'total_tercatat'     => 0,
                 'persen_kehadiran'   => 0,
+                'total_shaum'        => 0,
             ];
 
             $belumAbsenHariIni = false;
@@ -887,6 +949,10 @@ class PresensiService
                     if (($presensi->pulang_cepat_menit ?? 0) > 0) {
                         $totals['pulang_cepat']++;
                     }
+                    if ($presensi->shaum) {
+                        $totals['total_shaum']++;
+                        $columnTotals[$dateStr]['shaum']++;
+                    }
                     $totals['total_tercatat']++;
 
                     if (isset($columnTotals[$dateStr][$status])) {
@@ -899,6 +965,7 @@ class PresensiService
                         'jam_masuk'           => $presensi->jam_masuk ? substr($presensi->jam_masuk, 0, 5) : null,
                         'jam_pulang'          => $presensi->jam_pulang ? substr($presensi->jam_pulang, 0, 5) : null,
                         'keterlambatan_menit' => $presensi->keterlambatan_menit,
+                        'shaum'               => (bool) $presensi->shaum,
                         'catatan'             => $presensi->catatan,
                         'is_recorded'         => true,
                         'is_unrecorded'       => false,

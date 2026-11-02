@@ -207,6 +207,25 @@
 @endphp
 
 <div class="app-main__inner">
+    <!-- MODE SWITCHER & TIMESTAMP BAR -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 bg-white p-2 px-3 rounded-lg border border-slate-200 shadow-sm" style="border-radius: 12px;">
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-2 mb-md-0">
+            <span class="badge px-3 py-1 text-white font-weight-bold" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 8px; font-size: 12px;">
+                <i class="fa fa-chart-pie mr-1"></i> Dashboard Admin Lembaga
+            </span>
+            <a href="{{ route('dashboard.user') }}" class="btn btn-outline-warning btn-sm font-weight-bold ml-1" style="border-radius: 8px; font-size: 11.5px; color: #ea580c; border-color: #ea580c;">
+                <i class="fa fa-user mr-1"></i> Beralih ke Dashboard Pegawai Saya
+            </a>
+        </div>
+        <div class="text-muted small d-flex align-items-center">
+            <i class="fa fa-calendar-alt text-primary mr-2"></i>
+            <span>{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y') }}</span>
+            <span class="mx-2 text-slate-300">|</span>
+            <i class="fa fa-clock text-warning mr-1"></i>
+            <span class="font-weight-bold text-dark">{{ \Carbon\Carbon::now()->format('H:i') }} WIB</span>
+        </div>
+    </div>
+
     <!-- HERO WELCOME BANNER -->
     <div class="dashboard-hero mb-4">
         <div class="hero-decor-circle"></div>
@@ -278,6 +297,66 @@
         </div>
     </div>
 
+    <!-- WIDGET INTERAKTIF STATUS SHAUM PEGAWAI HARI INI -->
+    <div class="card mb-4 border-0 shadow-sm"
+        style="border-radius: 14px; background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 1.5px solid #a7f3d0 !important;">
+        <div class="card-body p-3 d-flex flex-wrap align-items-center justify-content-between">
+            <div class="d-flex align-items-center mb-2 mb-md-0">
+                <div class="rounded-circle d-flex align-items-center justify-content-center mr-3 shadow-sm"
+                    style="width: 46px; height: 46px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-size: 20px; flex-shrink: 0;">
+                    <i class="fa fa-moon"></i>
+                </div>
+                <div>
+                    <div class="d-flex align-items-center flex-wrap">
+                        <span class="small font-weight-bold text-success text-uppercase mr-2" style="letter-spacing: 0.05em;">
+                            Status Shaum (Puasa) Hari Ini &bull; {{ \Carbon\Carbon::now()->isoFormat('D MMMM Y') }}
+                        </span>
+                        <span class="badge badge-soft-success font-weight-bold px-2 py-0" style="font-size: 10.5px;">
+                            {{ $todayShaum }} Pegawai Shaum
+                        </span>
+                    </div>
+                    <div class="font-weight-bold text-dark mt-1" style="font-size: 14px;">
+                        @if ($myPresensiToday)
+                            @if ($myPresensiToday->shaum)
+                                <span class="text-success"><i class="fa fa-check-circle mr-1"></i> Anda Tercatat Sedang Shaum (Puasa)</span>
+                            @else
+                                <span class="text-secondary"><i class="fa fa-info-circle mr-1"></i> Anda Tercatat Tidak Sedang Shaum</span>
+                            @endif
+                            <span class="badge badge-light border text-muted ml-2 font-weight-normal" style="font-size: 11px;">
+                                Jam Masuk: {{ $myPresensiToday->jam_masuk ? substr($myPresensiToday->jam_masuk, 0, 5) : '-' }}
+                            </span>
+                        @else
+                            <span class="text-danger"><i class="fa fa-exclamation-circle mr-1"></i> Anda Belum Melakukan Presensi Hari Ini</span>
+                            <span class="small text-muted font-weight-normal ml-1">(Silakan absen terlebih dahulu sebelum mengisi status shaum)</span>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center">
+                @if ($myPresensiToday)
+                    <form action="{{ route('presensi.my-shaum.toggle') }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn font-weight-bold shadow-sm"
+                            style="border-radius: 8px; padding: 7px 16px; font-size: 12.5px; {{ $myPresensiToday->shaum ? 'background: #ffffff; color: #047857; border: 1.5px solid #10b981;' : 'background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff;' }}"
+                            title="Klik untuk mengubah status shaum Anda hari ini">
+                            @if ($myPresensiToday->shaum)
+                                <i class="fa fa-times text-danger mr-1"></i> Ubah ke Tidak Shaum
+                            @else
+                                <i class="fa fa-moon mr-1"></i> Konfirmasi Saya Sedang Shaum
+                            @endif
+                        </button>
+                    </form>
+                @else
+                    <button type="button" class="btn btn-sm btn-light border text-muted" disabled style="border-radius: 8px; font-size: 12px;"
+                        title="Anda harus absen terlebih dahulu">
+                        <i class="fa fa-lock mr-1"></i> Harus Absen Terlebih Dahulu
+                    </button>
+                @endif
+            </div>
+        </div>
+    </div>
+
     <!-- TOP ROW: KPI STATS CARDS -->
     <div class="row mb-4">
         <!-- KPI 1: Total Karyawan -->
@@ -341,6 +420,9 @@
                         </span>
                         <span class="badge badge-soft-warning" style="font-size: 10.5px;">
                             <i class="fa fa-clock mr-1"></i> {{ $todayTerlambat }} Terlambat
+                        </span>
+                        <span class="badge badge-soft-success" style="font-size: 10.5px;">
+                            <i class="fa fa-moon mr-1"></i> {{ $todayShaum }} Shaum
                         </span>
                     </div>
                 </div>
@@ -562,6 +644,11 @@
                                         <span class="badge badge-soft-primary py-0 px-2" style="font-size: 10px;">Tugas</span>
                                     @else
                                         <span class="badge badge-soft-secondary py-0 px-2" style="font-size: 10px;">{{ ucfirst($item->status) }}</span>
+                                    @endif
+                                    @if ($item->shaum)
+                                        <span class="badge badge-soft-success py-0 px-1 ml-1" style="font-size: 10px;" title="Sedang Shaum">
+                                            <i class="fa fa-moon"></i> Shaum
+                                        </span>
                                     @endif
                                 </div>
                             </div>

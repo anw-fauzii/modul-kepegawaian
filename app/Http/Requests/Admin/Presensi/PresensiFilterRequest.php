@@ -20,6 +20,7 @@ class PresensiFilterRequest extends FormRequest
             'tanggal_mulai'                  => ['nullable', 'date'],
             'tanggal_selesai'                => ['nullable', 'date', 'after_or_equal:tanggal_mulai'],
             'status'                         => ['nullable', Rule::in(['hadir', 'terlambat', 'izin', 'sakit', 'cuti', 'alpa', 'tugas'])],
+            'shaum'                          => ['nullable'],
             'search'                         => ['nullable', 'string', 'max:100'],
             'per_page'                       => ['nullable', 'integer', 'min:5', 'max:100'],
         ];

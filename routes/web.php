@@ -16,6 +16,7 @@ Auth::routes();
 
 Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class,'index'])->name('home');
+    Route::get('/dashboard/user', [App\Http\Controllers\HomeController::class, 'userDashboard'])->name('dashboard.user');
     Route::resource('/data-master/kategori', App\Http\Controllers\Admin\DataMaster\KategoriController::class);      
     Route::resource('/data-master/jam-kerja', App\Http\Controllers\Admin\DataMaster\JamKerjaController::class);
     Route::resource('/data-master/bulan', App\Http\Controllers\Admin\DataMaster\BulanController::class);
@@ -32,6 +33,10 @@ Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     Route::get('/presensi/matriks/pdf', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'matriksPdf'])->name('presensi.matriks.pdf');
     Route::get('/presensi/matriks', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'matriks'])->name('presensi.matriks');
     Route::post('/presensi/bulk', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'storeBulk'])->name('presensi.store-bulk');
+    Route::patch('/presensi/my-shaum', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'updateMyShaum'])->name('presensi.my-shaum');
+    Route::post('/presensi/my-shaum/toggle', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'toggleMyShaum'])->name('presensi.my-shaum.toggle');
+    Route::patch('/presensi/{presensi}/shaum', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'updateShaum'])->name('presensi.update-shaum');
+    Route::post('/presensi/{presensi}/toggle-shaum', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'toggleShaum'])->name('presensi.toggle-shaum');
     Route::resource('/presensi', App\Http\Controllers\Admin\Presensi\PresensiController::class);
 
     // Modul Kegiatan Lembaga & Presensi QR Code

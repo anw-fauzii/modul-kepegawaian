@@ -188,6 +188,7 @@
     $sumCuti = $rekapData->sum('total_cuti');
     $sumAlpa = $rekapData->sum('total_alpa');
     $sumPulangCepat = $rekapData->sum('total_pulang_cepat');
+    $sumShaum = $rekapData->sum('total_shaum');
     $totalPegawai = count($rekapData);
     $totalHariCatatan = $sumHadir + $sumTerlambat + $sumTugas + $sumIzin + $sumSakit + $sumCuti + $sumAlpa;
     $persenKehadiran = $totalHariCatatan > 0 ? round((($sumHadir + $sumTerlambat) / $totalHariCatatan) * 100, 1) : 0;
@@ -428,6 +429,7 @@
                         <th style="min-width: 65px;">Alpa</th>
                         <th style="min-width: 105px;">Menit Telat</th>
                         <th style="min-width: 95px;">Pulang Cepat</th>
+                        <th style="min-width: 75px;"><i class="fa fa-moon text-success mr-1"></i> Shaum</th>
                         <th style="min-width: 110px;">Performa</th>
                     </tr>
                 </thead>
@@ -569,6 +571,17 @@
                                 @endif
                             </td>
 
+                            <!-- Shaum -->
+                            <td>
+                                @if (($karyawan->total_shaum ?? 0) > 0)
+                                    <span class="badge badge-soft-success font-weight-bold px-2 py-1" style="min-width: 28px; border-radius: 6px;">
+                                        <i class="fa fa-moon mr-1"></i> {{ $karyawan->total_shaum }}
+                                    </span>
+                                @else
+                                    <span class="text-muted" style="font-size: 11px;">0</span>
+                                @endif
+                            </td>
+
                             <!-- Kehadiran Rate / Mini Progress -->
                             <td>
                                 <div class="font-weight-bold text-dark" style="font-size: 11px;">{{ $rate }}%</div>
@@ -579,7 +592,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="13" class="text-center text-muted py-5">
+                            <td colspan="14" class="text-center text-muted py-5">
                                 <div class="py-4">
                                     <i class="fa fa-folder-open fa-3x text-light mb-3"></i>
                                     <div class="h6 font-weight-bold text-secondary">Data Tidak Ditemukan</div>

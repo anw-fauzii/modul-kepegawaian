@@ -107,10 +107,20 @@
     </div>
 </div>
 
-<!-- Dispensasi / Izin Khusus -->
+<!-- Status Shaum & Dispensasi / Izin Khusus -->
 <div class="row mb-3">
-    <div class="col-md-6">
-        <div class="custom-control custom-checkbox bg-light p-3 rounded border">
+    <div class="col-md-4 mb-2">
+        <div class="custom-control custom-checkbox p-3 rounded border h-100" style="background-color: #f0fdf4; border-color: #bbf7d0 !important;">
+            <input type="checkbox" class="custom-control-input" id="shaum" name="shaum" value="1"
+                {{ old('shaum', $presensi->shaum ?? false) ? 'checked' : '' }}>
+            <label class="custom-control-label font-weight-bold text-success" for="shaum">
+                <i class="fa fa-moon mr-1"></i> Sedang Shaum (Puasa)
+            </label>
+            <div class="small text-muted">Centang jika pegawai sedang menjalankan ibadah puasa/shaum hari ini.</div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-2">
+        <div class="custom-control custom-checkbox bg-light p-3 rounded border h-100">
             <input type="checkbox" class="custom-control-input" id="izin_terlambat" name="izin_terlambat" value="1"
                 {{ old('izin_terlambat', $presensi->izin_terlambat ?? false) ? 'checked' : '' }}>
             <label class="custom-control-label font-weight-bold text-primary" for="izin_terlambat">
@@ -119,8 +129,8 @@
             <div class="small text-muted">Centang jika keterlambatan memiliki surat izin/dispensasi tugas dinas.</div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="custom-control custom-checkbox bg-light p-3 rounded border">
+    <div class="col-md-4 mb-2">
+        <div class="custom-control custom-checkbox bg-light p-3 rounded border h-100">
             <input type="checkbox" class="custom-control-input" id="izin_pulang_cepat" name="izin_pulang_cepat" value="1"
                 {{ old('izin_pulang_cepat', $presensi->izin_pulang_cepat ?? false) ? 'checked' : '' }}>
             <label class="custom-control-label font-weight-bold text-primary" for="izin_pulang_cepat">

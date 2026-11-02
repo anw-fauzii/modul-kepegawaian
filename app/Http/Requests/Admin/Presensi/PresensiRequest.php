@@ -17,6 +17,7 @@ class PresensiRequest extends FormRequest
         $this->merge([
             'izin_terlambat'    => $this->boolean('izin_terlambat'),
             'izin_pulang_cepat' => $this->boolean('izin_pulang_cepat'),
+            'shaum'             => $this->boolean('shaum'),
             'catatan'           => $this->filled('catatan') ? strip_tags(trim($this->catatan)) : null,
         ]);
     }
@@ -32,6 +33,7 @@ class PresensiRequest extends FormRequest
             'jam_pulang'                   => ['nullable', 'date_format:H:i'],
             'izin_terlambat'               => ['boolean'],
             'izin_pulang_cepat'            => ['boolean'],
+            'shaum'                        => ['boolean'],
             'catatan'                      => ['nullable', 'string', 'max:500'],
         ];
     }

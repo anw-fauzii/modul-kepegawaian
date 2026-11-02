@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Presensi\PresensiBulkRequest;
 use App\Http\Requests\Admin\Presensi\PresensiFilterRequest;
 use App\Http\Requests\Admin\Presensi\PresensiRequest;
+use App\Http\Requests\Admin\Presensi\PresensiShaumRequest;
 use App\Http\Requests\Admin\Presensi\PresensiStatistikRequest;
 use App\Models\Admin\DataMaster\Bulan;
 use App\Models\Admin\DataMaster\Kategori;
@@ -13,6 +14,7 @@ use App\Models\Admin\DataMaster\Karyawan;
 use App\Models\Admin\DataMaster\TahunAjaran;
 use App\Models\Admin\Presensi\Presensi;
 use App\Services\Admin\Presensi\PresensiService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -169,6 +171,132 @@ class PresensiController extends Controller
 
         return redirect()->back()
             ->with('success', 'Data presensi berhasil dihapus.');
+    }
+
+    /**
+     * Memperbarui status shaum (puasa) pada data presensi tertentu.
+     */
+    public function updateShaum(PresensiShaumRequest $request, Presensi $presensi): JsonResponse|RedirectResponse
+    {
+        $presensi = $this->service->updateShaum($presensi, $request->boolean('shaum'));
+        $statusText = $presensi->shaum ? 'Shaum' : 'Tidak Shaum';
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Status shaum untuk {$presensi->karyawan_nipy} berhasil diperbarui menjadi {$statusText}.",
+                'data'    => [
+                    'id'    => $presensi->id,
+                    'shaum' => $presensi->shaum,
+                ],
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', "Status shaum berhasil diperbarui menjadi {$statusText}.");
+    }
+
+    /**
+     * Toggle status shaum pada data presensi tertentu (true <-> false).
+     */
+    public function toggleShaum(Request $request, Presensi $presensi): JsonResponse|RedirectResponse
+    {
+        $presensi = $this->service->toggleShaum($presensi);
+        $statusText = $presensi->shaum ? 'Shaum' : 'Tidak Shaum';
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Status shaum berhasil diubah menjadi: {$statusText}.",
+                'data'    => [
+                    'id'    => $presensi->id,
+                    'shaum' => $presensi->shaum,
+                ],
+            ]);
+        }
+
+        return redirect()->back()
+            ->with('success', "Status shaum pegawai berhasil diubah menjadi: {$statusText}.");
+    }
+
+    /**
+     * Memperbarui status shaum hari ini untuk user yang sedang login (hanya jika sudah absen).
+     */
+    public function updateMyShaum(PresensiShaumRequest $request): JsonResponse|RedirectResponse
+    {
+        $nipy = auth()->user()?->no_induk ?? auth()->user()?->karyawan?->nipy;
+
+        if (! $nipy) {
+            $msg = 'Akun Anda tidak terhubung dengan data NIPY pegawai manapun.';
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $msg], 404);
+            }
+            return redirect()->back()->with('error', $msg);
+        }
+
+        try {
+            $presensi = $this->service->updateShaumTodayByNipy($nipy, $request->boolean('shaum'));
+            $statusText = $presensi->shaum ? 'Shaum' : 'Tidak Shaum';
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Status shaum Anda berhasil diperbarui menjadi {$statusText}.",
+                    'data'    => [
+                        'id'    => $presensi->id,
+                        'shaum' => $presensi->shaum,
+                    ],
+                ]);
+            }
+
+            return redirect()->back()
+                ->with('success', "Alhamdulillah, status shaum Anda hari ini berhasil disimpan: {$statusText}.");
+        } catch (\DomainException $e) {
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
+            }
+            return redirect()->back()->with('warning', $e->getMessage());
+        }
+    }
+
+    /**
+     * Toggle status shaum hari ini untuk user yang sedang login (hanya jika sudah absen).
+     */
+    public function toggleMyShaum(Request $request): JsonResponse|RedirectResponse
+    {
+        $nipy = auth()->user()?->no_induk ?? auth()->user()?->karyawan?->nipy;
+
+        if (! $nipy) {
+            $msg = 'Akun Anda tidak terhubung dengan data NIPY pegawai manapun.';
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $msg], 404);
+            }
+            return redirect()->back()->with('error', $msg);
+        }
+
+        try {
+            $presensi = $this->service->toggleShaumTodayByNipy($nipy);
+            $statusText = $presensi->shaum ? 'Shaum' : 'Tidak Shaum';
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Status shaum Anda berhasil diubah menjadi {$statusText}.",
+                    'data'    => [
+                        'id'    => $presensi->id,
+                        'shaum' => $presensi->shaum,
+                    ],
+                ]);
+            }
+
+            return redirect()->back()
+                ->with('success', "Status shaum Anda hari ini berhasil diubah menjadi: {$statusText}.");
+        } catch (\DomainException $e) {
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
+            }
+            return redirect()->back()->with('warning', $e->getMessage());
+        }
     }
 
     /**

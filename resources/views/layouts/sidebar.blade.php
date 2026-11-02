@@ -34,20 +34,37 @@
                 Menu Utama
             </p>
             <nav class="space-y-1">
-                <!-- Dashboard -->
+                <!-- Dashboard Admin -->
                 <div class="relative group/tooltip">
                     <a href="{{ route('home') }}"
-                        class="group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('home') ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
+                        class="group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('home') && request('view') !== 'user' ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
                         <div class="flex items-center gap-3">
-                            <svg class="h-4 w-4 shrink-0 {{ request()->routeIs('home') ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}"
+                            <svg class="h-4 w-4 shrink-0 {{ request()->routeIs('home') && request('view') !== 'user' ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                             </svg>
-                            <span class="menu-text">Dashboard</span>
+                            <span class="menu-text">Dashboard Admin</span>
                         </div>
                     </a>
-                    <div class="sidebar-tooltip">Dashboard</div>
+                    <div class="sidebar-tooltip">Dashboard Admin</div>
+                </div>
+
+                <!-- Dashboard Pegawai (User) -->
+                <div class="relative group/tooltip">
+                    <a href="{{ route('dashboard.user') }}"
+                        class="group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('dashboard.user') || request('view') === 'user' ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
+                        <div class="flex items-center gap-3">
+                            <svg class="h-4 w-4 shrink-0 {{ request()->routeIs('dashboard.user') || request('view') === 'user' ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span class="menu-text">Dashboard Pegawai</span>
+                        </div>
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500 text-white">SAYA</span>
+                    </a>
+                    <div class="sidebar-tooltip">Dashboard Pegawai</div>
                 </div>
 
                 <!-- Data Master Dropdown -->

@@ -181,4 +181,9 @@ class Karyawan extends Model
     {
         return $this->hasMany(\App\Models\Admin\Tupoksi\Tupoksi::class, 'karyawan_nipy', 'nipy');
     }
+
+    public function penggajian(): HasMany
+    {
+        return $this->hasMany(\App\Models\Admin\Penggajian\Penggajian::class, 'karyawan_nipy', 'nipy');
+    }
 }

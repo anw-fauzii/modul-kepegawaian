@@ -114,10 +114,11 @@
                                 <thead class="thead-light">
                                     <tr class="text-center">
                                         <th style="width: 4%;">No</th>
-                                        <th style="text-align: left; width: 22%;">Nama & NIPY Pegawai</th>
-                                        <th style="width: 15%;">Status Kehadiran</th>
-                                        <th style="width: 11%;">Jam Masuk</th>
-                                        <th style="width: 11%;">Jam Pulang</th>
+                                        <th style="text-align: left; width: 20%;">Nama & NIPY Pegawai</th>
+                                        <th style="width: 14%;">Status Kehadiran</th>
+                                        <th style="width: 10%;">Jam Masuk</th>
+                                        <th style="width: 10%;">Jam Pulang</th>
+                                        <th style="width: 8%; text-align: center;">Shaum</th>
                                         <th style="width: 14%;">Dispensasi / Izin</th>
                                         <th>Catatan</th>
                                     </tr>
@@ -169,6 +170,17 @@
                                                     class="form-control form-control-sm text-center jam-pulang-input"
                                                     value="{{ $defaultJamPulang }}">
                                             </td>
+                                            <td class="text-center align-middle">
+                                                <div class="custom-control custom-checkbox d-inline-block">
+                                                    <input type="checkbox" class="custom-control-input shaum-checkbox"
+                                                        id="shaum_{{ $index }}"
+                                                        name="items[{{ $index }}][shaum]" value="1"
+                                                        {{ ($existing && $existing->shaum) ? 'checked' : '' }}>
+                                                    <label class="custom-control-label text-success font-weight-bold" for="shaum_{{ $index }}" title="Tandai jika sedang shaum/puasa">
+                                                        <i class="fa fa-moon"></i>
+                                                    </label>
+                                                </div>
+                                            </td>
                                             <td>
                                                 <div class="custom-control custom-checkbox small">
                                                     <input type="checkbox" class="custom-control-input"
@@ -198,7 +210,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="7" class="text-center text-muted py-4">
+                                            <td colspan="8" class="text-center text-muted py-4">
                                                 <i class="fa fa-info-circle mr-1"></i> Tidak ada pegawai terdaftar pada kategori ini.
                                             </td>
                                         </tr>
