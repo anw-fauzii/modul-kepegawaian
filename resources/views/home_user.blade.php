@@ -369,6 +369,15 @@
             'grad'  => '#ec4899, #be185d',
             'badge' => null,
         ],
+        [
+            'key'   => 'cuti',
+            'label' => 'Permohonan Cuti',
+            'count' => ($docCounts['cuti'] ?? 0) . ' Berkas',
+            'icon'  => 'pe-7s-note2',
+            'route' => route('cuti.index'),
+            'grad'  => '#0ea5e9, #0284c7',
+            'badge' => null,
+        ],
     ];
 @endphp
 
@@ -573,7 +582,7 @@
                                     @if ($myPresensiToday?->shaum)
                                         Alhamdulillah, status shaum Anda tercatat aktif hari ini. Baarakallahu fiikum.
                                     @else
-                                        Presensi hari ini telah tercatat. Klik tombol di bawah jika Anda sedang menjalankan shaum sunnah.
+                                        Klik tombol di bawah jika Anda sedang menjalankan shaum sunnah.
                                     @endif
                                 @else
                                     <span class="text-warning font-weight-semibold">
@@ -795,154 +804,148 @@
         </div>
     </div>
 
-    <!-- ROW 4: DOKUMEN & PORTOFOLIO MANDIRI (RINGKASAN COUNT SAJA - KLIK UNTUK DETAIL LENGKAP) -->
-    <div class="modern-card mb-4">
-        <div class="modern-card-header">
-            <div>
-                <h6 class="font-weight-bold text-dark mb-0.5">
-                    <i class="fa fa-folder-open text-warning mr-1.5"></i> Dokumen & Portofolio Mandiri
-                </h6>
-                <small class="text-muted">Ringkasan berkas resmi Anda. Klik pada kartu untuk membuka detail lengkapnya.</small>
-            </div>
-            <span class="badge badge-light border text-muted small font-weight-normal">
-                {{ array_sum($docCounts) }} Total Berkas
-            </span>
-        </div>
-        <div class="p-3.5 p-sm-4">
-            <div class="row">
-                @foreach ($portofolioModuls as $modul)
-                    <div class="col-12 col-md-4 col-lg-3 mb-3">
-                        <a href="{{ $modul['route'] }}" class="doc-jump-card">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center min-w-0">
-                                    <div class="doc-jump-icon mr-3" style="background: linear-gradient(135deg, {{ $modul['grad'] }});">
-                                        <i class="{{ $modul['icon'] }}"></i>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <div class="doc-jump-count">{{ $modul['count'] }}</div>
-                                        <div class="doc-jump-label text-truncate">{{ $modul['label'] }}</div>
-                                        @if ($modul['badge'])
-                                            <span class="badge badge-soft-warning py-0 px-1 font-weight-bold" style="font-size: 10px;">
-                                                {{ $modul['badge'] }}
-                                            </span>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="pl-2 flex-shrink-0">
-                                    <i class="fa fa-chevron-right doc-jump-arrow"></i>
-                                </div>
-                            </div>
-                        </a>
+    <!-- ROW 4 & 5: DOKUMEN & PORTOFOLIO MANDIRI & RIWAYAT PRESENSI HARIAN (2 GRID) -->
+    <div class="row">
+        <!-- GRID 1: DOKUMEN & PORTOFOLIO MANDIRI -->
+        <div class="col-12 col-lg-6 mb-4">
+            <div class="modern-card h-100 d-flex flex-column">
+                <div class="modern-card-header">
+                    <div>
+                        <h6 class="font-weight-bold text-dark mb-0.5">
+                            <i class="fa fa-folder-open text-warning mr-1.5"></i> Dokumen & Portofolio Mandiri
+                        </h6>
+                        <small class="text-muted">Ringkasan berkas resmi (klik kartu untuk membuka)</small>
                     </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-
-    <!-- ROW 5: LOG RIWAYAT PRESENSI SAYA (14 HARI TERAKHIR) -->
-    <div class="modern-card">
-        <div class="modern-card-header">
-            <div>
-                <h6 class="font-weight-bold text-dark mb-0">
-                    <i class="fa fa-history text-success mr-1.5"></i> Riwayat Presensi Saya (14 Hari Terakhir)
-                </h6>
-                <small class="text-muted">Catatan jam masuk, kepulangan, durasi kerja, dan status shaum harian</small>
-            </div>
-        </div>
-        <div class="p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0 align-middle">
-                    <thead class="bg-light text-muted small">
-                        <tr>
-                            <th class="py-2.5 px-3">Hari & Tanggal</th>
-                            <th class="py-2.5 px-3">Jam Masuk</th>
-                            <th class="py-2.5 px-3">Jam Pulang</th>
-                            <th class="py-2.5 px-3">Durasi</th>
-                            <th class="py-2.5 px-3">Status</th>
-                            <th class="py-2.5 px-3 text-center">Shaum</th>
-                            <th class="py-2.5 px-3">Catatan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($myRecentPresensi as $rp)
-                            <tr>
-                                <td class="px-3 py-2">
-                                    <div class="font-weight-bold text-dark" style="font-size: 13px;">
-                                        {{ $rp->tanggal->isoFormat('dddd, D MMMM Y') }}
+                    <span class="badge badge-light border text-muted small font-weight-normal">
+                        {{ array_sum($docCounts) }} Total Berkas
+                    </span>
+                </div>
+                <div class="p-3 p-sm-3.5 flex-grow-1">
+                    <div class="row">
+                        @foreach ($portofolioModuls as $modul)
+                            <div class="col-12 col-sm-6 mb-2.5">
+                                <a href="{{ $modul['route'] }}" class="doc-jump-card h-100" style="padding: 12px 14px;">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center min-w-0 flex-grow-1">
+                                            <div class="doc-jump-icon mr-3" style="width: 40px; height: 40px; min-width: 40px; font-size: 16px; border-radius: 10px; background: linear-gradient(135deg, {{ $modul['grad'] }});">
+                                                <i class="{{ $modul['icon'] }}"></i>
+                                            </div>
+                                            <div class="min-w-0 flex-grow-1">
+                                                <div class="doc-jump-count" style="font-size: 16px; font-weight: 800;">{{ $modul['count'] }}</div>
+                                                <div class="doc-jump-label text-truncate" style="font-size: 12px; margin-top: 1px;" title="{{ $modul['label'] }}">{{ $modul['label'] }}</div>
+                                                @if ($modul['badge'])
+                                                    <div class="mt-0.5">
+                                                        <span class="badge badge-soft-warning py-0 px-1 font-weight-bold" style="font-size: 9.5px;">
+                                                            {{ $modul['badge'] }}
+                                                        </span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="pl-2 flex-shrink-0">
+                                            <i class="fa fa-chevron-right doc-jump-arrow" style="font-size: 11px;"></i>
+                                        </div>
                                     </div>
-                                    @if ($rp->tanggal->isToday())
-                                        <span class="badge badge-soft-success py-0 px-1 font-weight-bold" style="font-size: 9.5px;">Hari Ini</span>
-                                    @endif
-                                </td>
-                                <td class="px-3 py-2">
-                                    @if ($rp->jam_masuk)
-                                        <span class="font-weight-bold text-dark font-monospace small">
-                                            {{ substr($rp->jam_masuk, 0, 5) }} WIB
-                                        </span>
-                                    @else
-                                        <span class="text-muted small">-</span>
-                                    @endif
-                                </td>
-                                <td class="px-3 py-2">
-                                    @if ($rp->jam_pulang)
-                                        <span class="font-weight-bold text-dark font-monospace small">
-                                            {{ substr($rp->jam_pulang, 0, 5) }} WIB
-                                        </span>
-                                    @else
-                                        <span class="text-muted small">Belum tap</span>
-                                    @endif
-                                </td>
-                                <td class="px-3 py-2 text-muted small">
-                                    {{ $rp->durasi_kerja ?? '-' }}
-                                </td>
-                                <td class="px-3 py-2">
-                                    @if ($rp->status === 'hadir')
-                                        <span class="badge badge-soft-success font-weight-bold px-2 py-0.5">Hadir Tepat Waktu</span>
-                                    @elseif ($rp->status === 'terlambat')
-                                        <span class="badge badge-soft-warning font-weight-bold px-2 py-0.5">
-                                            +{{ $rp->keterlambatan_menit }}m
-                                        </span>
-                                    @elseif ($rp->status === 'tugas')
-                                        <span class="badge badge-soft-primary font-weight-bold px-2 py-0.5">Tugas</span>
-                                    @elseif ($rp->status === 'izin')
-                                        <span class="badge badge-soft-info font-weight-bold px-2 py-0.5">Izin</span>
-                                    @elseif ($rp->status === 'sakit')
-                                        <span class="badge badge-soft-secondary font-weight-bold px-2 py-0.5">Sakit</span>
-                                    @else
-                                        <span class="badge badge-soft-danger font-weight-bold px-2 py-0.5">{{ ucfirst($rp->status) }}</span>
-                                    @endif
-                                </td>
-                                <td class="px-3 py-2 text-center">
-                                    @if ($rp->shaum)
-                                        <span class="badge badge-soft-success font-weight-bold px-1.5 py-0.5" title="Shaum">
-                                            <i class="fa fa-moon"></i>
-                                        </span>
-                                    @else
-                                        <span class="text-muted small">-</span>
-                                    @endif
-                                </td>
-                                <td class="px-3 py-2 small">
-                                    @if ($rp->izin_terlambat)
-                                        <span class="text-info font-weight-bold"><i class="fa fa-check-circle mr-1"></i> Dispensasi</span>
-                                    @endif
-                                    @if ($rp->catatan)
-                                        <span class="text-muted">{{ $rp->catatan }}</span>
-                                    @endif
-                                    @if (! $rp->izin_terlambat && ! $rp->catatan)
-                                        <span class="text-muted">-</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center py-4 text-muted small">
-                                    <i class="fa fa-calendar-times fa-2x opacity-4 mb-2 text-secondary" style="display: block;"></i>
-                                    Belum ada data riwayat presensi harian.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRID 2: RIWAYAT PRESENSI HARIAN (7 HARI TERAKHIR - PERSINGKAT) -->
+        <div class="col-12 col-lg-6 mb-4">
+            <div class="modern-card h-100 d-flex flex-column">
+                <div class="modern-card-header">
+                    <div>
+                        <h6 class="font-weight-bold text-dark mb-0.5">
+                            <i class="fa fa-history text-success mr-1.5"></i> Riwayat Presensi Harian
+                        </h6>
+                        <small class="text-muted">7 hari terakhir &bull; Catatan kehadiran & shaum</small>
+                    </div>
+                    <span class="badge badge-soft-primary small font-weight-bold">
+                        7 Hari Terakhir
+                    </span>
+                </div>
+                <div class="p-0 flex-grow-1">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="bg-light text-muted" style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <tr>
+                                    <th class="py-2.5 px-3">Hari & Tanggal</th>
+                                    <th class="py-2.5 px-2">Jam (In &rarr; Out)</th>
+                                    <th class="py-2.5 px-2 text-center">Status</th>
+                                    <th class="py-2.5 px-2 text-center">Shaum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($myRecentPresensi as $rp)
+                                    <tr>
+                                        <td class="px-3 py-2">
+                                            <div class="font-weight-bold text-dark" style="font-size: 12px;">
+                                                {{ $rp->tanggal->isoFormat('dddd, D MMM') }}
+                                            </div>
+                                            @if ($rp->tanggal->isToday())
+                                                <span class="badge badge-soft-success py-0 px-1 font-weight-bold" style="font-size: 9px;">Hari Ini</span>
+                                            @endif
+                                            @if ($rp->izin_terlambat)
+                                                <span class="text-info font-weight-bold ml-1" style="font-size: 9.5px;" title="Dispensasi Keterlambatan"><i class="fa fa-check-circle"></i> Disp.</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-2 py-2">
+                                            <div class="font-weight-bold text-dark font-monospace" style="font-size: 11.5px;">
+                                                {{ $rp->jam_masuk ? substr($rp->jam_masuk, 0, 5) : '-' }}
+                                                <span class="text-muted font-weight-normal">&rarr;</span>
+                                                {{ $rp->jam_pulang ? substr($rp->jam_pulang, 0, 5) : ($rp->jam_masuk ? '...' : '-') }}
+                                            </div>
+                                            @if ($rp->durasi_kerja)
+                                                <div class="text-muted" style="font-size: 10.5px;">
+                                                    <i class="fa fa-clock mr-0.5 opacity-6"></i> {{ $rp->durasi_kerja }}
+                                                </div>
+                                            @endif
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            @if ($rp->status === 'hadir')
+                                                <span class="badge badge-soft-success font-weight-bold px-2 py-0.5" style="font-size: 10.5px;">Hadir</span>
+                                            @elseif ($rp->status === 'terlambat')
+                                                <span class="badge badge-soft-warning font-weight-bold px-2 py-0.5" style="font-size: 10.5px;" title="Terlambat {{ $rp->keterlambatan_menit }} menit">
+                                                    +{{ $rp->keterlambatan_menit }}m
+                                                </span>
+                                            @elseif ($rp->status === 'tugas')
+                                                <span class="badge badge-soft-primary font-weight-bold px-2 py-0.5" style="font-size: 10.5px;">Tugas</span>
+                                            @elseif ($rp->status === 'izin')
+                                                <span class="badge badge-soft-info font-weight-bold px-2 py-0.5" style="font-size: 10.5px;">Izin</span>
+                                            @elseif ($rp->status === 'sakit')
+                                                <span class="badge badge-soft-secondary font-weight-bold px-2 py-0.5" style="font-size: 10.5px;">Sakit</span>
+                                            @elseif ($rp->status === 'cuti')
+                                                <span class="badge badge-soft-info font-weight-bold px-2 py-0.5" style="font-size: 10.5px;">Cuti</span>
+                                            @else
+                                                <span class="badge badge-soft-danger font-weight-bold px-2 py-0.5" style="font-size: 10.5px;">{{ ucfirst($rp->status) }}</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-2 py-2 text-center">
+                                            @if ($rp->shaum)
+                                                <span class="badge badge-soft-success font-weight-bold px-2 py-0.5" title="Shaum" style="font-size: 10.5px;">
+                                                    <i class="fa fa-moon mr-0.5"></i> Ya
+                                                </span>
+                                            @else
+                                                <span class="text-muted" style="font-size: 11px;">-</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4 text-muted small">
+                                            <i class="fa fa-calendar-times fa-2x opacity-4 mb-2 text-secondary" style="display: block;"></i>
+                                            Belum ada data presensi 7 hari terakhir.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

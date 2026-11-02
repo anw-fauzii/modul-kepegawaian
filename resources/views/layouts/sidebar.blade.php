@@ -69,7 +69,7 @@
 
                 <!-- Data Master Dropdown -->
                 @php
-                    $isDataMasterActive = request()->is('data-master/kategori*', 'data-master/jam-kerja*', 'data-master/bulan*');
+                    $isDataMasterActive = request()->is('data-master/kategori*', 'data-master/jam-kerja*', 'data-master/bulan*', 'data-master/jenis-cuti*', 'data-master/hari-libur*');
                 @endphp
                 <div class="has-submenu relative group/submenu">
                     <button type="button" data-sidebar-toggle="submenu-data-master"
@@ -105,6 +105,14 @@
                         <a href="{{ route('bulan.index') }}"
                             class="block px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->is('data-master/bulan*') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
                             Bulan
+                        </a>
+                        <a href="{{ route('jenis-cuti.index') }}"
+                            class="block px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->is('data-master/jenis-cuti*') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
+                            Jenis Cuti
+                        </a>
+                        <a href="{{ route('hari-libur.index') }}"
+                            class="block px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->is('data-master/hari-libur*') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
+                            Hari Libur Nasional
                         </a>
                     </div>
                 </div>
@@ -171,7 +179,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <span class="menu-text">Presensi</span>
+                            <span class="menu-text">Presensi & Cuti</span>
                         </div>
                         <svg class="menu-chevron h-3.5 w-3.5 text-slate-400 transition-transform duration-200 {{ $isPresensiActive ? 'rotate-180' : '' }}"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,6 +221,21 @@
                             <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-500 text-slate-900">ADMIN</span>
                         </a>
                     </div>
+                </div>
+
+                <div class="relative group/tooltip">
+                    <a href="{{ route('cuti.index') }}"
+                        class="group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('cuti*') && request('view') !== 'user' ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
+                        <div class="flex items-center gap-3">
+                            <svg class="h-4 w-4 shrink-0 {{ request()->routeIs('cuti*') && request('view') !== 'user' ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                            </svg>
+                            <span class="menu-text">Pengajuan Cuti</span>
+                        </div>
+                    </a>
+                    <div class="sidebar-tooltip">Pengajuan Cuti</div>
                 </div>
 
                 <!-- Administrasi & Fasilitas Dropdown -->

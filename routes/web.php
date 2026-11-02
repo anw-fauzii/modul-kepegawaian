@@ -20,6 +20,9 @@ Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     Route::resource('/data-master/kategori', App\Http\Controllers\Admin\DataMaster\KategoriController::class);      
     Route::resource('/data-master/jam-kerja', App\Http\Controllers\Admin\DataMaster\JamKerjaController::class);
     Route::resource('/data-master/bulan', App\Http\Controllers\Admin\DataMaster\BulanController::class);
+    Route::resource('/data-master/jenis-cuti', App\Http\Controllers\Admin\DataMaster\JenisCutiController::class);
+    Route::post('/data-master/hari-libur/sync', [App\Http\Controllers\Admin\DataMaster\HariLiburController::class, 'sync'])->name('hari-libur.sync');
+    Route::resource('/data-master/hari-libur', App\Http\Controllers\Admin\DataMaster\HariLiburController::class);
     Route::get('/data-master/karyawan/template', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'template'])->name('karyawan.template');
     Route::get('/data-master/karyawan/export', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'export'])->name('karyawan.export');
     Route::post('/data-master/karyawan/import', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'import'])->name('karyawan.import');
@@ -38,6 +41,10 @@ Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     Route::patch('/presensi/{presensi}/shaum', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'updateShaum'])->name('presensi.update-shaum');
     Route::post('/presensi/{presensi}/toggle-shaum', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'toggleShaum'])->name('presensi.toggle-shaum');
     Route::resource('/presensi', App\Http\Controllers\Admin\Presensi\PresensiController::class);
+
+    // Modul Pengajuan & Form Cuti Karyawan
+    Route::post('/cuti/{cuti}/toggle-acc', [App\Http\Controllers\Admin\Cuti\CutiController::class, 'toggleAcc'])->name('cuti.toggle-acc');
+    Route::resource('/cuti', App\Http\Controllers\Admin\Cuti\CutiController::class);
 
     // Modul Kegiatan Lembaga & Presensi QR Code
     Route::get('/kegiatan-scanner', [App\Http\Controllers\Admin\Kegiatan\KegiatanLembagaController::class, 'scannerUser'])->name('kegiatan.scanner');

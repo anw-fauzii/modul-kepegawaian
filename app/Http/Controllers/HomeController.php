@@ -282,11 +282,11 @@ class HomeController extends Controller
         $totalTercatat = $myMonthlyRecords->count();
         $myAttendanceRate = $totalTercatat > 0 ? round(($totalMasuk / $totalTercatat) * 100, 1) : 100;
 
-        // 4. Log Riwayat Presensi 14 Hari Terakhir
+        // 4. Log Riwayat Presensi 7 Hari Terakhir
         $myRecentPresensi = Presensi::with('jamKerja')
             ->where('karyawan_nipy', $karyawan?->nipy)
             ->latest('tanggal')
-            ->take(14)
+            ->take(7)
             ->get();
 
         // 5. Kegiatan Lembaga Terjadwal & Status Kehadiran Saya
@@ -310,6 +310,7 @@ class HomeController extends Controller
             'fasilitas'   => Fasilitas::where('karyawan_nipy', $karyawan?->nipy)->count(),
             'diklat'      => Diklat::where('karyawan_nipy', $karyawan?->nipy)->count(),
             'penghargaan' => SertifikatPenghargaan::where('karyawan_nipy', $karyawan?->nipy)->count(),
+            'cuti'        => \App\Models\Admin\Cuti\Cuti::where('karyawan_nipy', $karyawan?->nipy)->count(),
         ];
         $fasilitasDipinjamCount = Fasilitas::where('karyawan_nipy', $karyawan?->nipy)->where('status', false)->count();
 
