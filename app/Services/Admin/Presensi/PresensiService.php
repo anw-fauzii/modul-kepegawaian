@@ -18,6 +18,82 @@ use Illuminate\Support\Str;
 class PresensiService
 {
     /**
+     * Mengambil koleksi presensi terfilter dengan Eager Loading (Zero N+1 Query) untuk DataTables.
+     */
+    public function getFiltered(array $filters): \Illuminate\Support\Collection
+    {
+        if (($filters['status'] ?? null) === 'belum_absen') {
+            $targetDate = $filters['tanggal_mulai'] ?? $filters['tanggal_selesai'] ?? date('Y-m-d');
+
+            return Karyawan::query()
+                ->select('nipy', 'nama_lengkap', 'gelar', 'unit', 'foto', 'kepegawaian_master_kategori_id')
+                ->with(['kategori:id,nama_kategori'])
+                ->whereDoesntHave('presensi', fn ($q) => $q->whereDate('tanggal', $targetDate))
+                ->when($filters['kepegawaian_master_kategori_id'] ?? null, fn ($q, $katId) => $q->where('kepegawaian_master_kategori_id', $katId))
+                ->when($filters['search'] ?? null, function ($q, $search) {
+                    $q->where(function ($sq) use ($search) {
+                        $sq->where('nipy', 'LIKE', "%{$search}%")
+                            ->orWhere('nama_lengkap', 'LIKE', "%{$search}%");
+                    });
+                })
+                ->orderBy('nama_lengkap')
+                ->get()
+                ->map(function (Karyawan $karyawan) use ($targetDate) {
+                    $presensi = new Presensi([
+                        'karyawan_nipy'       => $karyawan->nipy,
+                        'tanggal'             => $targetDate,
+                        'jam_masuk'           => null,
+                        'jam_pulang'          => null,
+                        'status'              => 'belum_absen',
+                        'keterlambatan_menit' => 0,
+                        'pulang_cepat_menit'  => 0,
+                        'shaum'               => false,
+                    ]);
+                    $presensi->setRelation('karyawan', $karyawan);
+
+                    return $presensi;
+                });
+        }
+
+        return Presensi::query()
+            ->select([
+                'id',
+                'karyawan_nipy',
+                'kepegawaian_master_bulan_id',
+                'kepegawaian_master_jam_kerja_id',
+                'tanggal',
+                'jam_masuk',
+                'jam_pulang',
+                'status',
+                'keterlambatan_menit',
+                'izin_terlambat',
+                'pulang_cepat_menit',
+                'izin_pulang_cepat',
+                'catatan',
+                'shaum',
+                'created_at',
+            ])
+            ->with([
+                'karyawan' => fn ($query) => $query
+                    ->select('nipy', 'nama_lengkap', 'gelar', 'unit', 'foto', 'kepegawaian_master_kategori_id')
+                    ->with([
+                        'kategori' => fn ($kq) => $kq->select('id', 'nama_kategori'),
+                    ]),
+                'bulan' => fn ($query) => $query
+                    ->select('id', 'nama_bulan', 'akademik_master_tahun_ajaran_id')
+                    ->with([
+                        'tahunAjaran' => fn ($tq) => $tq->select('id', 'nama_tahun_ajaran'),
+                    ]),
+                'jamKerja' => fn ($query) => $query
+                    ->select('id', 'nama', 'jam_masuk', 'jam_pulang_senin_kamis', 'jam_pulang_jumat'),
+            ])
+            ->filter($filters)
+            ->latest('tanggal')
+            ->latest('jam_masuk')
+            ->get();
+    }
+
+    /**
      * Mengambil daftar presensi terpaginasi dengan Eager Loading (Zero N+1 Query).
      */
     public function getPaginated(array $filters, int $perPage = 15): LengthAwarePaginator
@@ -42,7 +118,7 @@ class PresensiService
             ])
             ->with([
                 'karyawan' => fn ($query) => $query
-                    ->select('nipy', 'nama_lengkap', 'gelar', 'kepegawaian_master_kategori_id')
+                    ->select('nipy', 'nama_lengkap', 'gelar', 'unit', 'foto', 'kepegawaian_master_kategori_id')
                     ->with([
                         'kategori' => fn ($kq) => $kq->select('id', 'nama_kategori'),
                     ]),
@@ -68,7 +144,7 @@ class PresensiService
     public function getKaryawanForBulk(int $kategoriId, string $tanggal): Collection
     {
         return Karyawan::query()
-            ->select('nipy', 'nama_lengkap', 'gelar', 'kepegawaian_master_kategori_id', 'kepegawaian_master_jam_kerja_id')
+            ->select('nipy', 'nama_lengkap', 'gelar', 'unit', 'foto', 'kepegawaian_master_kategori_id', 'kepegawaian_master_jam_kerja_id')
             ->with([
                 'jamKerja:id,nama,jam_masuk,jam_pulang_senin_kamis,jam_pulang_jumat',
                 'kategori:id,nama_kategori',
@@ -317,7 +393,7 @@ class PresensiService
     public function getRekapBulanan(int $bulanId, ?int $kategoriId = null): Collection
     {
         return Karyawan::query()
-            ->select('nipy', 'nama_lengkap', 'gelar', 'kepegawaian_master_kategori_id')
+            ->select('nipy', 'nama_lengkap', 'gelar', 'unit', 'foto', 'kepegawaian_master_kategori_id')
             ->with(['kategori:id,nama_kategori'])
             ->when($kategoriId, fn ($q) => $q->where('kepegawaian_master_kategori_id', $kategoriId))
             ->withCount([
@@ -497,7 +573,7 @@ class PresensiService
 
         // 3. Rekap Tahunan per Pegawai (Eager Loading withCount & withSum)
         $rekapPegawai = Karyawan::query()
-            ->select('nipy', 'nama_lengkap', 'gelar', 'kepegawaian_master_kategori_id')
+            ->select('nipy', 'nama_lengkap', 'gelar', 'unit', 'foto', 'kepegawaian_master_kategori_id')
             ->with(['kategori:id,nama_kategori'])
             ->when($kategoriId, fn ($q) => $q->where('kepegawaian_master_kategori_id', $kategoriId))
             ->withCount([
@@ -866,7 +942,7 @@ class PresensiService
 
         // Ambil seluruh karyawan
         $karyawanList = Karyawan::query()
-            ->select('nipy', 'nama_lengkap', 'gelar', 'golongan', 'kepegawaian_master_kategori_id', 'unit')
+            ->select('nipy', 'nama_lengkap', 'gelar', 'golongan', 'foto', 'kepegawaian_master_kategori_id', 'unit')
             ->with([
                 'kategori:id,nama_kategori',
                 'user:id,no_induk,is_active',

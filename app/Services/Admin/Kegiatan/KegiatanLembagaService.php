@@ -308,7 +308,7 @@ class KegiatanLembagaService
             ->where('kepegawaian_kegiatan_lembaga_id', $kegiatan->id)
             ->with([
                 'karyawan' => fn ($query) => $query
-                    ->select('nipy', 'nama_lengkap', 'gelar', 'unit', 'jabatan', 'kepegawaian_master_kategori_id')
+                    ->select('nipy', 'nama_lengkap', 'gelar', 'unit', 'jabatan', 'foto', 'kepegawaian_master_kategori_id')
                     ->with([
                         'kategori' => fn ($kq) => $kq->select('id', 'nama_kategori'),
                     ]),

@@ -77,7 +77,7 @@ class KegiatanLembagaController extends Controller
         $data = $this->service->getRekapDetailKegiatan($kegiatan, $request->only(['status', 'search']));
 
         // Ambil daftar karyawan untuk modal presensi manual jika dibutuhkan
-        $karyawanList = Karyawan::select('nipy', 'nama_lengkap', 'gelar', 'unit')
+        $karyawanList = Karyawan::select('nipy', 'nama_lengkap', 'gelar', 'unit', 'jabatan', 'foto')
             ->orderBy('nama_lengkap')
             ->get();
 

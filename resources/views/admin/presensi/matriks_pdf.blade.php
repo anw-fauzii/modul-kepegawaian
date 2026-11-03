@@ -414,7 +414,6 @@
                     Cut-off Tanggal 28
                 @endif
                 <br>
-                <strong>Filter:</strong> {{ $onlyWorkdays ? 'Hanya Hari Kerja' : 'Semua Hari' }}
                 @if ($filterStatus && $filterStatus !== 'all')
                     &bull; [{{ ucwords(str_replace('_', ' ', $filterStatus)) }}]
                 @endif

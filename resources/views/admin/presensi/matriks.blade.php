@@ -6,11 +6,11 @@
 
 @section('content')
 <style>
-    /* Styling Matriks Modern */
+    /* Modern KPI & Filter Cards */
     .stat-card {
         border-radius: 14px;
         transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1px solid rgba(226, 232, 240, 0.8);
+        border: 1px solid rgba(226, 232, 240, 0.85);
         background: #ffffff;
         position: relative;
         overflow: hidden;
@@ -27,11 +27,86 @@
         align-items: center;
         justify-content: center;
         font-size: 20px;
+        flex-shrink: 0;
+    }
+    .filter-card {
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+    }
+    .form-filter-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #475569;
+        letter-spacing: 0.04em;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .form-filter-control {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        font-size: 13px;
+        height: 38px;
+        transition: all 0.2s ease;
+        color: #1e293b;
+    }
+    .form-filter-control:focus {
+        border-color: #ea580c;
+        box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+    }
+
+    /* Filter Pills */
+    .filter-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 13px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid #e2e8f0;
+        background-color: #f8fafc;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .filter-pill:hover {
+        background-color: #fff7ed;
+        border-color: #fed7aa;
+        color: #ea580c;
+        text-decoration: none;
+    }
+    .filter-pill.active {
+        background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important;
+        color: #ffffff !important;
+        border-color: #ea580c !important;
+        box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);
+    }
+
+    /* Legend Chips */
+    .legend-card {
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+    }
+    .legend-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 9px;
+        border-radius: 6px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        font-size: 11.5px;
+        font-weight: 600;
+        color: #334155;
     }
 
     /* Container Matriks dengan Scrollbar Halus */
     .matrix-wrapper {
-        border-radius: 12px;
+        border-radius: 14px;
         border: 1px solid #e2e8f0;
         background: #ffffff;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
@@ -50,11 +125,11 @@
     /* Header Tabel */
     .matrix-table thead th {
         background-color: #f8fafc;
-        color: #334155;
+        color: #475569;
         font-weight: 700;
         font-size: 11px;
         border-top: none;
-        border-bottom: 2px solid #cbd5e1;
+        border-bottom: 2px solid #e2e8f0;
         border-right: 1px solid #f1f5f9;
         padding: 8px 4px;
         text-align: center;
@@ -62,9 +137,9 @@
         white-space: nowrap;
     }
     .matrix-table thead th.col-today {
-        background-color: #eff6ff !important;
-        border-bottom: 2px solid #3b82f6 !important;
-        color: #1d4ed8 !important;
+        background-color: #fff7ed !important;
+        border-bottom: 2px solid #ea580c !important;
+        color: #c2410c !important;
     }
     .matrix-table thead th.col-weekend {
         background-color: #f1f5f9 !important;
@@ -79,19 +154,19 @@
         justify-content: center;
         width: 100%;
         padding: 4px 3px;
-        border-radius: 6px;
+        border-radius: 7px;
         border: 1px solid #e2e8f0;
         background-color: #ffffff;
-        color: inherit;
+        color: #334155;
         text-decoration: none !important;
         transition: all 0.18s ease;
         cursor: pointer;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
     }
     .col-today .btn-matrix-date {
-        background-color: #dbeafe;
-        border-color: #93c5fd;
-        color: #1d4ed8;
+        background-color: #ffedd5;
+        border-color: #fdba74;
+        color: #c2410c;
     }
     .col-weekend .btn-matrix-date {
         background-color: #f8fafc;
@@ -112,29 +187,28 @@
         left: 0;
         background-color: #ffffff;
         z-index: 10;
-        width: 42px;
-        min-width: 42px;
-        max-width: 42px;
+        width: 40px;
+        min-width: 40px;
+        max-width: 40px;
         text-align: center;
         border-right: 1px solid #e2e8f0 !important;
     }
     .sticky-col-name {
         position: sticky;
-        left: 42px;
+        left: 40px;
         background-color: #ffffff;
         z-index: 10;
-        width: 220px;
-        min-width: 220px;
-        max-width: 220px;
+        width: 245px;
+        min-width: 245px;
+        max-width: 245px;
         text-align: left !important;
+        padding-left: 10px !important;
+        padding-right: 8px !important;
         border-right: 2px solid #cbd5e1 !important;
-        box-shadow: 3px 0 6px -2px rgba(0, 0, 0, 0.06);
+        box-shadow: 3px 0 6px -2px rgba(0, 0, 0, 0.05);
     }
     .matrix-table thead th.sticky-col-no,
-    .matrix-table thead th.sticky-col-name {
-        background-color: #f8fafc;
-        z-index: 20;
-    }
+    .matrix-table thead th.sticky-col-name,
     .matrix-table tfoot td.sticky-col-no,
     .matrix-table tfoot td.sticky-col-name {
         background-color: #f8fafc;
@@ -149,22 +223,21 @@
         border-bottom: 1px solid #f1f5f9;
         border-right: 1px solid #f1f5f9;
         text-align: center;
-        height: 38px;
+        height: 42px;
     }
-    .matrix-table tbody tr:hover {
-        background-color: #f8fafc;
+    .matrix-table tbody tr:hover td {
+        background-color: #fff7ed;
     }
-    .matrix-table tbody tr:hover td.sticky-col-no,
     .matrix-table tbody tr:hover td.sticky-col-name {
-        background-color: #f8fafc;
+        background-color: #fff7ed;
     }
 
     /* Highlight Hari Ini di Seluruh Baris */
     .cell-today {
-        background-color: #f0f7ff;
+        background-color: #fffaf5;
     }
 
-    /* Tampilan Simbol Kehadiran Sesuai Desain */
+    /* Simbol Kehadiran */
     .matrix-symbol {
         display: inline-flex;
         align-items: center;
@@ -172,66 +245,80 @@
         font-weight: 700;
         font-size: 12px;
         line-height: 1;
-        transition: transform 0.1s ease;
+        transition: transform 0.12s ease;
         cursor: default;
     }
     .matrix-symbol:hover {
-        transform: scale(1.15);
+        transform: scale(1.18);
     }
 
     /* Hadir (v) */
     .symbol-hadir {
-        color: #1e293b;
-        font-size: 13px;
-        font-weight: 600;
-        font-family: system-ui, -apple-system, sans-serif;
+        width: 22px;
+        height: 22px;
+        border-radius: 5px;
+        background-color: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #059669;
+        font-size: 12px;
+        font-weight: 800;
+    }
+    .symbol-terlambat {
+        width: 22px;
+        height: 22px;
+        border-radius: 5px;
+        background-color: #fffbeb;
+        border: 1px solid #fde68a;
+        color: #d97706;
+        font-size: 12px;
+        font-weight: 800;
     }
 
-    /* Izin, Sakit, Cuti (Kotak Merah Solid Teks Putih Sesuai Screenshot) */
+    /* Izin, Sakit, Cuti */
     .symbol-merah {
         width: 22px;
         height: 22px;
-        border-radius: 4px;
+        border-radius: 5px;
         background-color: #dc2626 !important;
         color: #ffffff !important;
         font-weight: 700;
-        font-size: 12px;
+        font-size: 11.5px;
         text-transform: lowercase;
         box-shadow: 0 1px 2px rgba(220, 38, 38, 0.2);
     }
 
-    /* Tugas Luar (Kotak Biru Solid) */
+    /* Tugas Luar */
     .symbol-tugas {
         width: 22px;
         height: 22px;
-        border-radius: 4px;
+        border-radius: 5px;
         background-color: #0284c7 !important;
         color: #ffffff !important;
         font-weight: 700;
-        font-size: 12px;
+        font-size: 11.5px;
         text-transform: lowercase;
     }
 
-    /* Libur (Kotak Abu/Ungu Lembut) */
+    /* Libur */
     .symbol-libur {
         width: 22px;
         height: 22px;
-        border-radius: 4px;
+        border-radius: 5px;
         background-color: #64748b !important;
         color: #ffffff !important;
         font-weight: 700;
-        font-size: 12px;
+        font-size: 11.5px;
         text-transform: lowercase;
     }
 
-    /* Belum Absen (Kotak Merah Muda dengan Strip - Terlihat Mencolok) */
+    /* Belum Absen */
     .symbol-belum-absen {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         width: 22px;
         height: 22px;
-        border-radius: 4px;
+        border-radius: 5px;
         background-color: #fef2f2;
         border: 1px solid #fecaca;
         color: #ef4444;
@@ -239,36 +326,10 @@
         font-size: 13px;
     }
 
-    /* Sel Kosong (Masa Depan / Hari Libur) */
+    /* Sel Kosong */
     .symbol-empty {
         color: #cbd5e1;
-        font-size: 11px;
-    }
-
-    /* Filter Pills */
-    .filter-pill {
-        display: inline-flex;
-        align-items: center;
-        padding: 5px 14px;
-        border-radius: 20px;
         font-size: 12px;
-        font-weight: 600;
-        border: 1px solid #e2e8f0;
-        background-color: #ffffff;
-        color: #475569;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-    }
-    .filter-pill:hover {
-        background-color: #f8fafc;
-        color: #0f172a;
-    }
-    .filter-pill.active {
-        background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important;
-        color: #ffffff !important;
-        border-color: #ea580c !important;
-        box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);
     }
 
     /* Scrollbar */
@@ -310,7 +371,7 @@
 </style>
 
 <div class="app-main__inner">
-    <!-- PAGE TITLE & BREADCRUMB -->
+    <!-- PAGE TITLE & ACTIONS -->
     <div class="app-page-title mb-3">
         <div class="page-title-wrapper">
             <div class="page-title-heading">
@@ -319,15 +380,19 @@
                     <i class="pe-7s-keypad" style="color: white;"></i>
                 </div>
                 <div>
-                    Matriks Presensi Harian (Grid View)
+                    Matriks Presensi Harian
                     <div class="page-title-subheading">
-                        Pantau absensi seluruh pegawai per tanggal secara langsung untuk mendeteksi siapa saja yang belum absen.
+                        Pantau kehadiran seluruh pegawai per tanggal secara visual dan deteksi pegawai yang belum absen.
                     </div>
                 </div>
             </div>
 
             <div class="page-title-actions d-flex align-items-center flex-wrap no-print" style="gap: 8px;">
-                <!-- Tombol Cetak PDF (Kertas A3 Landscape) -->
+                <a href="{{ route('presensi.rekap', request()->query()) }}"
+                    class="btn btn-outline-secondary shadow-sm font-weight-bold" style="border-radius: 8px;">
+                    <i class="fa fa-table mr-1"></i> Rekap Bulanan
+                </a>
+
                 <div class="btn-group shadow-sm">
                     <a href="{{ route('presensi.matriks.pdf', request()->query()) }}"
                         target="_blank"
@@ -355,87 +420,69 @@
         </div>
     </div>
 
-    <!-- Navigation Tabs: Rekap Akumulasi vs Matriks Harian -->
-    <div class="mb-3 d-flex align-items-center flex-wrap no-print" style="gap: 8px;">
-        <a href="{{ route('presensi.rekap', request()->query()) }}"
-            class="btn btn-sm font-weight-bold btn-light border text-muted shadow-sm hover:text-dark"
-            style="border-radius: 20px; padding: 6px 16px;">
-            <i class="fa fa-table mr-1"></i> Rekap Akumulasi Bulanan
-        </a>
-        <a href="{{ route('presensi.matriks', request()->query()) }}"
-            class="btn btn-sm font-weight-bold shadow-sm"
-            style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%); color: white; border-radius: 20px; padding: 6px 16px;">
-            <i class="fa fa-calendar-check-o mr-1"></i> Matriks Presensi Harian
-        </a>
-    </div>
-
     <!-- KPI SUMMARY CARDS -->
     <div class="row mb-3 no-print">
-        <!-- Total Pegawai -->
         <div class="col-md-3 col-sm-6 mb-2">
             <div class="stat-card p-3 shadow-sm">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-uppercase text-muted font-weight-bold" style="font-size: 11px;">Total Pegawai</span>
-                        <h4 class="font-weight-bold my-1 text-dark" style="font-size: 1.5rem;">
+                        <h4 class="font-weight-bold my-1 text-dark" style="font-size: 1.45rem;">
                             {{ $summary['total_pegawai'] }}
                         </h4>
                         <small class="text-success font-weight-bold">
                             <i class="fa fa-check-circle mr-1"></i> {{ $summary['total_pegawai_aktif'] }} Akun Aktif
                         </small>
                     </div>
-                    <div class="stat-icon" style="background-color: #f0fdf4; color: #16a34a;">
+                    <div class="stat-icon" style="background-color: #ecfdf5; color: #10b981;">
                         <i class="pe-7s-users font-weight-bold"></i>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Periode Tutup Buku Tanggal 28 -->
         <div class="col-md-3 col-sm-6 mb-2">
             <div class="stat-card p-3 shadow-sm">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-uppercase text-muted font-weight-bold" style="font-size: 11px;">Periode Presensi</span>
-                        <h6 class="font-weight-bold my-1 text-primary" style="font-size: 1rem; line-height: 1.3;">
+                        <h6 class="font-weight-bold my-1 text-dark" style="font-size: 1rem; line-height: 1.35;">
                             {{ $bulan?->nama_bulan ?? 'Pilih Bulan' }}
                         </h6>
                         <small class="text-muted font-weight-bold">
                             @if ($summary['start_date'] && $summary['end_date'])
-                                {{ $summary['start_date']->format('d/m/Y') }} - {{ $summary['end_date']->format('d/m/Y') }}
+                                {{ $summary['start_date']->format('d/m/Y') }} &ndash; {{ $summary['end_date']->format('d/m/Y') }}
                             @else
                                 Cut-off Tanggal 28
                             @endif
                         </small>
                     </div>
-                    <div class="stat-icon" style="background-color: #eff6ff; color: #2563eb;">
+                    <div class="stat-icon" style="background-color: #fff7ed; color: #ea580c;">
                         <i class="pe-7s-date"></i>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Kolom Tanggal Tampil -->
         <div class="col-md-3 col-sm-6 mb-2">
             <div class="stat-card p-3 shadow-sm">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-uppercase text-muted font-weight-bold" style="font-size: 11px;">Hari Ditampilkan</span>
-                        <h4 class="font-weight-bold my-1 text-dark" style="font-size: 1.5rem;">
-                            {{ $summary['total_hari_tampil'] }} <span style="font-size: 0.9rem; font-weight: normal; color: #64748b;">Hari</span>
+                        <h4 class="font-weight-bold my-1 text-dark" style="font-size: 1.45rem;">
+                            {{ $summary['total_hari_tampil'] }} <span style="font-size: 0.85rem; font-weight: normal; color: #64748b;">Hari</span>
                         </h4>
                         <small class="text-muted">
-                            {{ $onlyWorkdays ? 'Hanya Hari Kerja (Senin - Jumat)' : 'Semua Hari' }}
+                            {{ $onlyWorkdays ? 'Hari Kerja (Senin - Jumat)' : 'Semua Hari' }}
                         </small>
                     </div>
-                    <div class="stat-icon" style="background-color: #faf5ff; color: #9333ea;">
+                    <div class="stat-icon" style="background-color: #eef2ff; color: #6366f1;">
                         <i class="pe-7s-clock"></i>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Pegawai Belum Absen Hari Ini (ALERT) -->
         <div class="col-md-3 col-sm-6 mb-2">
             <div class="stat-card p-3 shadow-sm" style="{{ $summary['total_pegawai_belum_absen_hari_ini'] > 0 ? 'border: 1.5px solid #fca5a5; background: #fff5f5;' : '' }}">
                 <div class="d-flex align-items-center justify-content-between">
@@ -443,14 +490,14 @@
                         <span class="text-uppercase font-weight-bold {{ $summary['total_pegawai_belum_absen_hari_ini'] > 0 ? 'text-danger' : 'text-muted' }}" style="font-size: 11px;">
                             Belum Absen Hari Ini
                         </span>
-                        <h4 class="font-weight-bold my-1 {{ $summary['total_pegawai_belum_absen_hari_ini'] > 0 ? 'text-danger' : 'text-success' }}" style="font-size: 1.5rem;">
+                        <h4 class="font-weight-bold my-1 {{ $summary['total_pegawai_belum_absen_hari_ini'] > 0 ? 'text-danger' : 'text-success' }}" style="font-size: 1.45rem;">
                             {{ $summary['total_pegawai_belum_absen_hari_ini'] }} <span style="font-size: 0.85rem; font-weight: normal;">Orang</span>
                         </h4>
                         <small class="{{ $summary['total_pegawai_belum_absen_hari_ini'] > 0 ? 'text-danger font-weight-bold' : 'text-muted' }}">
                             {{ $summary['total_pegawai_belum_absen_hari_ini'] > 0 ? 'Perlu konfirmasi kehadiran' : 'Semua sudah tercatat' }}
                         </small>
                     </div>
-                    <div class="stat-icon" style="{{ $summary['total_pegawai_belum_absen_hari_ini'] > 0 ? 'background-color: #fee2e2; color: #dc2626;' : 'background-color: #f0fdf4; color: #16a34a;' }}">
+                    <div class="stat-icon" style="{{ $summary['total_pegawai_belum_absen_hari_ini'] > 0 ? 'background-color: #fee2e2; color: #dc2626;' : 'background-color: #ecfdf5; color: #10b981;' }}">
                         <i class="{{ $summary['total_pegawai_belum_absen_hari_ini'] > 0 ? 'pe-7s-attention font-weight-bold' : 'pe-7s-check' }}"></i>
                     </div>
                 </div>
@@ -458,28 +505,31 @@
         </div>
     </div>
 
-    <!-- FILTER FORM CARD -->
-    <div class="main-card card mb-3 shadow-sm border-0 no-print" style="border-radius: 12px;">
+    <!-- FILTER & QUICK TOOLBAR CARD -->
+    <div class="filter-card card mb-3 no-print">
         <div class="card-body p-3">
             <form action="{{ route('presensi.matriks') }}" method="GET" id="filterMatriksForm">
                 <div class="row align-items-end">
-                    <!-- Pilihan Bulan -->
-                    <div class="col-md-4 col-sm-6 mb-2">
-                        <label class="form-label font-weight-bold small text-uppercase text-muted">Periode Master Bulan</label>
-                        <select name="bulan_id" class="form-control form-control-sm" style="border-radius: 8px;" onchange="document.getElementById('filterMatriksForm').submit();">
+                    <div class="col-md-4 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label d-flex justify-content-between">
+                            <span><i class="fa fa-calendar-alt mr-1 text-warning"></i> Periode Master Bulan</span>
+                            <span class="text-warning" style="text-transform: none;"><i class="fa fa-info-circle"></i> Cut-off tgl 28</span>
+                        </label>
+                        <select name="bulan_id" class="form-control form-filter-control" onchange="document.getElementById('filterMatriksForm').submit();">
                             @foreach ($bulanList as $b)
                                 <option value="{{ $b->id }}" {{ $selectedBulanId == $b->id ? 'selected' : '' }}>
-                                    {{ $b->nama_bulan }} {{ $b->tahunAjaran ? '(' . $b->tahunAjaran->nama_tahun_ajaran . ')' : '' }} {{ $b->status ? ' • [Aktif]' : '' }}
+                                    {{ $b->nama_bulan }} {{ $b->tahunAjaran ? '(' . $b->tahunAjaran->nama_tahun_ajaran . ')' : '' }} {{ $b->status ? ' [Aktif]' : '' }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Pilihan Kategori Karyawan -->
-                    <div class="col-md-4 col-sm-6 mb-2">
-                        <label class="form-label font-weight-bold small text-uppercase text-muted">Kategori Pegawai</label>
-                        <select name="kepegawaian_master_kategori_id" class="form-control form-control-sm" style="border-radius: 8px;" onchange="document.getElementById('filterMatriksForm').submit();">
-                            <option value="">-- Semua Kategori Pegawai --</option>
+                    <div class="col-md-4 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-layer-group mr-1 text-primary"></i> Kategori Pegawai
+                        </label>
+                        <select name="kepegawaian_master_kategori_id" class="form-control form-filter-control" onchange="document.getElementById('filterMatriksForm').submit();">
+                            <option value="">Semua Kategori Pegawai</option>
                             @foreach ($kategoriList as $kat)
                                 <option value="{{ $kat->id }}" {{ $selectedKategoriId == $kat->id ? 'selected' : '' }}>
                                     {{ $kat->nama_kategori }}
@@ -488,120 +538,100 @@
                         </select>
                     </div>
 
-                    <!-- Toggle Hari Kerja -->
-                    <div class="col-md-2 col-sm-6 mb-2">
-                        <div class="custom-control custom-switch pt-2">
-                            <input type="checkbox" class="custom-control-input" id="onlyWorkdaysSwitch" name="only_workdays" value="1" {{ $onlyWorkdays ? 'checked' : '' }} onchange="document.getElementById('filterMatriksForm').submit();">
-                            <label class="custom-control-label font-weight-bold small" for="onlyWorkdaysSwitch" style="cursor: pointer;">
-                                Hanya Hari Kerja
-                            </label>
-                        </div>
-                        <small class="text-muted" style="font-size: 10px;">Senin - Jumat</small>
+                    <div class="col-md-3 col-sm-8 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-search mr-1 text-secondary"></i> Cari Nama Pegawai
+                        </label>
+                        <input type="text" id="searchKaryawanInput" class="form-control form-filter-control"
+                            placeholder="Ketik nama pegawai...">
                     </div>
 
-                    <!-- Tombol Reset / Submit -->
-                    <div class="col-md-2 col-sm-6 mb-2 text-right">
-                        <a href="{{ route('presensi.matriks') }}" class="btn btn-sm btn-outline-secondary" style="border-radius: 8px;">
-                            <i class="fa fa-refresh mr-1"></i> Reset
+                    <div class="col-md-1 col-sm-4">
+                        <a href="{{ route('presensi.matriks') }}" class="btn btn-light border btn-block shadow-sm d-flex align-items-center justify-content-center"
+                            style="border-radius: 8px; height: 38px;" title="Reset Filter">
+                            <i class="fa fa-undo"></i>
                         </a>
                     </div>
                 </div>
             </form>
+
+            <!-- FILTER PILLS BARIS -->
+            <div class="d-flex align-items-center justify-content-between flex-wrap pt-3 mt-3 border-top" style="gap: 8px;">
+                <div class="d-flex align-items-center flex-wrap" style="gap: 6px;">
+                    <span class="text-muted small font-weight-bold mr-1">
+                        <i class="fa fa-bolt text-warning mr-1"></i> Tampilkan:
+                    </span>
+                    <button type="button" class="filter-pill active" data-filter="all">
+                        Semua Pegawai ({{ $summary['total_pegawai'] }})
+                    </button>
+                    <button type="button" class="filter-pill" data-filter="belum_absen_hari_ini">
+                        <i class="fa fa-user-clock text-danger mr-1"></i> Belum Absen Hari Ini ({{ $summary['total_pegawai_belum_absen_hari_ini'] }})
+                    </button>
+                    <button type="button" class="filter-pill" data-filter="ada_belum_absen">
+                        Ada Belum Absen Bulan Ini
+                    </button>
+                </div>
+                <div class="small text-muted">
+                    <i class="fa fa-hand-pointer-o mr-1 text-warning"></i> Klik tanggal di header tabel untuk input massal pada tanggal tersebut
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- FILTER BARIS CEPAT & LEGENDA SIMBOL -->
-    <div class="d-flex align-items-center justify-content-between flex-wrap mb-3 px-1 no-print" style="gap: 12px;">
-        <!-- Filter Pills Baris -->
-        <div class="d-flex align-items-center flex-wrap" style="gap: 6px;">
-            <span class="text-muted small font-weight-bold mr-1">Filter Tampilan:</span>
-            <button type="button" class="filter-pill active" data-filter="all">
-                Semua Pegawai ({{ $summary['total_pegawai'] }})
-            </button>
-            <button type="button" class="filter-pill" data-filter="belum_absen_hari_ini">
-                <i class="fa fa-exclamation-circle text-danger mr-1"></i> Belum Absen Hari Ini ({{ $summary['total_pegawai_belum_absen_hari_ini'] }})
-            </button>
-            <button type="button" class="filter-pill" data-filter="ada_belum_absen">
-                Ada Belum Absen Bulan Ini
-            </button>
-            
-        </div>
-
-        <!-- Pencarian Cepat Nama Pegawai -->
-        <div style="min-width: 220px;">
-            <input type="text" id="searchKaryawanInput" class="form-control form-control-sm"
-                placeholder="Cari nama pegawai..." style="border-radius: 20px; font-size: 12px; padding: 6px 14px;">
-        </div>
-    </div>
-
-    <!-- LEGENDA STATUS PRESENSI & WARNA NOMOR (Sesuai Permintaan User) -->
-    <div class="card mb-3 shadow-sm border-0 no-print" style="border-radius: 10px; background-color: #ffffff;">
-        <div class="card-body py-2 px-3">
-            <div class="d-flex align-items-center justify-content-between flex-wrap pb-2 mb-2 border-bottom" style="gap: 12px;">
-                <div class="d-flex align-items-center flex-wrap" style="gap: 16px; font-size: 12px;">
-                    <span class="font-weight-bold text-muted small text-uppercase">Legenda Simbol:</span>
-                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
-                        <span class="matrix-symbol symbol-hadir">v</span>
-                        <span class="text-dark font-weight-bold">Hadir / Terlambat</span>
-                    </span>
-                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
-                        <span class="matrix-symbol symbol-merah">i</span>
-                        <span class="text-dark font-weight-bold">Izin</span>
-                    </span>
-                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
-                        <span class="matrix-symbol symbol-merah">s</span>
-                        <span class="text-dark font-weight-bold">Sakit</span>
-                    </span>
-                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
-                        <span class="matrix-symbol symbol-merah">c</span>
-                        <span class="text-dark font-weight-bold">Cuti</span>
-                    </span>
-                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
-                        <span class="matrix-symbol symbol-tugas">t</span>
-                        <span class="text-dark font-weight-bold">Tugas Luar</span>
-                    </span>
-                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
-                        <span class="matrix-symbol symbol-libur">l</span>
-                        <span class="text-dark font-weight-bold">Libur (Tidak Dihitung %)</span>
-                    </span>
-                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
-                        <span class="symbol-belum-absen">-</span>
-                        <span class="text-danger font-weight-bold">Belum Absen (Hari Kerja)</span>
-                    </span>
-                </div>
-                <div class="text-muted small">
-                    Hover pada simbol untuk melihat detail jam masuk / pulang
-                </div>
-            </div>
-
-            <!-- Keterangan Warna Nomor Pegawai -->
-            <div class="d-flex align-items-center flex-wrap" style="gap: 14px; font-size: 11.5px;">
-                <span class="font-weight-bold text-muted small text-uppercase">Warna Nomor:</span>
-                <span class="d-inline-flex align-items-center" style="gap: 5px;" title="Tidak ada keterlambatan, semua nol kecuali cuti tidak dihitung">
-                    <span class="badge border font-weight-bold" style="background-color: #fef08a; color: #854d0e; border-color: #ca8a04 !important; font-size: 11px;">No</span>
-                    <span class="font-weight-bold text-dark">Kuning = Reward</span>
+    <!-- LEGENDA STATUS PRESENSI & WARNA NOMOR -->
+    <div class="legend-card mb-3 p-2.5 px-3 shadow-sm no-print">
+        <div class="d-flex align-items-center justify-content-between flex-wrap pb-2 mb-2 border-bottom" style="gap: 8px;">
+            <div class="d-flex align-items-center flex-wrap" style="gap: 8px;">
+                <span class="font-weight-bold text-muted small text-uppercase mr-1" style="font-size: 10.5px;">Simbol:</span>
+                <span class="legend-chip">
+                    <span class="matrix-symbol symbol-hadir">v</span> Hadir
                 </span>
-                <span class="d-inline-flex align-items-center" style="gap: 5px;" title="5 Kali Terlambat dalam 2 bulan berturut-turut">
-                    <span class="badge font-weight-bold text-white" style="background-color: #ef4444; font-size: 11px;">No</span>
-                    <span class="font-weight-bold text-dark">Merah = 5x Terlambat (2 Bulan Berturut)</span>
+                <span class="legend-chip">
+                    <span class="matrix-symbol symbol-terlambat">v</span> Terlambat
                 </span>
-                <span class="d-inline-flex align-items-center" style="gap: 5px;" title="5 Kali Terlambat dalam 1 bulan">
-                    <span class="badge font-weight-bold text-white" style="background-color: #22c55e; font-size: 11px;">No</span>
-                    <span class="font-weight-bold text-dark">Hijau = 5x Terlambat (1 Bulan)</span>
+                <span class="legend-chip">
+                    <span class="matrix-symbol symbol-merah">i</span> Izin
                 </span>
-                <span class="d-inline-flex align-items-center" style="gap: 5px;" title="3 Kali Terlambat dalam 7 hari">
-                    <span class="badge font-weight-bold text-white" style="background-color: #3b82f6; font-size: 11px;">No</span>
-                    <span class="font-weight-bold text-dark">Biru = 3x Terlambat (7 Hari)</span>
+                <span class="legend-chip">
+                    <span class="matrix-symbol symbol-merah">s</span> Sakit
                 </span>
-                <span class="d-inline-flex align-items-center" style="gap: 5px;" title="Tidak ada data presensi">
-                    <span class="badge font-weight-bold text-white" style="background-color: #000000; font-size: 11px;">No</span>
-                    <span class="font-weight-bold text-dark">Hitam = Kosong</span>
+                <span class="legend-chip">
+                    <span class="matrix-symbol symbol-merah">c</span> Cuti
                 </span>
-                <span class="d-inline-flex align-items-center" style="gap: 5px;" title="Normal">
-                    <span class="badge border font-weight-bold" style="background-color: #ffffff; color: #1e293b; border-color: #cbd5e1 !important; font-size: 11px;">No</span>
-                    <span class="font-weight-bold text-dark">Putih = Normal</span>
+                <span class="legend-chip">
+                    <span class="matrix-symbol symbol-tugas">t</span> Tugas
+                </span>
+                <span class="legend-chip">
+                    <span class="matrix-symbol symbol-libur">l</span> Libur
+                </span>
+                <span class="legend-chip">
+                    <span class="symbol-belum-absen">-</span> <span class="text-danger">Belum Absen</span>
                 </span>
             </div>
+        </div>
+
+        <div class="d-flex align-items-center flex-wrap" style="gap: 8px;">
+            <span class="font-weight-bold text-muted small text-uppercase mr-1" style="font-size: 10.5px;">Indikator Nomor:</span>
+            <span class="legend-chip" title="Tidak ada keterlambatan, semua nol kecuali cuti">
+                <span class="badge border font-weight-bold" style="background-color: #fef08a; color: #854d0e; border-color: #ca8a04 !important;">No</span>
+                Reward (Tepat Waktu)
+            </span>
+            <span class="legend-chip" title="3 Kali Terlambat dalam 7 hari">
+                <span class="badge font-weight-bold text-white" style="background-color: #3b82f6;">No</span>
+                3x Telat (7 Hari)
+            </span>
+            <span class="legend-chip" title="5 Kali Terlambat dalam 1 bulan">
+                <span class="badge font-weight-bold text-white" style="background-color: #22c55e;">No</span>
+                5x Telat (1 Bulan)
+            </span>
+            <span class="legend-chip" title="5 Kali Terlambat dalam 2 bulan berturut-turut">
+                <span class="badge font-weight-bold text-white" style="background-color: #ef4444;">No</span>
+                5x Telat (2 Bulan Berturut)
+            </span>
+            <span class="legend-chip" title="Tidak ada data presensi">
+                <span class="badge font-weight-bold text-white" style="background-color: #0f172a;">No</span>
+                Kosong
+            </span>
         </div>
     </div>
 
@@ -614,7 +644,7 @@
                     <th class="sticky-col-name" rowspan="2">Nama Pegawai</th>
                     @foreach ($daftarTanggal as $tgl)
                         <th class="{{ $tgl['is_today'] ? 'col-today' : ($tgl['is_weekend'] ? 'col-weekend' : '') }}"
-                            style="min-width: 36px; width: 38px; padding: 4px 2px;">
+                            style="min-width: 38px; width: 40px; padding: 4px 2px;">
                             <a href="{{ route('presensi.create', array_filter([
                                 'tanggal'                        => $tgl['date_string'],
                                 'kepegawaian_master_bulan_id'    => $selectedBulanId,
@@ -630,12 +660,12 @@
                         </th>
                     @endforeach
                     <!-- Kolom Rekap Akumulasi di Ujung Kanan -->
-                    <th style="min-width: 30px; background-color: #f8fafc;" title="Total Hadir">H</th>
+                    <th style="min-width: 32px; background-color: #ecfdf5; color: #065f46;" title="Total Hadir">H</th>
                     <th style="min-width: 30px; background-color: #f8fafc;" title="Total Izin">I</th>
                     <th style="min-width: 30px; background-color: #f8fafc;" title="Total Sakit">S</th>
                     <th style="min-width: 30px; background-color: #f8fafc;" title="Total Cuti">C</th>
                     <th style="min-width: 30px; background-color: #f8fafc;" title="Total Tugas">T</th>
-                    <th style="min-width: 32px; background-color: #fef2f2; color: #dc2626;" title="Total Belum Absen">BA</th>
+                    <th style="min-width: 34px; background-color: #fef2f2; color: #dc2626;" title="Total Belum Absen">BA</th>
                     <th style="min-width: 48px; background-color: #f8fafc;" title="Persentase Kehadiran">%</th>
                 </tr>
             </thead>
@@ -665,19 +695,31 @@
                             {{ $index + 1 }}
                         </td>
                         <td class="sticky-col-name">
-                            <div class="d-flex align-items-center justify-content-between" style="gap: 4px;">
-                                <div class="text-truncate" style="max-width: 175px;" title="{{ $karyawan->nama_lengkap }}{{ $karyawan->gelar ? ', ' . $karyawan->gelar : '' }}">
-                                    <span class="font-weight-bold text-dark" style="font-size: 12.5px;">
-                                        @if ($karyawan->golongan)
-                                            <strong>({{ $karyawan->golongan }})</strong>
-                                        @endif
-                                        {{ $karyawan->nama_lengkap }}{{ $karyawan->gelar ? ', ' . $karyawan->gelar : '' }}
-                                    </span>
+                            <div class="d-flex align-items-center justify-content-between" style="gap: 6px;">
+                                <div class="d-flex align-items-center" style="gap: 8px; min-width: 0;">
+                                    @if ($karyawan->foto_url)
+                                        <img src="{{ $karyawan->foto_url }}" alt="Foto"
+                                            style="width: 28px; height: 28px; object-fit: cover; border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15); flex-shrink: 0;">
+                                    @else
+                                        <span class="d-flex align-items-center justify-content-center text-white font-weight-bold"
+                                            style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #ea580c, #d97706); font-size: 0.72rem; flex-shrink: 0;">
+                                            {{ strtoupper(mb_substr($karyawan->nama_lengkap ?? 'P', 0, 1)) }}
+                                        </span>
+                                    @endif
+                                    <div style="min-width: 0; line-height: 1.2;">
+                                        <div class="font-weight-bold text-dark text-truncate" style="font-size: 12px; max-width: 170px;"
+                                            title="{{ $karyawan->nama_lengkap }}{{ $karyawan->gelar ? ', ' . $karyawan->gelar : '' }}">
+                                            {{ $karyawan->nama_lengkap }}{{ $karyawan->gelar ? ', ' . $karyawan->gelar : '' }}
+                                        </div>
+                                        <small class="text-muted d-block text-truncate" style="font-size: 10px; max-width: 170px;">
+                                            {{ $karyawan->nipy }}{{ $karyawan->golongan ? ' • Gol. ' . $karyawan->golongan : '' }}
+                                        </small>
+                                    </div>
                                 </div>
                                 @if (! $isActive)
                                     <span class="badge badge-danger px-1 py-0" style="font-size: 9px;" title="Akun Non-Aktif">OFF</span>
                                 @elseif ($belumAbsenHariIni)
-                                    <span class="badge badge-warning px-1 py-0 text-white" style="font-size: 9px;" title="Belum Absen Hari Ini">!</span>
+                                    <span class="badge badge-warning px-1.5 py-0 text-white" style="font-size: 9px;" title="Belum Absen Hari Ini">!</span>
                                 @endif
                             </div>
                         </td>
@@ -691,10 +733,16 @@
                                 $symbol = $rec['symbol'] ?? '';
                             @endphp
                             <td class="{{ $tgl['is_today'] ? 'cell-today' : '' }}">
-                                @if ($status === 'hadir' || $status === 'terlambat')
+                                @if ($status === 'hadir')
                                     <span class="matrix-symbol symbol-hadir"
                                         data-toggle="tooltip" data-placement="top"
-                                        title="{{ $karyawan->nama_lengkap }} ({{ $tgl['formatted'] }}): Hadir {{ $rec['jam_masuk'] ? 'Jam ' . $rec['jam_masuk'] : '' }} {{ $rec['keterlambatan_menit'] > 0 ? '[Terlambat ' . $rec['keterlambatan_menit'] . ' mnt]' : '' }}">
+                                        title="{{ $karyawan->nama_lengkap }} ({{ $tgl['formatted'] }}): Hadir {{ $rec['jam_masuk'] ? 'Jam ' . $rec['jam_masuk'] : '' }}">
+                                        v
+                                    </span>
+                                @elseif ($status === 'terlambat')
+                                    <span class="matrix-symbol symbol-terlambat"
+                                        data-toggle="tooltip" data-placement="top"
+                                        title="{{ $karyawan->nama_lengkap }} ({{ $tgl['formatted'] }}): Terlambat {{ $rec['jam_masuk'] ? 'Jam ' . $rec['jam_masuk'] : '' }} {{ $rec['keterlambatan_menit'] > 0 ? '(+' . $rec['keterlambatan_menit'] . ' mnt)' : '' }}">
                                         v
                                     </span>
                                 @elseif (in_array($status, ['izin', 'sakit', 'cuti']))
@@ -728,15 +776,15 @@
                         @endforeach
 
                         <!-- Kolom Rekap Akumulasi di Ujung Kanan -->
-                        <td class="font-weight-bold text-dark">{{ $totals['total_hadir_semua'] }}</td>
+                        <td class="font-weight-bold text-success" style="background-color: #f8fafc;">{{ $totals['total_hadir_semua'] }}</td>
                         <td class="font-weight-bold {{ $totals['izin'] > 0 ? 'text-danger' : 'text-muted' }}">{{ $totals['izin'] ?: '-' }}</td>
                         <td class="font-weight-bold {{ $totals['sakit'] > 0 ? 'text-danger' : 'text-muted' }}">{{ $totals['sakit'] ?: '-' }}</td>
                         <td class="font-weight-bold {{ $totals['cuti'] > 0 ? 'text-danger' : 'text-muted' }}">{{ $totals['cuti'] ?: '-' }}</td>
                         <td class="font-weight-bold {{ $totals['tugas'] > 0 ? 'text-info' : 'text-muted' }}">{{ $totals['tugas'] ?: '-' }}</td>
-                        <td class="font-weight-bold {{ $totals['belum_absen'] > 0 ? 'text-danger bg-danger-soft' : 'text-muted' }}" style="{{ $totals['belum_absen'] > 0 ? 'background-color: #fee2e2;' : '' }}">
+                        <td class="font-weight-bold {{ $totals['belum_absen'] > 0 ? 'text-danger' : 'text-muted' }}" style="{{ $totals['belum_absen'] > 0 ? 'background-color: #fef2f2;' : '' }}">
                             {{ $totals['belum_absen'] ?: '-' }}
                         </td>
-                        <td class="font-weight-bold" style="font-size: 11px;">
+                        <td class="font-weight-bold text-dark" style="font-size: 11px; background-color: #f8fafc;">
                             {{ $totals['persen_kehadiran'] }}%
                         </td>
                     </tr>
@@ -754,7 +802,7 @@
             @if ($pegawaiRows->isNotEmpty())
                 <tfoot>
                     <tr style="background-color: #f8fafc; font-weight: 700; border-top: 2px solid #cbd5e1;">
-                        <td class="sticky-col-no text-center font-weight-bold">&Sigma;</td>
+                        <td class="sticky-col-no text-center font-weight-bold text-success">&Sigma;</td>
                         <td class="sticky-col-name text-dark font-weight-bold">
                             Total Hadir Harian
                         </td>
@@ -770,9 +818,9 @@
                         <td colspan="7"></td>
                     </tr>
                     <tr style="background-color: #fff5f5; font-weight: 700;">
-                        <td class="sticky-col-no text-center font-weight-bold text-danger">!</td>
+                        <td class="sticky-col-no text-center font-weight-bold text-danger" style="background-color: #fff5f5 !important;">!</td>
                         <td class="sticky-col-name text-danger font-weight-bold" style="background-color: #fff5f5 !important;">
-                            Belum Absen
+                            Belum Absen Harian
                         </td>
                         @foreach ($daftarTanggal as $tgl)
                             @php

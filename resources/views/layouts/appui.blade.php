@@ -58,6 +58,12 @@
         .action-dropdown-item.item-locked { color: #94a3b8 !important; cursor: not-allowed !important; }
         .action-dropdown-item.item-locked .action-item-icon { background-color: #f1f5f9; color: #94a3b8; }
         .action-dropdown-divider { height: 1px; background-color: #f1f5f9; margin: 4px 0; }
+
+        /* Global Modal Overlay Adapter */
+        .modal { display: none; position: fixed; inset: 0; z-index: 1055; overflow-x: hidden; overflow-y: auto; outline: 0; background-color: rgba(15, 23, 42, 0.55); backdrop-filter: blur(3px); padding: 1rem; }
+        .modal.show, .modal.is-open { display: flex !important; align-items: center; justify-content: center; }
+        .modal-dialog { position: relative; width: 100%; max-width: 520px; margin: auto; pointer-events: auto; }
+        .modal-backdrop { display: none !important; }
     </style>
 
     @stack('css')

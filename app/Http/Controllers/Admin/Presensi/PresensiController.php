@@ -40,24 +40,15 @@ class PresensiController extends Controller
             || $request->filled('tanggal_selesai')
             || $request->filled('kepegawaian_master_kategori_id')
             || $request->filled('status')
+            || $request->filled('shaum')
             || $request->filled('search');
 
         $activeBulan = Bulan::where('status', true)->first();
 
         if ($hasFilter) {
-            $presensi = $this->service->getPaginated(
-                filters: $filters,
-                perPage: (int) $request->input('per_page', 15)
-            );
+            $presensi = $this->service->getFiltered($filters);
         } else {
-            // Gunakan paginator kosong agar tidak membebani query database saat pertama kali membuka menu
-            $presensi = new \Illuminate\Pagination\LengthAwarePaginator(
-                items: collect(),
-                total: 0,
-                perPage: (int) $request->input('per_page', 15),
-                currentPage: 1,
-                options: ['path' => $request->url(), 'query' => $request->query()]
-            );
+            $presensi = collect();
         }
 
         $kategoriList = Kategori::orderBy('nama_kategori')->get();

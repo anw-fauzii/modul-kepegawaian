@@ -145,7 +145,7 @@ class FingerspotService
                 'pulang_cepat_menit'              => 0,
                 'izin_pulang_cepat'               => false,
                 'shaum'                           => false,
-                'catatan'                         => 'Fingerspot scan' . ($cloudId ? " [{$cloudId}]" : ''),
+                'catatan'                         => 'Finger' . ($cloudId ? " [{$cloudId}]" : ''),
             ]);
 
             Log::info('[Fingerspot] Presensi masuk berhasil dicatat', [

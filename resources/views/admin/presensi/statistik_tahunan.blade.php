@@ -151,6 +151,44 @@
         border-radius: 6px;
     }
 
+    /* Category Pills for Top Cards */
+    .top-kat-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 13px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid #e2e8f0;
+        background-color: #f8fafc;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+    }
+    .top-kat-pill:hover {
+        background-color: #fff7ed;
+        border-color: #fed7aa;
+        color: #ea580c;
+    }
+    .top-kat-pill.active {
+        background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important;
+        color: #ffffff !important;
+        border-color: #ea580c !important;
+        box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);
+    }
+    .rank-badge {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
     /* Print Styles */
     @media print {
         .app-sidebar, .app-header, .app-page-title .page-title-actions, .filter-section, .no-print {
@@ -390,129 +428,233 @@
         </div>
     </div>
 
-    <!-- HRD EARLY WARNING & INSIGHTS (3 CARDS) -->
-    <div class="row mb-4 no-print">
-        <!-- Top Disiplin / Teladan -->
-        <div class="col-lg-4 mb-3">
-            <div class="card shadow-sm border-0" style="border-radius: 14px;">
-                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
-                    <div>
-                        <h6 class="font-weight-bold text-success mb-0">
-                            <i class="fa fa-medal mr-1"></i> Top 5 Pegawai Paling Disiplin
-                        </h6>
-                        <small class="text-muted">Tingkat kehadiran terbaik & tanpa alpa</small>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <ul class="list-group list-group-flush">
-                        @forelse ($topDisiplin as $p)
-                            <li class="list-group-item d-flex align-items-center justify-content-between px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-circle mr-2 bg-success text-white" style="width: 32px; height: 32px; font-size: 12px;">
-                                        {{ strtoupper(substr($p->nama_lengkap, 0, 1)) }}
-                                    </div>
-                                    <div style="line-height: 1.2;">
-                                        <div class="font-weight-bold text-dark small text-truncate" style="max-width: 170px;">
-                                            {{ $p->nama_lengkap }}
-                                        </div>
-                                        <small class="text-muted">{{ $p->kategori?->nama_kategori ?: $p->nipy }}</small>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <span class="badge badge-soft-success font-weight-bold">{{ $p->persentase_kehadiran }}%</span>
-                                    <div class="text-muted" style="font-size: 10px;">{{ $p->total_hadir_efektif }} hadir</div>
-                                </div>
-                            </li>
-                        @empty
-                            <li class="list-group-item text-center text-muted py-4 small">
-                                Belum ada data presensi yang memenuhi kriteria.
-                            </li>
-                        @endforelse
-                    </ul>
-                </div>
-            </div>
-        </div>
+    <!-- HRD EARLY WARNING & INSIGHTS BERDASARKAN KATEGORI -->
+    @php
+        $karyawanDenganCatatan = $rekapPegawai->filter(fn ($k) => ($k->total_catatan ?? 0) > 0);
+        $kategoriGroups = collect([
+            (object) ['key' => 'all', 'label' => 'Semua Kategori'],
+        ]);
+        foreach ($kategoriList as $kat) {
+            if (! $selectedKategoriId || (int) $selectedKategoriId === (int) $kat->id) {
+                $kategoriGroups->push((object) [
+                    'key'   => (string) $kat->id,
+                    'label' => $kat->nama_kategori,
+                ]);
+            }
+        }
+    @endphp
 
-        <!-- Top Keterlambatan -->
-        <div class="col-lg-4 mb-3">
-            <div class="card shadow-sm border-0" style="border-radius: 14px;">
-                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
-                    <div>
-                        <h6 class="font-weight-bold text-warning mb-0">
-                            <i class="fa fa-exclamation-triangle mr-1"></i> Menit Terlambat Tertinggi
-                        </h6>
-                        <small class="text-muted">Perlu evaluasi ketepatan waktu HRD</small>
-                    </div>
+    <div class="card shadow-sm border-0 mb-4 no-print" style="border-radius: 14px;">
+        <div class="card-body p-3">
+            <div class="d-flex flex-wrap align-items-center justify-content-between pb-3 mb-3 border-bottom" style="gap: 10px;">
+                <div>
+                    <h6 class="font-weight-bold text-dark mb-0">
+                        <i class="fa fa-trophy text-warning mr-1"></i> Highlight & Evaluasi Pegawai Berdasarkan Kategori
+                    </h6>
                 </div>
-                <div class="card-body p-0">
-                    <ul class="list-group list-group-flush">
-                        @forelse ($topTerlambat as $p)
-                            <li class="list-group-item d-flex align-items-center justify-content-between px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-circle mr-2 bg-warning text-dark font-weight-bold" style="width: 32px; height: 32px; font-size: 12px;">
-                                        {{ strtoupper(substr($p->nama_lengkap, 0, 1)) }}
-                                    </div>
-                                    <div style="line-height: 1.2;">
-                                        <div class="font-weight-bold text-dark small text-truncate" style="max-width: 170px;">
-                                            {{ $p->nama_lengkap }}
-                                        </div>
-                                        <small class="text-muted">{{ $p->kategori?->nama_kategori ?: $p->nipy }}</small>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <span class="badge badge-soft-danger font-weight-bold">{{ $p->akumulasi_keterlambatan_menit }} mnt</span>
-                                    <div class="text-muted" style="font-size: 10px;">{{ $p->total_terlambat }}x telat</div>
-                                </div>
-                            </li>
-                        @empty
-                            <li class="list-group-item text-center text-muted py-4 small">
-                                Tidak ada pegawai dengan catatan terlambat.
-                            </li>
-                        @endforelse
-                    </ul>
-                </div>
-            </div>
-        </div>
 
-        <!-- Top Alpa / Ketidakhadiran -->
-        <div class="col-lg-4 mb-3">
-            <div class="card shadow-sm border-0" style="border-radius: 14px;">
-                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
-                    <div>
-                        <h6 class="font-weight-bold text-danger mb-0">
-                            <i class="fa fa-user-slash mr-1"></i> Alpa Terbanyak (Early Warning)
-                        </h6>
-                        <small class="text-muted">Tidak hadir tanpa keterangan resmi</small>
+            </div>
+
+            @foreach ($kategoriGroups as $group)
+                @php
+                    $subset = $group->key === 'all'
+                        ? $karyawanDenganCatatan
+                        : $karyawanDenganCatatan->where('kepegawaian_master_kategori_id', (int) $group->key);
+
+                    $grpDisiplin = $subset
+                        ->filter(fn ($k) => $k->total_alpa == 0)
+                        ->sortByDesc(fn ($k) => ($k->persentase_kehadiran * 1000) - ($k->akumulasi_keterlambatan_menit ?? 0))
+                        ->take(5)
+                        ->values();
+
+                    $grpTerlambat = $subset
+                        ->filter(fn ($k) => ($k->akumulasi_keterlambatan_menit ?? 0) > 0 || $k->total_terlambat > 0)
+                        ->sortByDesc('akumulasi_keterlambatan_menit')
+                        ->take(5)
+                        ->values();
+
+                    $grpAlpa = $subset
+                        ->filter(fn ($k) => $k->total_alpa > 0)
+                        ->sortByDesc('total_alpa')
+                        ->take(5)
+                        ->values();
+                @endphp
+
+                <div class="top-kategori-block {{ $group->key === 'all' ? '' : 'd-none' }}" data-kat-key="{{ $group->key }}">
+                    @if ($group->key !== 'all')
+                        <div class="d-flex align-items-center justify-content-between px-3 py-2 mb-2 rounded"
+                            style="background: #fff7ed; border: 1px solid #fed7aa;">
+                            <span class="font-weight-bold text-dark" style="font-size: 13px;">
+                                <i class="fa fa-layer-group text-warning mr-1.5"></i> Kategori: <span style="color: #ea580c;">{{ $group->label }}</span>
+                            </span>
+                            <span class="badge badge-light border text-muted font-weight-bold">
+                                {{ $subset->count() }} Pegawai Tercatat
+                            </span>
+                        </div>
+                    @endif
+
+                    <div class="row mb-2">
+                        <!-- Top Disiplin / Teladan -->
+                        <div class="col-lg-4 mb-3">
+                            <div class="card h-100 border" style="border-radius: 12px; border-color: #e2e8f0 !important;">
+                                <div class="card-header bg-light py-2.5 px-3 border-bottom d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h6 class="font-weight-bold text-success mb-0" style="font-size: 13.5px;">
+                                            <i class="fa fa-medal mr-1"></i> Top 5 Paling Disiplin
+                                        </h6>
+                                        <small class="text-muted">Kehadiran tertinggi & tanpa alpa</small>
+                                    </div>
+                                    <span class="badge badge-soft-success font-weight-bold">{{ $group->label }}</span>
+                                </div>
+                                <div class="card-body p-0">
+                                    <ul class="list-group list-group-flush">
+                                        @forelse ($grpDisiplin as $rIdx => $p)
+                                            <li class="list-group-item d-flex align-items-center justify-content-between px-3 py-2">
+                                                <div class="d-flex align-items-center" style="gap: 8px; min-width: 0;">
+                                                    <span class="rank-badge" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;">
+                                                        {{ $rIdx + 1 }}
+                                                    </span>
+                                                    @if ($p->foto_url)
+                                                        <img src="{{ $p->foto_url }}" alt="Foto"
+                                                            style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15); flex-shrink: 0;">
+                                                    @else
+                                                        <div class="avatar-circle bg-success text-white" style="width: 32px; height: 32px; font-size: 12px;">
+                                                            {{ strtoupper(mb_substr($p->nama_lengkap, 0, 1)) }}
+                                                        </div>
+                                                    @endif
+                                                    <div style="line-height: 1.2; min-width: 0;">
+                                                        <div class="font-weight-bold text-dark small text-truncate" style="max-width: 155px;"
+                                                            title="{{ $p->nama_lengkap }}{{ $p->gelar ? ', ' . $p->gelar : '' }}">
+                                                            {{ $p->nama_lengkap }}{{ $p->gelar ? ', ' . $p->gelar : '' }}
+                                                        </div>
+                                                        <small class="text-muted d-block text-truncate" style="max-width: 155px;">
+                                                            <span class="font-weight-bold text-secondary">{{ $p->kategori?->nama_kategori ?: '-' }}</span> &bull; {{ $p->nipy }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div class="text-right" style="flex-shrink: 0;">
+                                                    <span class="badge badge-soft-success font-weight-bold">{{ $p->persentase_kehadiran }}%</span>
+                                                    <div class="text-muted" style="font-size: 10px;">{{ $p->total_hadir_efektif }} hadir</div>
+                                                </div>
+                                            </li>
+                                        @empty
+                                            <li class="list-group-item text-center text-muted py-4 small">
+                                                Belum ada data presensi pada kategori ini.
+                                            </li>
+                                        @endforelse
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top Keterlambatan -->
+                        <div class="col-lg-4 mb-3">
+                            <div class="card h-100 border" style="border-radius: 12px; border-color: #e2e8f0 !important;">
+                                <div class="card-header bg-light py-2.5 px-3 border-bottom d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h6 class="font-weight-bold text-warning mb-0" style="font-size: 13.5px;">
+                                            <i class="fa fa-exclamation-triangle mr-1"></i> Menit Terlambat Tertinggi
+                                        </h6>
+                                        <small class="text-muted">Perlu evaluasi ketepatan waktu</small>
+                                    </div>
+                                    <span class="badge badge-soft-warning font-weight-bold">{{ $group->label }}</span>
+                                </div>
+                                <div class="card-body p-0">
+                                    <ul class="list-group list-group-flush">
+                                        @forelse ($grpTerlambat as $rIdx => $p)
+                                            <li class="list-group-item d-flex align-items-center justify-content-between px-3 py-2">
+                                                <div class="d-flex align-items-center" style="gap: 8px; min-width: 0;">
+                                                    <span class="rank-badge" style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a;">
+                                                        {{ $rIdx + 1 }}
+                                                    </span>
+                                                    @if ($p->foto_url)
+                                                        <img src="{{ $p->foto_url }}" alt="Foto"
+                                                            style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15); flex-shrink: 0;">
+                                                    @else
+                                                        <div class="avatar-circle bg-warning text-dark font-weight-bold" style="width: 32px; height: 32px; font-size: 12px;">
+                                                            {{ strtoupper(mb_substr($p->nama_lengkap, 0, 1)) }}
+                                                        </div>
+                                                    @endif
+                                                    <div style="line-height: 1.2; min-width: 0;">
+                                                        <div class="font-weight-bold text-dark small text-truncate" style="max-width: 155px;"
+                                                            title="{{ $p->nama_lengkap }}{{ $p->gelar ? ', ' . $p->gelar : '' }}">
+                                                            {{ $p->nama_lengkap }}{{ $p->gelar ? ', ' . $p->gelar : '' }}
+                                                        </div>
+                                                        <small class="text-muted d-block text-truncate" style="max-width: 155px;">
+                                                            <span class="font-weight-bold text-secondary">{{ $p->kategori?->nama_kategori ?: '-' }}</span> &bull; {{ $p->nipy }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div class="text-right" style="flex-shrink: 0;">
+                                                    <span class="badge badge-soft-danger font-weight-bold">{{ $p->akumulasi_keterlambatan_menit ?? 0 }} mnt</span>
+                                                    <div class="text-muted" style="font-size: 10px;">{{ $p->total_terlambat }}x telat</div>
+                                                </div>
+                                            </li>
+                                        @empty
+                                            <li class="list-group-item text-center text-muted py-4 small">
+                                                <i class="fa fa-check text-success mr-1"></i> Tidak ada pegawai terlambat pada kategori ini.
+                                            </li>
+                                        @endforelse
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top Alpa / Ketidakhadiran -->
+                        <div class="col-lg-4 mb-3">
+                            <div class="card h-100 border" style="border-radius: 12px; border-color: #e2e8f0 !important;">
+                                <div class="card-header bg-light py-2.5 px-3 border-bottom d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h6 class="font-weight-bold text-danger mb-0" style="font-size: 13.5px;">
+                                            <i class="fa fa-user-slash mr-1"></i> Alpa Terbanyak
+                                        </h6>
+                                        <small class="text-muted">Tidak hadir tanpa keterangan</small>
+                                    </div>
+                                    <span class="badge badge-soft-danger font-weight-bold">{{ $group->label }}</span>
+                                </div>
+                                <div class="card-body p-0">
+                                    <ul class="list-group list-group-flush">
+                                        @forelse ($grpAlpa as $rIdx => $p)
+                                            <li class="list-group-item d-flex align-items-center justify-content-between px-3 py-2">
+                                                <div class="d-flex align-items-center" style="gap: 8px; min-width: 0;">
+                                                    <span class="rank-badge" style="background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca;">
+                                                        {{ $rIdx + 1 }}
+                                                    </span>
+                                                    @if ($p->foto_url)
+                                                        <img src="{{ $p->foto_url }}" alt="Foto"
+                                                            style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15); flex-shrink: 0;">
+                                                    @else
+                                                        <div class="avatar-circle bg-danger text-white font-weight-bold" style="width: 32px; height: 32px; font-size: 12px;">
+                                                            {{ strtoupper(mb_substr($p->nama_lengkap, 0, 1)) }}
+                                                        </div>
+                                                    @endif
+                                                    <div style="line-height: 1.2; min-width: 0;">
+                                                        <div class="font-weight-bold text-dark small text-truncate" style="max-width: 155px;"
+                                                            title="{{ $p->nama_lengkap }}{{ $p->gelar ? ', ' . $p->gelar : '' }}">
+                                                            {{ $p->nama_lengkap }}{{ $p->gelar ? ', ' . $p->gelar : '' }}
+                                                        </div>
+                                                        <small class="text-muted d-block text-truncate" style="max-width: 155px;">
+                                                            <span class="font-weight-bold text-secondary">{{ $p->kategori?->nama_kategori ?: '-' }}</span> &bull; {{ $p->nipy }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div class="text-right" style="flex-shrink: 0;">
+                                                    <span class="badge badge-soft-danger font-weight-bold">{{ $p->total_alpa }} Hari</span>
+                                                    <div class="text-muted" style="font-size: 10px;">Rate: {{ $p->persentase_kehadiran }}%</div>
+                                                </div>
+                                            </li>
+                                        @empty
+                                            <li class="list-group-item text-center text-muted py-4 small">
+                                                <i class="fa fa-check text-success mr-1"></i> Tidak ada catatan alpa pada kategori ini.
+                                            </li>
+                                        @endforelse
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="card-body p-0">
-                    <ul class="list-group list-group-flush">
-                        @forelse ($topAlpa as $p)
-                            <li class="list-group-item d-flex align-items-center justify-content-between px-3 py-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-circle mr-2 bg-danger text-white font-weight-bold" style="width: 32px; height: 32px; font-size: 12px;">
-                                        {{ strtoupper(substr($p->nama_lengkap, 0, 1)) }}
-                                    </div>
-                                    <div style="line-height: 1.2;">
-                                        <div class="font-weight-bold text-dark small text-truncate" style="max-width: 170px;">
-                                            {{ $p->nama_lengkap }}
-                                        </div>
-                                        <small class="text-muted">{{ $p->kategori?->nama_kategori ?: $p->nipy }}</small>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <span class="badge badge-soft-danger font-weight-bold">{{ $p->total_alpa }} Hari</span>
-                                    <div class="text-muted" style="font-size: 10px;">Rate: {{ $p->persentase_kehadiran }}%</div>
-                                </div>
-                            </li>
-                        @empty
-                            <li class="list-group-item text-center text-muted py-4 small">
-                                <i class="fa fa-check text-success mr-1"></i> Tidak ada catatan alpa pada periode ini.
-                            </li>
-                        @endforelse
-                    </ul>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 
@@ -643,15 +785,28 @@
                 </h6>
                 <small class="text-muted">Total kehadiran individual sepanjang periode Tahun Ajaran ini</small>
             </div>
-            <div class="d-flex align-items-center mt-2 mt-sm-0">
-                <div class="input-group input-group-sm mr-2" style="width: 250px;">
+            <div class="d-flex flex-wrap align-items-center mt-2 mt-sm-0" style="gap: 8px;">
+                @if (empty($selectedKategoriId))
+                    <select id="pegawaiKategoriFilter" class="form-control form-control-sm" style="width: 185px; border-radius: 8px;" onchange="filterPegawaiTable()">
+                        <option value="">Semua Kategori ({{ count($rekapPegawai) }})</option>
+                        @foreach ($kategoriList as $kat)
+                            @php
+                                $cnt = $rekapPegawai->where('kepegawaian_master_kategori_id', $kat->id)->count();
+                            @endphp
+                            @if ($cnt > 0)
+                                <option value="{{ $kat->id }}">{{ $kat->nama_kategori }} ({{ $cnt }})</option>
+                            @endif
+                        @endforeach
+                    </select>
+                @endif
+                <div class="input-group input-group-sm" style="width: 240px;">
                     <div class="input-group-prepend">
                         <span class="input-group-text bg-light border-right-0"><i class="fa fa-search text-muted"></i></span>
                     </div>
                     <input type="text" id="pegawaiSearchInput" class="form-control border-left-0"
                         placeholder="Cari Nama / NIPY..." onkeyup="filterPegawaiTable()">
                 </div>
-                <div class="small text-muted">
+                <div class="small text-muted ml-1">
                     Menampilkan <strong id="visiblePegawaiCount">{{ count($rekapPegawai) }}</strong> pegawai
                 </div>
             </div>
@@ -694,15 +849,28 @@
                             $rate = $pegawai->persentase_kehadiran;
                             $rateColor = $rate >= 90 ? '#10b981' : ($rate >= 75 ? '#f59e0b' : '#ef4444');
                         @endphp
-                        <tr class="pegawai-row" data-name="{{ strtolower($pegawai->nama_lengkap) }}" data-nipy="{{ strtolower($pegawai->nipy) }}">
-                            <td class="text-muted font-weight-bold">{{ $idx + 1 }}</td>
+                        <tr class="pegawai-row"
+                            data-name="{{ strtolower($pegawai->nama_lengkap) }}"
+                            data-nipy="{{ strtolower($pegawai->nipy) }}"
+                            data-kategori="{{ $pegawai->kepegawaian_master_kategori_id }}">
+                            <td class="text-muted font-weight-bold row-num">{{ $idx + 1 }}</td>
                             
                             <!-- Profile -->
                             <td class="text-left">
                                 <div class="d-flex align-items-center">
-                                    <div class="avatar-circle mr-2 shadow-sm" style="background: {{ $gradientBg }};">
-                                        {{ $initial }}
-                                    </div>
+                                    @if (!empty($pegawai->foto_url))
+                                        <img src="{{ $pegawai->foto_url }}" alt="{{ $pegawai->nama_lengkap }}"
+                                            class="mr-2 shadow-sm flex-shrink-0"
+                                            style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1.5px solid #e2e8f0;"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+                                        <div class="avatar-circle mr-2 shadow-sm" style="background: {{ $gradientBg }}; display: none;">
+                                            {{ $initial }}
+                                        </div>
+                                    @else
+                                        <div class="avatar-circle mr-2 shadow-sm" style="background: {{ $gradientBg }};">
+                                            {{ $initial }}
+                                        </div>
+                                    @endif
                                     <div style="line-height: 1.25;">
                                         <div class="font-weight-bold text-dark text-truncate" style="max-width: 220px;" title="{{ $pegawai->nama_lengkap }}">
                                             {{ $pegawai->nama_lengkap }}{{ $pegawai->gelar ? ', ' . $pegawai->gelar : '' }}
@@ -824,20 +992,52 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <script>
-    // Live Search Table Pegawai
+    // Switch Top Pegawai / Terlambat / Alpa Berdasarkan Kategori
+    function switchTopKategori(key, btn) {
+        var pills = document.querySelectorAll('.top-kat-pill');
+        pills.forEach(function(pill) {
+            pill.classList.remove('active');
+        });
+        if (btn) {
+            btn.classList.add('active');
+        }
+
+        var blocks = document.querySelectorAll('.top-kategori-block');
+        blocks.forEach(function(block) {
+            var blockKey = block.getAttribute('data-kat-key');
+            if (key === 'grouped') {
+                // Tampilkan seluruh blok kategori (kecuali gabungan 'all') untuk memudahkan perekapan
+                block.style.display = (blockKey !== 'all') ? '' : 'none';
+            } else {
+                block.style.display = (blockKey === String(key)) ? '' : 'none';
+            }
+        });
+    }
+
+    // Live Search & Kategori Filter Table Pegawai
     function filterPegawaiTable() {
         var input = document.getElementById('pegawaiSearchInput');
-        var filter = input.value.toLowerCase().trim();
+        var katSelect = document.getElementById('pegawaiKategoriFilter');
+        var filter = input ? input.value.toLowerCase().trim() : '';
+        var selectedKat = katSelect ? katSelect.value : '';
         var rows = document.querySelectorAll('.pegawai-row');
         var visibleCount = 0;
 
         rows.forEach(function(row) {
             var name = row.getAttribute('data-name') || '';
             var nipy = row.getAttribute('data-nipy') || '';
+            var rowKat = row.getAttribute('data-kategori') || '';
 
-            if (name.indexOf(filter) > -1 || nipy.indexOf(filter) > -1) {
+            var matchSearch = (name.indexOf(filter) > -1 || nipy.indexOf(filter) > -1);
+            var matchKat = (!selectedKat || rowKat === selectedKat);
+
+            if (matchSearch && matchKat) {
                 row.style.display = '';
                 visibleCount++;
+                var numCell = row.querySelector('.row-num');
+                if (numCell) {
+                    numCell.innerText = visibleCount;
+                }
             } else {
                 row.style.display = 'none';
             }

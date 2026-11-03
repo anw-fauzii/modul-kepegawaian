@@ -6,22 +6,12 @@
 
 @section('content')
 <style>
-    /* Modern Card & Styling */
     .filter-card {
         border-radius: 14px;
         border: 1px solid #e2e8f0;
         background: #ffffff;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
     }
-    .table-card {
-        border-radius: 14px;
-        border: 1px solid #e2e8f0;
-        background: #ffffff;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
-        overflow: hidden;
-    }
-    
-    /* Form Filter Controls */
     .form-filter-label {
         font-size: 11px;
         font-weight: 700;
@@ -43,8 +33,6 @@
         border-color: #ea580c;
         box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
     }
-
-    /* Quick Shortcut Pills */
     .quick-pill {
         display: inline-flex;
         align-items: center;
@@ -60,48 +48,14 @@
         margin-right: 6px;
         margin-bottom: 6px;
     }
-    .quick-pill:hover {
-        background-color: #ea580c;
-        color: #ffffff;
-        border-color: #ea580c;
-        text-decoration: none;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(234, 88, 12, 0.2);
-    }
+    .quick-pill:hover,
     .quick-pill.active {
         background-color: #ea580c;
         color: #ffffff;
         border-color: #ea580c;
+        text-decoration: none;
         box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);
     }
-
-    /* Avatar & Pill Badges */
-    .avatar-circle {
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 13px;
-        color: #ffffff;
-        flex-shrink: 0;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-    }
-    .badge-nipy {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-        background-color: #f1f5f9;
-        color: #475569;
-        font-size: 11px;
-        padding: 2px 6px;
-        border-radius: 4px;
-        border: 1px solid #e2e8f0;
-        font-weight: 600;
-        display: inline-block;
-    }
-
-    /* Modern Soft Badges */
     .badge-status {
         display: inline-flex;
         align-items: center;
@@ -111,103 +65,41 @@
         font-weight: 600;
         line-height: 1.2;
     }
-    .badge-soft-success {
-        background-color: #ecfdf5;
-        color: #065f46;
-        border: 1px solid #a7f3d0;
-    }
-    .badge-soft-warning {
-        background-color: #fffbeb;
-        color: #b45309;
-        border: 1px solid #fde68a;
-    }
-    .badge-soft-primary {
-        background-color: #eef2ff;
-        color: #4338ca;
-        border: 1px solid #c7d2fe;
-    }
-    .badge-soft-info {
-        background-color: #f0f9ff;
-        color: #0369a1;
-        border: 1px solid #bae6fd;
-    }
-    .badge-soft-secondary {
-        background-color: #f1f5f9;
-        color: #475569;
-        border: 1px solid #cbd5e1;
-    }
-    .badge-soft-dark {
-        background-color: #faf5ff;
-        color: #6b21a8;
-        border: 1px solid #e9d5ff;
-    }
-    .badge-soft-danger {
-        background-color: #fef2f2;
-        color: #b91c1c;
-        border: 1px solid #fecaca;
-    }
-
-    /* Table Styles */
-    .modern-table {
-        margin-bottom: 0;
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-    }
-    .modern-table thead th {
-        background-color: #f8fafc;
-        color: #334155;
-        font-weight: 700;
-        font-size: 11.5px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        border-top: none;
-        border-bottom: 1px solid #e2e8f0;
-        padding: 12px 10px;
-        vertical-align: middle;
-    }
-    .modern-table tbody tr {
-        transition: background-color 0.15s ease-in-out;
-    }
-    .modern-table tbody tr:hover {
-        background-color: #f8fafc;
-    }
-    .modern-table tbody td {
-        padding: 12px 10px;
-        vertical-align: middle;
-        font-size: 13px;
-        border-bottom: 1px solid #f1f5f9;
-    }
-
-    /* Guidance Box (Empty State Sebelum Memilih Filter) */
+    .badge-soft-success { background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .badge-soft-warning { background-color: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+    .badge-soft-primary { background-color: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
+    .badge-soft-info    { background-color: #f0f9ff; color: #0369a1; border: 1px solid #bae6fd; }
+    .badge-soft-secondary { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+    .badge-soft-dark    { background-color: #faf5ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+    .badge-soft-danger  { background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
     .guidance-box {
         border-radius: 16px;
         border: 1.5px dashed #cbd5e1;
         background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-        padding: 44px 24px;
+        padding: 40px 24px;
         text-align: center;
     }
     .guidance-icon-circle {
-        width: 78px;
-        height: 78px;
+        width: 72px;
+        height: 72px;
         border-radius: 50%;
         background: #fff7ed;
         border: 2px solid #ffedd5;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 18px;
+        margin-bottom: 16px;
         color: #ea580c;
-        font-size: 34px;
+        font-size: 32px;
         box-shadow: 0 6px 16px rgba(234, 88, 12, 0.12);
     }
     .guidance-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
         border-radius: 12px;
-        padding: 20px;
+        padding: 18px;
         text-align: left;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.25s ease;
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -218,27 +110,15 @@
         box-shadow: 0 12px 20px -6px rgba(0, 0, 0, 0.08);
         border-color: #ea580c;
     }
-
-    /* Active Filter Summary Bar */
     .active-filter-bar {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
         border-radius: 10px;
         padding: 10px 16px;
     }
 </style>
 
 @php
-    $bgGradients = [
-        'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-        'linear-gradient(135deg, #10b981 0%, #047857 100%)',
-        'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)',
-        'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
-        'linear-gradient(135deg, #ec4899 0%, #be185d 100%)',
-        'linear-gradient(135deg, #06b6d4 0%, #0e7490 100%)',
-        'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
-    ];
-
     $todayDate = date('Y-m-d');
 @endphp
 
@@ -354,14 +234,15 @@
                         <select name="status" class="form-control form-filter-control">
                             <option value="">Semua Status</option>
                             @foreach ([
-                                'hadir'     => 'Hadir Tepat Waktu',
-                                'terlambat' => 'Terlambat',
-                                'tugas'     => 'Tugas (Dinas Luar)',
-                                'izin'      => 'Izin',
-                                'sakit'     => 'Sakit',
-                                'cuti'      => 'Cuti',
-                                'alpa'      => 'Alpa',
-                                'libur'     => 'Libur'
+                                'hadir'       => 'Hadir Tepat Waktu',
+                                'terlambat'   => 'Terlambat',
+                                'belum_absen' => 'Belum Absen',
+                                'tugas'       => 'Tugas (Dinas Luar)',
+                                'izin'        => 'Izin',
+                                'sakit'       => 'Sakit',
+                                'cuti'        => 'Cuti',
+                                'alpa'        => 'Alpa',
+                                'libur'       => 'Libur'
                             ] as $key => $val)
                                 <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>
                                     {{ $val }}
@@ -415,8 +296,13 @@
                     </span>
 
                     <a href="{{ route('presensi.index', ['tanggal_mulai' => $todayDate, 'tanggal_selesai' => $todayDate]) }}"
-                        class="quick-pill {{ request('tanggal_mulai') == $todayDate && request('tanggal_selesai') == $todayDate && !request('shaum') ? 'active' : '' }}">
+                        class="quick-pill {{ request('tanggal_mulai') == $todayDate && request('tanggal_selesai') == $todayDate && !request('shaum') && !request('status') ? 'active' : '' }}">
                         <i class="fa fa-calendar-day mr-1"></i> Presensi Hari Ini
+                    </a>
+
+                    <a href="{{ route('presensi.index', ['status' => 'belum_absen', 'tanggal_mulai' => $todayDate, 'tanggal_selesai' => $todayDate]) }}"
+                        class="quick-pill {{ request('status') == 'belum_absen' ? 'active' : '' }}">
+                        <i class="fa fa-user-clock mr-1 text-danger"></i> Belum Absen Hari Ini
                     </a>
 
                     <a href="{{ route('presensi.index', ['shaum' => '1', 'tanggal_mulai' => $todayDate, 'tanggal_selesai' => $todayDate]) }}"
@@ -434,11 +320,6 @@
                     <a href="{{ route('presensi.index', ['status' => 'terlambat']) }}"
                         class="quick-pill {{ request('status') == 'terlambat' ? 'active' : '' }}">
                         <i class="fa fa-clock mr-1 text-danger"></i> Khusus Terlambat
-                    </a>
-
-                    <a href="{{ route('presensi.index', ['status' => 'tugas']) }}"
-                        class="quick-pill {{ request('status') == 'tugas' ? 'active' : '' }}">
-                        <i class="fa fa-briefcase mr-1 text-primary"></i> Dinas / Tugas
                     </a>
                 </div>
             </form>
@@ -558,7 +439,7 @@
 
                 @if (request('status'))
                     <span class="badge badge-soft-secondary py-1 px-2 mr-2 mb-1" style="font-size: 11.5px;">
-                        Status: {{ ucfirst(request('status')) }}
+                        Status: {{ request('status') === 'belum_absen' ? 'Belum Absen' : ucfirst(request('status')) }}
                     </span>
                 @endif
 
@@ -576,7 +457,7 @@
             </div>
 
             <div class="small text-muted font-weight-bold my-1">
-                Ditemukan <span class="text-dark font-weight-bold">{{ $presensi->total() }}</span> data presensi
+                Ditemukan <span class="text-dark font-weight-bold">{{ $presensi->count() }}</span> data presensi
                 <a href="{{ route('presensi.index') }}" class="ml-2 text-danger font-weight-bold" style="text-decoration: underline;">
                     <i class="fa fa-times-circle"></i> Bersihkan Filter
                 </a>
@@ -584,234 +465,199 @@
         </div>
 
         <!-- MAIN TABLE CARD -->
-        <div class="table-card card mb-3">
-            <div class="card-body p-0">
+        <div class="main-card card mb-4 shadow-sm border-0" style="border-radius: 12px;">
+            <div class="card-body p-3">
                 <div class="table-responsive">
-                    <table class="modern-table align-middle">
+                    <table class="mb-0 table table-hover table-striped align-middle" id="myTable6" style="width: 100%;">
                         <thead>
-                            <tr>
-                                <th style="width: 4%; text-align: center;">No</th>
-                                <th style="width: 11%;">Tanggal</th>
-                                <th style="width: 21%;">Pegawai</th>
-                                <th style="width: 10%;">Kategori</th>
-                                <th style="width: 10%;">Periode Bulan</th>
-                                <th style="width: 9%;">Jam Masuk</th>
-                                <th style="width: 9%;">Jam Pulang</th>
-                                <th style="width: 8%;">Durasi</th>
-                                <th style="width: 10%;">Status</th>
-                                <th style="width: 9%; text-align: center;">Shaum</th>
-                                <th style="width: 8%; text-align: center;">Aksi</th>
+                            <tr style="background: #f8fafc;">
+                                <th style="width: 5%; text-align: center;">No</th>
+                                <th>Nama Lengkap</th>
+                                <th>Tanggal</th>
+                                <th>Jam Kerja</th>
+                                <th>Status</th>
+                                <th style="width: 60px; text-align: center;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($presensi as $index => $item)
-                                @php
-                                    $namaClean = trim($item->karyawan?->nama_lengkap ?? 'Pegawai');
-                                    $words = explode(' ', $namaClean);
-                                    $initials = strtoupper(substr($words[0] ?? 'P', 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
-                                    $bgGrad = $bgGradients[crc32($namaClean) % count($bgGradients)];
-                                @endphp
+                            @foreach ($presensi as $index => $item)
                                 <tr>
-                                    <td class="text-center font-weight-bold text-muted" style="font-size: 12px;">
-                                        {{ $presensi->firstItem() + $index }}
+                                    <td class="text-center font-weight-bold text-muted row-number">
+                                        {{ $index + 1 }}
                                     </td>
                                     <td>
-                                        <div class="font-weight-bold text-dark" style="font-size: 13px;">
+                                        <div class="d-flex align-items-center" style="gap: 10px;">
+                                            @if ($item->karyawan?->foto_url)
+                                                <img src="{{ $item->karyawan->foto_url }}" alt="Foto"
+                                                    style="width: 38px; height: 38px; object-fit: cover; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.2); flex-shrink: 0;">
+                                            @else
+                                                <span class="d-flex align-items-center justify-content-center text-white font-weight-bold"
+                                                    style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #ea580c, #d97706); font-size: 0.82rem; flex-shrink: 0;">
+                                                    {{ strtoupper(mb_substr($item->karyawan?->nama_lengkap ?? 'P', 0, 1)) }}
+                                                </span>
+                                            @endif
+                                            <div style="min-width: 0;">
+                                                <div class="font-weight-bold text-dark text-truncate" style="font-size: 0.88rem; max-width: 240px;"
+                                                    title="{{ $item->karyawan?->nama_lengkap }}{{ $item->karyawan?->gelar ? ', ' . $item->karyawan->gelar : '' }}">
+                                                    {{ $item->karyawan?->nama_lengkap ?? '-' }}{{ $item->karyawan?->gelar ? ', ' . $item->karyawan->gelar : '' }}
+                                                </div>
+                                                <small class="text-muted d-block text-truncate" style="max-width: 240px;">
+                                                    {{ $item->karyawan_nipy }}
+                                                    @if ($item->karyawan?->unit)
+                                                        &nbsp;|&nbsp; <i class="pe-7s-map-marker text-danger"></i> {{ $item->karyawan->unit }}
+                                                    @endif
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="white-space: nowrap;">
+                                        <div class="font-weight-bold text-dark" style="font-size: 0.84rem;">
                                             {{ $item->tanggal ? $item->tanggal->translatedFormat('d M Y') : '-' }}
                                         </div>
-                                        <div class="small text-muted">
+                                        <small class="text-muted">
                                             {{ $item->tanggal ? $item->tanggal->translatedFormat('l') : '' }}
-                                        </div>
+                                        </small>
                                     </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar-circle mr-2" style="background: {{ $bgGrad }};">
-                                                {{ $initials }}
-                                            </div>
-                                            <div style="min-width: 0;">
-                                                <div class="font-weight-bold text-dark text-truncate" style="font-size: 13.5px;" title="{{ $item->karyawan?->nama_lengkap }}">
-                                                    {{ $item->karyawan?->nama_lengkap ?? '-' }}{{ $item->karyawan?->gelar ? ', ' . $item->karyawan?->gelar : '' }}
-                                                </div>
-                                                <div class="mt-1">
-                                                    <span class="badge-nipy">NIPY: {{ $item->karyawan_nipy }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-light border text-secondary font-weight-bold" style="font-size: 11px; padding: 4px 8px; border-radius: 6px;">
-                                            {{ $item->karyawan?->kategori?->nama_kategori ?? '-' }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        @if ($item->bulan)
-                                            <div class="font-weight-bold text-dark" style="font-size: 12px;">
-                                                {{ $item->bulan->nama_bulan }}
-                                            </div>
-                                            <div class="small text-muted">
-                                                {{ $item->bulan->tahunAjaran?->nama_tahun_ajaran ?? '' }}
-                                            </div>
-                                        @else
-                                            <span class="text-muted small">-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($item->jam_masuk)
-                                            <span class="font-weight-bold text-dark" style="font-size: 13px;">
-                                                {{ substr($item->jam_masuk, 0, 5) }}
+                                    <td style="white-space: nowrap;">
+                                        <div class="d-flex align-items-center" style="gap: 6px;">
+                                            <span class="font-weight-bold text-dark" style="font-size: 0.84rem;">
+                                                {{ $item->jam_masuk ? substr($item->jam_masuk, 0, 5) : '--:--' }} &ndash; {{ $item->jam_pulang ? substr($item->jam_pulang, 0, 5) : '--:--' }}
                                             </span>
-                                            @if ($item->keterlambatan_menit > 0)
-                                                <div class="mt-1">
-                                                    @if ($item->izin_terlambat)
-                                                        <span class="badge badge-soft-info py-0 px-1" style="font-size: 10px;" title="Terlambat dengan izin/dispensasi">
-                                                            +{{ $item->keterlambatan_menit }}m (Izin)
-                                                        </span>
-                                                    @else
-                                                        <span class="badge badge-soft-danger py-0 px-1 font-weight-bold" style="font-size: 10px;">
-                                                            +{{ $item->keterlambatan_menit }}m
-                                                        </span>
-                                                    @endif
-                                                </div>
+                                            @if ($item->durasi_kerja && $item->durasi_kerja !== '-')
+                                                <span class="badge badge-light text-muted font-weight-bold px-1.5 py-0"
+                                                    style="border-radius: 4px; border: 1px solid #e2e8f0; font-size: 0.7rem;">
+                                                    {{ $item->durasi_kerja }}
+                                                </span>
                                             @endif
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($item->jam_pulang)
-                                            <span class="font-weight-bold text-dark" style="font-size: 13px;">
-                                                {{ substr($item->jam_pulang, 0, 5) }}
-                                            </span>
-                                            @if ($item->pulang_cepat_menit > 0)
-                                                <div class="mt-1">
-                                                    @if ($item->izin_pulang_cepat)
-                                                        <span class="badge badge-soft-info py-0 px-1" style="font-size: 10px;" title="Pulang cepat dengan izin">
-                                                            -{{ $item->pulang_cepat_menit }}m (Izin)
-                                                        </span>
-                                                    @else
-                                                        <span class="badge badge-soft-warning py-0 px-1 font-weight-bold" style="font-size: 10px;">
-                                                            -{{ $item->pulang_cepat_menit }}m
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                            @endif
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <span class="text-secondary font-weight-bold" style="font-size: 12px;">
-                                            {{ $item->durasi_kerja }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        @php
-                                            $badgeClass = match ($item->status) {
-                                                'hadir'     => 'badge-soft-success',
-                                                'terlambat' => 'badge-soft-warning',
-                                                'tugas'     => 'badge-soft-primary',
-                                                'izin'      => 'badge-soft-info',
-                                                'sakit'     => 'badge-soft-secondary',
-                                                'cuti'      => 'badge-soft-dark',
-                                                'alpa'      => 'badge-soft-danger',
-                                                'libur'     => 'badge-soft-secondary',
-                                                default     => 'badge-soft-secondary',
-                                            };
-                                            $iconStatus = match ($item->status) {
-                                                'hadir'     => 'fa fa-check-circle',
-                                                'terlambat' => 'fa fa-clock',
-                                                'tugas'     => 'fa fa-briefcase',
-                                                'izin'      => 'fa fa-info-circle',
-                                                'sakit'     => 'fa fa-medkit',
-                                                'cuti'      => 'fa fa-calendar-minus',
-                                                'alpa'      => 'fa fa-times-circle',
-                                                'libur'     => 'fa fa-calendar-times',
-                                                default     => 'fa fa-circle',
-                                            };
-                                        @endphp
-                                        <span class="badge-status {{ $badgeClass }}">
-                                            <i class="{{ $iconStatus }} mr-1"></i>
-                                            {{ ucfirst($item->status) }}
-                                        </span>
-                                        @if ($item->catatan)
-                                            <div class="small text-muted mt-1 text-truncate" style="max-width: 140px;" title="{{ $item->catatan }}">
-                                                <i class="fa fa-comment-alt mr-1"></i> {{ $item->catatan }}
-                                            </div>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <form action="{{ route('presensi.toggle-shaum', $item->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm p-0 border-0 bg-transparent" title="Klik untuk mengubah status shaum/puasa">
-                                                @if ($item->shaum)
-                                                    <span class="badge-status badge-soft-success py-1 px-2 font-weight-bold" style="cursor: pointer; font-size: 11px;">
-                                                        <i class="fa fa-moon mr-1"></i> Shaum
-                                                    </span>
-                                                @else
-                                                    <span class="badge-status badge-soft-secondary py-1 px-2" style="cursor: pointer; opacity: 0.75; font-size: 11px;">
-                                                        <i class="fa fa-utensils mr-1"></i> Tidak
+                                        </div>
+                                        @if ($item->keterlambatan_menit > 0 || $item->pulang_cepat_menit > 0)
+                                            <div class="mt-0.5 d-flex flex-wrap" style="gap: 3px;">
+                                                @if ($item->keterlambatan_menit > 0)
+                                                    <span class="badge {{ $item->izin_terlambat ? 'badge-soft-info' : 'badge-soft-danger font-weight-bold' }} py-0 px-1" style="font-size: 9.5px;">
+                                                        +{{ $item->keterlambatan_menit }}m{{ $item->izin_terlambat ? ' (Izin)' : '' }}
                                                     </span>
                                                 @endif
-                                            </button>
-                                        </form>
+                                                @if ($item->pulang_cepat_menit > 0)
+                                                    <span class="badge {{ $item->izin_pulang_cepat ? 'badge-soft-info' : 'badge-soft-warning font-weight-bold' }} py-0 px-1" style="font-size: 9.5px;">
+                                                        -{{ $item->pulang_cepat_menit }}m{{ $item->izin_pulang_cepat ? ' (Izin)' : '' }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </td>
+                                    <td style="white-space: nowrap;">
+                                        @php
+                                            $badgeClass = match ($item->status) {
+                                                'hadir'       => 'badge-soft-success',
+                                                'terlambat'   => 'badge-soft-warning',
+                                                'belum_absen' => 'badge-soft-danger',
+                                                'tugas'       => 'badge-soft-primary',
+                                                'izin'        => 'badge-soft-info',
+                                                'sakit'       => 'badge-soft-secondary',
+                                                'cuti'        => 'badge-soft-dark',
+                                                'alpa'        => 'badge-soft-danger',
+                                                'libur'       => 'badge-soft-secondary',
+                                                default       => 'badge-soft-secondary',
+                                            };
+                                            $iconStatus = match ($item->status) {
+                                                'hadir'       => 'fa fa-check-circle',
+                                                'terlambat'   => 'fa fa-clock',
+                                                'belum_absen' => 'fa fa-user-clock',
+                                                'tugas'       => 'fa fa-briefcase',
+                                                'izin'        => 'fa fa-info-circle',
+                                                'sakit'       => 'fa fa-medkit',
+                                                'cuti'        => 'fa fa-calendar-minus',
+                                                'alpa'        => 'fa fa-times-circle',
+                                                'libur'       => 'fa fa-calendar-times',
+                                                default       => 'fa fa-circle',
+                                            };
+                                            $labelStatus = $item->status === 'belum_absen' ? 'Belum Absen' : ucfirst($item->status);
+                                        @endphp
+                                        <div class="d-flex align-items-center flex-wrap" style="gap: 4px;">
+                                            <span class="badge-status {{ $badgeClass }}">
+                                                <i class="{{ $iconStatus }} mr-1"></i>
+                                                {{ $labelStatus }}
+                                            </span>
+                                            @if ($item->shaum && $item->id)
+                                                <form action="{{ route('presensi.toggle-shaum', $item->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm p-0 border-0 bg-transparent" title="Klik untuk batalkan shaum">
+                                                        <span class="badge-status badge-soft-success py-1 px-2 font-weight-bold" style="cursor: pointer; font-size: 10.5px;">
+                                                            <i class="fa fa-moon mr-1"></i> Shaum
+                                                        </span>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td class="text-center">
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <a href="{{ route('presensi.edit', $item->id) }}"
-                                                class="btn btn-sm btn-outline-primary shadow-sm mx-1"
-                                                style="border-radius: 6px; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;"
-                                                data-toggle="tooltip" data-placement="top" title="Edit Data Presensi">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
+                                        <div class="action-dropdown">
+                                            <button type="button" class="btn-action-dots" title="Menu Aksi">
+                                                <i class="fa fa-ellipsis-v"></i>
+                                            </button>
+                                            <div class="action-dropdown-menu">
+                                                @if ($item->id)
+                                                    <form action="{{ route('presensi.toggle-shaum', $item->id) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="action-dropdown-item {{ $item->shaum ? 'item-warning' : 'item-success' }}">
+                                                            <span class="action-item-icon">
+                                                                <i class="fa {{ $item->shaum ? 'fa-utensils' : 'fa-moon' }}"></i>
+                                                            </span>
+                                                            <span>{{ $item->shaum ? 'Batalkan Shaum' : 'Tandai Shaum' }}</span>
+                                                        </button>
+                                                    </form>
 
-                                            <form action="{{ route('presensi.destroy', $item->id) }}" method="POST"
-                                                class="delete-form d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data presensi ini?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="btn btn-sm btn-outline-danger shadow-sm mx-1"
-                                                    style="border-radius: 6px; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;"
-                                                    data-toggle="tooltip" data-placement="top" title="Hapus Data Presensi">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </form>
+                                                    <a href="{{ route('presensi.edit', $item->id) }}" class="action-dropdown-item item-edit">
+                                                        <span class="action-item-icon"><i class="fa fa-edit"></i></span>
+                                                        <span>Edit Presensi</span>
+                                                    </a>
+
+                                                    @if ($item->karyawan_nipy)
+                                                        <a href="{{ route('karyawan.show', $item->karyawan_nipy) }}" class="action-dropdown-item item-view">
+                                                            <span class="action-item-icon"><i class="fa fa-user"></i></span>
+                                                            <span>Profil Pegawai</span>
+                                                        </a>
+                                                    @endif
+
+                                                    <div class="action-dropdown-divider"></div>
+
+                                                    <form action="{{ route('presensi.destroy', $item->id) }}" method="POST" class="delete-form">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="button" class="action-dropdown-item item-delete delete-button">
+                                                            <span class="action-item-icon"><i class="fa fa-trash"></i></span>
+                                                            <span>Hapus Presensi</span>
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <a href="{{ route('presensi.create', ['kepegawaian_master_kategori_id' => $item->karyawan?->kepegawaian_master_kategori_id, 'tanggal' => $item->tanggal ? $item->tanggal->format('Y-m-d') : $todayDate]) }}"
+                                                        class="action-dropdown-item item-edit">
+                                                        <span class="action-item-icon"><i class="fa fa-plus-circle"></i></span>
+                                                        <span>Input Presensi</span>
+                                                    </a>
+
+                                                    @if ($item->karyawan_nipy)
+                                                        <a href="{{ route('karyawan.show', $item->karyawan_nipy) }}" class="action-dropdown-item item-view">
+                                                            <span class="action-item-icon"><i class="fa fa-user"></i></span>
+                                                            <span>Profil Pegawai</span>
+                                                        </a>
+                                                    @endif
+                                                @endif
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="11" class="text-center py-5">
-                                        <div class="text-muted mb-2">
-                                            <i class="fa fa-search fa-3x text-secondary opacity-5 mb-3" style="display: block;"></i>
-                                            <h6 class="font-weight-bold text-dark">Data Tidak Ditemukan</h6>
-                                            <p class="small text-muted mb-3">Tidak ada riwayat presensi yang sesuai dengan kriteria filter yang Anda tentukan.</p>
-                                            <a href="{{ route('presensi.index') }}" class="btn btn-sm btn-primary font-weight-bold" style="border-radius: 6px;">
-                                                <i class="fa fa-undo mr-1"></i> Reset Filter
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforelse
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
-
-                <!-- PAGINATION FOOTER -->
-                @if ($presensi->total() > 0)
-                    <div class="d-flex flex-wrap justify-content-between align-items-center p-3 border-top">
-                        <div class="text-muted small mb-2 mb-md-0 font-weight-bold">
-                            Menampilkan <span class="text-dark">{{ $presensi->firstItem() ?? 0 }}</span> - <span class="text-dark">{{ $presensi->lastItem() ?? 0 }}</span> dari total <span class="text-dark font-weight-bold">{{ $presensi->total() }}</span> data
-                        </div>
-                        <div>
-                            {{ $presensi->appends(request()->query())->links() }}
-                        </div>
-                    </div>
-                @endif
             </div>
         </div>
     @endif
 </div>
+@endsection
 
+@section('js')
 <script>
     function handleSyncFingerspot(form) {
         const startInput = document.querySelector('#filterForm input[name="tanggal_mulai"]');
@@ -834,5 +680,20 @@
 
         return confirm(`Tarik dan sinkronkan data presensi dari mesin Fingerspot untuk ${periodeText}?`);
     }
+
+    $(document).ready(function() {
+        if ($('#myTable6').length && $.fn.DataTable.isDataTable('#myTable6')) {
+            var table = $('#myTable6').DataTable();
+            table.settings()[0].oLanguage.sEmptyTable = "Tidak ada data presensi yang sesuai dengan filter.";
+            table.settings()[0].oLanguage.sZeroRecords = "Tidak ditemukan data presensi yang cocok dengan kata kunci pencarian.";
+
+            table.on('order.dt search.dt draw.dt', function() {
+                var pageInfo = table.page.info();
+                table.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function(cell, i) {
+                    cell.innerHTML = pageInfo.start + i + 1;
+                });
+            }).draw();
+        }
+    });
 </script>
 @endsection
