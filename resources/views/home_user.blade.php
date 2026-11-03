@@ -37,6 +37,20 @@
         background: radial-gradient(circle, rgba(234, 88, 12, 0.2) 0%, rgba(234, 88, 12, 0) 70%);
         pointer-events: none;
     }
+    .user-hero-inner {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        width: 100%;
+    }
+    .user-hero-action {
+        flex-shrink: 0;
+        margin-left: auto;
+        text-align: right;
+    }
 
     /* Avatar */
     .user-avatar-box {
@@ -242,6 +256,16 @@
             padding: 18px 16px;
             border-radius: 14px;
         }
+        .user-hero-inner {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 14px;
+        }
+        .user-hero-action {
+            width: 100%;
+            margin-left: 0;
+            text-align: center;
+        }
         .user-avatar-box,
         .user-avatar-initials {
             width: 52px;
@@ -413,59 +437,58 @@
         <div class="user-hero-decor-1"></div>
         <div class="user-hero-decor-2"></div>
 
-        <div class="row align-items-center position-relative" style="z-index: 1;">
-            <div class="col-lg-8 mb-3 mb-lg-0">
-                <div class="d-flex align-items-center">
-                    <!-- Foto / Avatar Inisial -->
-                    <div class="mr-3 mr-sm-4">
-                        @if ($karyawan?->foto_url)
-                            <img src="{{ $karyawan->foto_url }}" alt="Foto Pegawai" class="user-avatar-box">
-                        @else
-                            <div class="user-avatar-initials">
-                                {{ $initials }}
-                            </div>
+        <div class="user-hero-inner">
+            <!-- Sisi Kiri: Avatar, Salam & Identitas Cepat -->
+            <div class="d-flex align-items-center min-w-0">
+                <!-- Foto / Avatar Inisial -->
+                <div class="mr-3 mr-sm-4">
+                    @if ($karyawan?->foto_url)
+                        <img src="{{ $karyawan->foto_url }}" alt="Foto Pegawai" class="user-avatar-box">
+                    @else
+                        <div class="user-avatar-initials">
+                            {{ $initials }}
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Salam & Identitas Cepat -->
+                <div class="min-w-0">
+                    <div class="d-flex align-items-center flex-wrap gap-1.5 mb-1">
+                        <span class="badge-nipy-chip mr-1">
+                            NIPY: {{ $karyawan->nipy ?? Auth::user()->no_induk ?? '-' }}
+                        </span>
+                        @if ($karyawan?->kategori)
+                            <span class="badge px-2 py-0.5 font-weight-bold text-white mr-1"
+                                style="background: rgba(59, 130, 246, 0.9); font-size: 10.5px; border-radius: 6px;">
+                                {{ $karyawan->kategori->nama_kategori }}
+                            </span>
+                        @endif
+                        @if ($karyawan?->status_pegawai)
+                            <span class="badge px-2 py-0.5 font-weight-bold text-white"
+                                style="background: rgba(234, 88, 12, 0.9); font-size: 10.5px; border-radius: 6px;">
+                                {{ $karyawan->status_pegawai }}
+                            </span>
                         @endif
                     </div>
 
-                    <!-- Salam & Identitas Cepat -->
-                    <div class="min-w-0">
-                        <div class="d-flex align-items-center flex-wrap gap-1.5 mb-1">
-                            <span class="badge-nipy-chip mr-1">
-                                NIPY: {{ $karyawan->nipy ?? Auth::user()->no_induk ?? '-' }}
-                            </span>
-                            @if ($karyawan?->kategori)
-                                <span class="badge px-2 py-0.5 font-weight-bold text-white mr-1"
-                                    style="background: rgba(59, 130, 246, 0.9); font-size: 10.5px; border-radius: 6px;">
-                                    {{ $karyawan->kategori->nama_kategori }}
-                                </span>
-                            @endif
-                            @if ($karyawan?->status_pegawai)
-                                <span class="badge px-2 py-0.5 font-weight-bold text-white"
-                                    style="background: rgba(234, 88, 12, 0.9); font-size: 10.5px; border-radius: 6px;">
-                                    {{ $karyawan->status_pegawai }}
-                                </span>
-                            @endif
-                        </div>
+                    <h4 class="font-weight-bold text-white mb-1 text-truncate" style="font-size: calc(1.1rem + 0.3vw);">
+                        {{ $salam }}, {{ $karyawan?->nama_gelar ?? Auth::user()->name }}!
+                    </h4>
 
-                        <h4 class="font-weight-bold text-white mb-1 text-truncate" style="font-size: calc(1.1rem + 0.3vw);">
-                            {{ $salam }}, {{ $karyawan?->nama_gelar ?? Auth::user()->name }}!
-                        </h4>
-
-                        <!-- Meta Baris Jam Kerja Hari Ini -->
-                        <div class="d-flex flex-wrap align-items-center text-white-50 small mt-1">
-                            <span class="mr-3 mb-1 d-inline-flex align-items-center">
-                                <i class="fa fa-business-time text-warning mr-1"></i> Jam Masuk: <strong class="text-white ml-1">{{ $jamMasukNormal }} WIB</strong>
-                            </span>
-                            <span class="mb-1 d-inline-flex align-items-center">
-                                <i class="fa fa-door-open text-success mr-1"></i> Pulang: <strong class="text-white ml-1">{{ $jamPulangNormal }} WIB</strong>
-                            </span>
-                        </div>
+                    <!-- Meta Baris Jam Kerja Hari Ini -->
+                    <div class="d-flex flex-wrap align-items-center text-white-50 small mt-1">
+                        <span class="mr-3 mb-1 d-inline-flex align-items-center">
+                            <i class="fa fa-business-time text-warning mr-1"></i> Jam Masuk: <strong class="text-white ml-1">{{ $jamMasukNormal }} WIB</strong>
+                        </span>
+                        <span class="mb-1 d-inline-flex align-items-center">
+                            <i class="fa fa-door-open text-success mr-1"></i> Pulang: <strong class="text-white ml-1">{{ $jamPulangNormal }} WIB</strong>
+                        </span>
                     </div>
                 </div>
             </div>
 
-            <!-- Tombol Aksi Cepat Scan QR Kegiatan -->
-            <div class="col-lg-4 text-lg-right">
+            <!-- Sisi Kanan: Tombol Aksi Cepat Scan QR Kegiatan -->
+            <div class="user-hero-action">
                 <a href="{{ route('kegiatan.scanner') }}" class="btn font-weight-bold text-white shadow-sm btn-mobile-block"
                     style="background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; border-radius: 10px; padding: 11px 22px; font-size: 13.5px; border: none;">
                     <i class="fa fa-qrcode mr-2"></i> Scan QR Presensi Kegiatan
@@ -597,6 +620,7 @@
                         @if ($hasAbsenToday)
                             <form action="{{ route('presensi.my-shaum.toggle') }}" method="POST" class="d-inline">
                                 @csrf
+                                <input type="hidden" name="karyawan_nipy" value="{{ $karyawan?->nipy }}">
                                 <button type="submit" class="btn btn-sm font-weight-bold shadow-sm btn-mobile-block"
                                     style="border-radius: 8px; padding: 7px 18px; font-size: 12.5px; {{ $myPresensiToday->shaum ? 'background: #ffffff; color: #047857; border: 1.5px solid #10b981;' : 'background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff;' }}"
                                     title="Klik untuk mengubah status shaum Anda hari ini">
@@ -615,7 +639,8 @@
                             </button>
                         @endif
                         <span class="small text-muted mt-1 mt-sm-0">
-                            Total Shaum Bulan Ini: <strong class="text-success">{{ $myShaumDays }} Hari</strong>
+                            Bulan Ini: <strong class="text-success">{{ $myShaumBulanIni ?? $myShaumDays }} Hari</strong>
+                            &bull; Total: <strong class="text-success">{{ $myShaumDays }} Hari</strong>
                         </span>
                     </div>
                 </div>
@@ -706,7 +731,7 @@
             </div>
         </div>
 
-        <!-- KPI 4: Shaum Bulan Ini -->
+        <!-- KPI 4: Shaum Bulan Ini & Total Akumulasi -->
         <div class="col-6 col-lg-3 mb-3">
             <div class="kpi-stat-card">
                 <div>
@@ -721,12 +746,12 @@
                     <div class="kpi-val-title text-warning">{{ $myShaumDays }} <span style="font-size: 13px; font-weight: 500;" class="text-muted">Hari</span></div>
                     <div class="small text-muted mt-2">
                         <span class="badge badge-soft-success font-weight-bold py-0 px-1" style="font-size: 10px;">
-                            <i class="fa fa-heart mr-0.5"></i> Puasa Sunnah
+                            <i class="fa fa-heart mr-0.5"></i> Bulan Ini: {{ $myShaumBulanIni ?? $myShaumDays }} Hari
                         </span>
                     </div>
                 </div>
                 <div class="pt-2 mt-2 border-top small text-warning font-weight-bold text-truncate">
-                    Senin, Kamis, dll
+                    Total Akumulasi Shaum
                 </div>
             </div>
         </div>

@@ -39,4 +39,11 @@ return [
         'api_key' => env('PEGAWAI_API_KEY'),
     ],
 
+    'fingerspot' => [
+        'api_token'     => env('FINGERSPOT_API_TOKEN'),
+        'cloud_ids'     => array_values(array_filter(array_map('trim', explode(',', (string) env('FINGERSPOT_CLOUD_IDS', ''))))),
+        'base_url'      => env('FINGERSPOT_BASE_URL', 'https://developer.fingerspot.io/api'),
+        'max_jam_masuk' => env('FINGERSPOT_MAX_MASUK', '10:00:00'),
+    ],
+
 ];

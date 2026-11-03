@@ -120,6 +120,11 @@ class PresensiService
                     $status = 'hadir';
                 }
 
+                if ($status === 'libur') {
+                    $jamMasuk = null;
+                    $jamPulang = null;
+                }
+
                 $calculated = $this->calculateLateAndEarly(
                     jamKerja: $karyawan->jamKerja,
                     tanggal: $tanggal,
@@ -263,7 +268,11 @@ class PresensiService
      */
     public function updateShaumTodayByNipy(string $nipy, bool $shaum): Presensi
     {
-        $presensi = Presensi::where('karyawan_nipy', $nipy)
+        $nipy = trim($nipy);
+        $presensi = Presensi::where(function ($q) use ($nipy) {
+            $q->where('karyawan_nipy', $nipy)
+                ->orWhere('karyawan_nipy', 'like', $nipy . '-%');
+        })
             ->whereDate('tanggal', Carbon::today())
             ->first();
 
@@ -279,7 +288,11 @@ class PresensiService
      */
     public function toggleShaumTodayByNipy(string $nipy): Presensi
     {
-        $presensi = Presensi::where('karyawan_nipy', $nipy)
+        $nipy = trim($nipy);
+        $presensi = Presensi::where(function ($q) use ($nipy) {
+            $q->where('karyawan_nipy', $nipy)
+                ->orWhere('karyawan_nipy', 'like', $nipy . '-%');
+        })
             ->whereDate('tanggal', Carbon::today())
             ->first();
 
@@ -319,6 +332,7 @@ class PresensiService
                 'presensi as total_cuti' => fn ($q) => $q->where('kepegawaian_master_bulan_id', $bulanId)->where('status', 'cuti'),
                 'presensi as total_tugas' => fn ($q) => $q->where('kepegawaian_master_bulan_id', $bulanId)->where('status', 'tugas'),
                 'presensi as total_alpa' => fn ($q) => $q->where('kepegawaian_master_bulan_id', $bulanId)->where('status', 'alpa'),
+                'presensi as total_libur' => fn ($q) => $q->where('kepegawaian_master_bulan_id', $bulanId)->where('status', 'libur'),
                 'presensi as total_shaum' => fn ($q) => $q->where('kepegawaian_master_bulan_id', $bulanId)->where('shaum', true),
             ])
             ->withSum([
@@ -413,6 +427,10 @@ class PresensiService
             $totalHari = $hadirEfektif + $totalAbsen;
             $rate = $totalHari > 0 ? round(($hadirEfektif / $totalHari) * 100, 1) : 0;
 
+            $persenHadir = $totalHari > 0 ? round(($sumHadir / $totalHari) * 100, 1) : 0;
+            $persenTerlambat = $totalHari > 0 ? round(($sumTerlambat / $totalHari) * 100, 1) : 0;
+            $persenTidakHadir = $totalHari > 0 ? round(($totalAbsen / $totalHari) * 100, 1) : 0;
+
             return (object) [
                 'bulan_id'               => $bulan->id,
                 'nama_bulan'             => $bulan->nama_bulan,
@@ -432,6 +450,9 @@ class PresensiService
                 'hadir_efektif'          => $hadirEfektif,
                 'total_catatan'          => $totalHari,
                 'rate_kehadiran'         => $rate,
+                'persen_hadir'           => $persenHadir,
+                'persen_terlambat'       => $persenTerlambat,
+                'persen_tidak_hadir'     => $persenTidakHadir,
             ];
         });
 
@@ -545,12 +566,12 @@ class PresensiService
             ->take(5)
             ->values();
 
-        // 5. Data Chart (Chart.js) - Hanya Hadir, Terlambat, dan Tidak Hadir
+        // 5. Data Chart (Chart.js) - Persentase Hadir Tepat Waktu, Terlambat, dan Tidak Hadir per Bulan
         $chartData = [
             'labels'     => $breakdownBulanan->pluck('nama_bulan')->toArray(),
-            'hadir'      => $breakdownBulanan->pluck('sum_hadir')->toArray(),
-            'terlambat'  => $breakdownBulanan->pluck('sum_terlambat')->toArray(),
-            'tidakHadir' => $breakdownBulanan->map(fn ($b) => $b->sum_izin + $b->sum_sakit + $b->sum_cuti + $b->sum_alpa)->toArray(),
+            'hadir'      => $breakdownBulanan->pluck('persen_hadir')->toArray(),
+            'terlambat'  => $breakdownBulanan->pluck('persen_terlambat')->toArray(),
+            'tidakHadir' => $breakdownBulanan->pluck('persen_tidak_hadir')->toArray(),
             'donutData'  => [
                 $totalHadir,
                 $totalTerlambat,
@@ -874,6 +895,7 @@ class PresensiService
                 'cuti'        => 0,
                 'tugas'       => 0,
                 'alpa'        => 0,
+                'libur'       => 0,
                 'belum_absen' => 0,
                 'shaum'       => 0,
             ];
@@ -923,6 +945,7 @@ class PresensiService
                 'cuti'               => 0,
                 'tugas'              => 0,
                 'alpa'               => 0,
+                'libur'              => 0,
                 'belum_absen'        => 0,
                 'pulang_cepat'       => 0,
                 'total_hadir_semua'  => 0,
@@ -953,7 +976,9 @@ class PresensiService
                         $totals['total_shaum']++;
                         $columnTotals[$dateStr]['shaum']++;
                     }
-                    $totals['total_tercatat']++;
+                    if ($status !== 'libur') {
+                        $totals['total_tercatat']++;
+                    }
 
                     if (isset($columnTotals[$dateStr][$status])) {
                         $columnTotals[$dateStr][$status]++;
@@ -1196,6 +1221,7 @@ class PresensiService
             'cuti'               => 'c',
             'tugas'              => 't',
             'alpa'               => 'a',
+            'libur'              => 'l',
             default              => '',
         };
     }

@@ -16,9 +16,25 @@
     ];
 @endphp
 <style>
-    .stat-card { border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.02); transition: transform .2s, box-shadow .2s; }
-    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,.05); }
-    .table td, .table th { vertical-align: middle; }
+    .stat-card { border-radius: 14px; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 2px 8px rgba(15, 23, 42, .03); transition: transform .2s, box-shadow .2s; height: 100%; }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(15, 23, 42, .06); }
+    .stat-icon-box { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .table td, .table th { vertical-align: middle !important; }
+    .action-btn-group { display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: nowrap; white-space: nowrap; }
+    .action-btn-group form { display: inline-flex; margin: 0; }
+    .btn-action-icon { width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.82rem; border: 1px solid transparent; transition: all 0.18s ease; cursor: pointer; text-decoration: none !important; padding: 0; flex-shrink: 0; }
+    .btn-action-icon:hover { transform: translateY(-1px); }
+    .btn-action-view { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; }
+    .btn-action-view:hover { background: #0284c7; color: #fff; border-color: #0284c7; }
+    .btn-action-edit { background: #eef2ff; color: #4f46e5; border-color: #c7d2fe; }
+    .btn-action-edit:hover { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+    .btn-action-delete { background: #ffe4e6; color: #e11d48; border-color: #fecdd3; }
+    .btn-action-delete:hover { background: #e11d48; color: #fff; border-color: #e11d48; }
+    .btn-action-locked { background: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; cursor: not-allowed; }
+    @media (max-width: 767.98px) {
+        .filter-actions-wrap { width: 100%; display: flex; gap: 8px; margin-top: 4px; }
+        .filter-actions-wrap .btn { flex: 1; justify-content: center; }
+    }
 
     /* Modal Import Gaji - Self-contained & Reliable */
     .modal-import-backdrop {
@@ -182,27 +198,29 @@
                     </select>
                 </div>
                 <div class="col-lg-2 d-flex justify-content-lg-end">
-                    <button type="submit" class="btn btn-primary mr-2"><i class="fas fa-filter mr-1"></i> Filter</button>
-                    <a href="{{ route('penggajian.index') }}" class="btn btn-outline-secondary"><i class="fas fa-redo mr-1"></i> Reset</a>
+                    <div class="filter-actions-wrap d-flex align-items-center" style="gap: 6px;">
+                        <button type="submit" class="btn btn-primary font-weight-bold" style="white-space: nowrap; border-radius: 8px;"><i class="fas fa-filter mr-1"></i> Filter</button>
+                        <a href="{{ route('penggajian.index') }}" class="btn btn-outline-secondary font-weight-bold" title="Reset Filter" style="white-space: nowrap; border-radius: 8px;"><i class="fas fa-redo"></i></a>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 
     {{-- Tabel --}}
-    <div class="main-card card border-0 shadow-sm mb-4" style="border-radius: 12px;">
-        <div class="card-header bg-white border-bottom font-weight-bold d-flex justify-content-between align-items-center py-3 px-3">
-            <span>
-                Daftar Slip
+    <div class="main-card card border-0 shadow-sm mb-4" style="border-radius: 14px; overflow: hidden;">
+        <div class="card-header bg-white border-bottom font-weight-bold d-flex flex-wrap justify-content-between align-items-center py-3 px-3">
+            <span class="text-dark">
+                <i class="fa fa-file-invoice-dollar text-success mr-2"></i>Daftar Slip
                 @if (!empty($currentJenis))
                     <span class="text-primary font-weight-normal">({{ $jenisList[$currentJenis] ?? '' }})</span>
                 @endif
             </span>
-            <span class="badge badge-primary">{{ $penggajianList->total() }} Data</span>
+            <span class="badge badge-primary px-2.5 py-1" style="border-radius: 999px;">{{ $penggajianList->total() }} Data</span>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover table-striped mb-0">
+                <table class="table table-hover table-striped mb-0 align-middle">
                     <thead class="thead-light">
                         <tr>
                             <th class="text-center" style="width: 50px;">No</th>
@@ -221,7 +239,7 @@
                             <th class="text-right">Potongan</th>
                             <th class="text-right">Gaji Bersih</th>
                             <th class="text-center">Status</th>
-                            <th class="text-center" style="width: 150px;">Aksi</th>
+                            <th class="text-center" style="width: 70px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -229,17 +247,17 @@
                             <tr>
                                 <td class="text-center text-muted font-weight-bold">{{ $penggajianList->firstItem() + $i }}</td>
                                 <td>
-                                    <div class="d-flex align-items-center" style="gap: 10px;">
+                                    <div class="d-flex align-items-center" style="gap: 10px; min-width: 210px;">
                                         @if ($item->karyawan?->foto_url)
-                                            <img src="{{ $item->karyawan->foto_url }}" alt="Foto" style="width: 36px; height: 36px; object-fit: cover; border-radius: 50%;">
+                                            <img src="{{ $item->karyawan->foto_url }}" alt="Foto" style="width: 38px; height: 38px; object-fit: cover; border-radius: 10px; flex-shrink: 0;">
                                         @else
-                                            <span class="d-flex align-items-center justify-content-center text-white font-weight-bold"
-                                                style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,#ea580c,#d97706); font-size: .8rem;">
+                                            <span class="d-inline-flex align-items-center justify-content-center text-white font-weight-bold"
+                                                style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg,#ea580c,#d97706); font-size: .82rem; flex-shrink: 0;">
                                                 {{ strtoupper(mb_substr($item->karyawan?->nama_lengkap ?? '?', 0, 1)) }}
                                             </span>
                                         @endif
                                         <div>
-                                            <div class="font-weight-bold text-dark">{{ $item->karyawan?->nama_lengkap ?? 'Data terhapus' }}</div>
+                                            <div class="font-weight-bold text-dark" style="font-size: 0.88rem;">{{ $item->karyawan?->nama_lengkap ?? 'Data terhapus' }}</div>
                                             <small class="text-muted"><code>{{ $item->karyawan_nipy }}</code> &bull; {{ $item->unit ?: '-' }}</small>
                                         </div>
                                     </div>
@@ -247,19 +265,19 @@
                                 <td>
                                     @if ($item->jenis === 'thr')
                                         <div class="text-center">
-                                            <span class="badge badge-success border font-weight-bold px-2 py-1" style="font-size: .82rem;">
+                                            <span class="badge badge-success border font-weight-bold px-2.5 py-1" style="font-size: .8rem; border-radius: 6px;">
                                                 Tahun {{ $item->tahun_thr }}
                                             </span>
                                         </div>
                                     @elseif ($item->jenis === 'bonus')
                                         <div class="text-center">
-                                            <span class="badge badge-warning border text-dark font-weight-bold px-2 py-1" style="font-size: .82rem;">
+                                            <span class="badge badge-warning border text-dark font-weight-bold px-2.5 py-1" style="font-size: .8rem; border-radius: 6px;">
                                                 TA {{ $item->bulan?->tahunAjaran?->nama_tahun_ajaran ?? date('Y') }}
                                             </span>
                                         </div>
                                     @else
                                         <div class="text-center">
-                                            <span class="badge badge-light border font-weight-bold px-2 py-1" style="font-size: .82rem;">
+                                            <span class="badge badge-light border font-weight-bold px-2.5 py-1" style="font-size: .8rem; border-radius: 6px;">
                                                 {{ $item->bulan?->nama_bulan ?? '-' }}
                                             </span>
                                             @if ($item->bulan?->tahunAjaran)
@@ -269,36 +287,54 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge {{ $item->jenis_badge_class }} px-2 py-1 font-weight-bold">
+                                    <span class="badge {{ $item->jenis_badge_class }} px-2.5 py-1 font-weight-bold" style="border-radius: 6px;">
                                         {{ $item->jenis_short_label }}
                                     </span>
                                 </td>
-                                <td class="text-right text-success">{{ $rp($item->penerimaan) }}</td>
-                                <td class="text-right text-danger">{{ $rp($item->potongan) }}</td>
-                                <td class="text-right font-weight-bold text-dark">{{ $rp($item->gaji_bersih) }}</td>
-                                <td class="text-center"><span class="badge {{ $item->status_badge_class }} px-2 py-1">{{ $item->status_label }}</span></td>
+                                <td class="text-right text-success font-weight-semibold" style="white-space: nowrap;">{{ $rp($item->penerimaan) }}</td>
+                                <td class="text-right text-danger font-weight-semibold" style="white-space: nowrap;">{{ $rp($item->potongan) }}</td>
+                                <td class="text-right font-weight-bold text-dark" style="white-space: nowrap;">{{ $rp($item->gaji_bersih) }}</td>
+                                <td class="text-center"><span class="badge {{ $item->status_badge_class }} px-2.5 py-1" style="border-radius: 6px;">{{ $item->status_label }}</span></td>
                                 <td class="text-center">
-                                    <div class="btn-group" role="group">
-                                        <a href="{{ route('penggajian.show', $item) }}" class="btn btn-sm btn-outline-info" title="Lihat Slip"><i class="fa fa-eye"></i></a>
-                                        @if ($item->status !== 'dibayar')
-                                            <a href="{{ route('penggajian.edit', $item) }}" class="btn btn-sm btn-outline-primary ml-1" title="Edit"><i class="fa fa-pen"></i></a>
-                                            <form action="{{ route('penggajian.destroy', $item) }}" method="POST" class="d-inline ml-1" onsubmit="return confirm('Hapus slip ini?');">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus"><i class="fa fa-trash"></i></button>
-                                            </form>
-                                        @else
-                                            <span class="btn btn-sm btn-light ml-1 disabled" title="Terkunci (sudah dibayar)"><i class="fa fa-lock"></i></span>
-                                        @endif
+                                    <div class="action-dropdown">
+                                        <button type="button" class="btn-action-dots" title="Menu Aksi">
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </button>
+                                        <div class="action-dropdown-menu">
+                                            <a href="{{ route('penggajian.show', $item) }}" class="action-dropdown-item item-view">
+                                                <span class="action-item-icon"><i class="fa fa-eye"></i></span>
+                                                <span>Lihat Slip</span>
+                                            </a>
+                                            @if ($item->status !== 'dibayar')
+                                                <a href="{{ route('penggajian.edit', $item) }}" class="action-dropdown-item item-edit">
+                                                    <span class="action-item-icon"><i class="fa fa-edit"></i></span>
+                                                    <span>Edit Slip</span>
+                                                </a>
+                                                <div class="action-dropdown-divider"></div>
+                                                <form action="{{ route('penggajian.destroy', $item) }}" method="POST" onsubmit="return confirm('Hapus slip ini?');">
+                                                    @csrf @method('DELETE')
+                                                    <button type="submit" class="action-dropdown-item item-delete">
+                                                        <span class="action-item-icon"><i class="fa fa-trash"></i></span>
+                                                        <span>Hapus Slip</span>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <span class="action-dropdown-item item-locked" title="Terkunci (sudah dibayar)">
+                                                    <span class="action-item-icon"><i class="fa fa-lock"></i></span>
+                                                    <span>Terkunci (Dibayar)</span>
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="9" class="text-center py-5 text-muted">
-                                    <i class="fa fa-folder-open fa-3x mb-3 text-secondary"></i>
-                                    <h5 class="font-weight-bold text-dark">Belum ada slip</h5>
+                                    <i class="fa fa-folder-open fa-3x mb-3 text-secondary" style="opacity: 0.45;"></i>
+                                    <h6 class="font-weight-bold text-dark">Belum ada slip pembayaran</h6>
                                     <p class="small mb-3">Tidak ada data yang sesuai kriteria filter.</p>
-                                    <a href="{{ route('penggajian.create', ['jenis' => $currentJenis ?: 'gaji']) }}" class="btn btn-sm btn-primary font-weight-bold">
+                                    <a href="{{ route('penggajian.create', ['jenis' => $currentJenis ?: 'gaji']) }}" class="btn btn-sm btn-primary font-weight-bold" style="border-radius: 8px;">
                                         <i class="fa fa-plus-circle mr-1"></i> Tambah Slip
                                     </a>
                                 </td>
@@ -310,7 +346,7 @@
         </div>
 
         @if ($penggajianList->hasPages())
-            <div class="card-footer bg-white border-top d-flex justify-content-between align-items-center py-2 px-3">
+            <div class="card-footer bg-white border-top d-flex flex-wrap justify-content-between align-items-center py-2.5 px-3 gap-2">
                 <span class="small text-muted">Menampilkan {{ $penggajianList->firstItem() }} - {{ $penggajianList->lastItem() }} dari {{ $penggajianList->total() }} data</span>
                 <div>{{ $penggajianList->links() }}</div>
             </div>

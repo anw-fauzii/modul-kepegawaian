@@ -28,7 +28,7 @@ class PresensiRequest extends FormRequest
             'karyawan_nipy'                => ['required', 'string', Rule::exists('kepegawaian_master_karyawan', 'nipy')],
             'kepegawaian_master_bulan_id'  => ['nullable', Rule::exists('kepegawaian_master_bulan', 'id')],
             'tanggal'                      => ['required', 'date'],
-            'status'                       => ['required', Rule::in(['hadir', 'terlambat', 'izin', 'sakit', 'cuti', 'alpa', 'tugas'])],
+            'status'                       => ['required', Rule::in(['hadir', 'terlambat', 'izin', 'sakit', 'cuti', 'alpa', 'tugas', 'libur'])],
             'jam_masuk'                    => ['nullable', 'date_format:H:i'],
             'jam_pulang'                   => ['nullable', 'date_format:H:i'],
             'izin_terlambat'               => ['boolean'],
@@ -47,7 +47,7 @@ class PresensiRequest extends FormRequest
             'tanggal.required'                     => 'Tanggal presensi wajib diisi.',
             'tanggal.date'                         => 'Format tanggal tidak valid.',
             'status.required'                      => 'Status presensi wajib ditentukan.',
-            'status.in'                            => 'Status presensi harus salah satu dari: Hadir, Terlambat, Izin, Sakit, Cuti, Alpa, atau Tugas.',
+            'status.in'                            => 'Status presensi harus salah satu dari: Hadir, Terlambat, Izin, Sakit, Cuti, Alpa, Tugas, atau Libur.',
             'jam_masuk.date_format'                => 'Format jam masuk harus berupa JJ:MM (contoh: 07:15).',
             'jam_pulang.date_format'               => 'Format jam pulang harus berupa JJ:MM (contoh: 16:00).',
         ];

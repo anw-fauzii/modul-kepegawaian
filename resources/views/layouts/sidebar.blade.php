@@ -50,7 +50,6 @@
                     <div class="sidebar-tooltip">Dashboard Admin</div>
                 </div>
 
-                <!-- Dashboard Pegawai (User) -->
                 <div class="relative group/tooltip">
                     <a href="{{ route('dashboard.user') }}"
                         class="group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('dashboard.user') || request('view') === 'user' ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
@@ -67,7 +66,6 @@
                     <div class="sidebar-tooltip">Dashboard Pegawai</div>
                 </div>
 
-                <!-- Data Master Dropdown -->
                 @php
                     $isDataMasterActive = request()->is('data-master/kategori*', 'data-master/jam-kerja*', 'data-master/bulan*', 'data-master/jenis-cuti*', 'data-master/hari-libur*');
                 @endphp
@@ -88,7 +86,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <!-- Submenu list & flyout popup container -->
+
                     <div id="submenu-data-master"
                         class="{{ $isDataMasterActive ? '' : 'hidden' }} submenu-flyout mt-1 space-y-1 pl-4 border-l border-slate-800 ml-5 py-1">
                         <div class="flyout-header hidden">
@@ -117,7 +115,6 @@
                     </div>
                 </div>
 
-                <!-- Karyawan Dropdown -->
                 @php
                     $isKaryawanActive = request()->is('data-master/karyawan*');
                 @endphp
@@ -138,7 +135,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <!-- Submenu list & flyout popup container -->
+
                     <div id="submenu-karyawan"
                         class="{{ $isKaryawanActive ? '' : 'hidden' }} submenu-flyout mt-1 space-y-1 pl-4 border-l border-slate-800 ml-5 py-1">
                         <div class="flyout-header hidden">
@@ -165,7 +162,6 @@
                     </div>
                 </div>
 
-                <!-- Presensi Dropdown -->
                 @php
                     $isPresensiActive = request()->is('presensi*', 'kegiatan*');
                 @endphp
@@ -179,14 +175,14 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <span class="menu-text">Presensi & Cuti</span>
+                            <span class="menu-text">Presensi</span>
                         </div>
                         <svg class="menu-chevron h-3.5 w-3.5 text-slate-400 transition-transform duration-200 {{ $isPresensiActive ? 'rotate-180' : '' }}"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <!-- Submenu list & flyout popup container -->
+
                     <div id="submenu-presensi"
                         class="{{ $isPresensiActive ? '' : 'hidden' }} submenu-flyout mt-1 space-y-1 pl-4 border-l border-slate-800 ml-5 py-1 max-h-[80vh] overflow-y-auto">
                         <div class="flyout-header hidden">

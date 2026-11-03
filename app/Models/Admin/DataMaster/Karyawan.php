@@ -191,4 +191,9 @@ class Karyawan extends Model
     {
         return $this->hasMany(\App\Models\Admin\Cuti\Cuti::class, 'karyawan_nipy', 'nipy');
     }
+
+    public function riwayatJabatan(): HasMany
+    {
+        return $this->hasMany(RiwayatJabatan::class, 'karyawan_nipy', 'nipy');
+    }
 }

@@ -20,7 +20,7 @@ class PresensiBulkRequest extends FormRequest
             'kepegawaian_master_bulan_id'    => ['nullable', Rule::exists('kepegawaian_master_bulan', 'id')],
             'items'                          => ['required', 'array'],
             'items.*.karyawan_nipy'          => ['required', 'string', Rule::exists('kepegawaian_master_karyawan', 'nipy')],
-            'items.*.status'                 => ['nullable', Rule::in(['hadir', 'terlambat', 'izin', 'sakit', 'cuti', 'alpa', 'tugas'])],
+            'items.*.status'                 => ['nullable', Rule::in(['hadir', 'terlambat', 'izin', 'sakit', 'cuti', 'alpa', 'tugas', 'libur'])],
             'items.*.jam_masuk'              => ['nullable', 'date_format:H:i'],
             'items.*.jam_pulang'             => ['nullable', 'date_format:H:i'],
             'items.*.izin_terlambat'         => ['nullable'],

@@ -71,6 +71,41 @@
         color: #94a3b8 !important;
     }
 
+    /* Tombol Klik Tanggal pada Header Tabel Matriks */
+    .btn-matrix-date {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 4px 3px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        background-color: #ffffff;
+        color: inherit;
+        text-decoration: none !important;
+        transition: all 0.18s ease;
+        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+    .col-today .btn-matrix-date {
+        background-color: #dbeafe;
+        border-color: #93c5fd;
+        color: #1d4ed8;
+    }
+    .col-weekend .btn-matrix-date {
+        background-color: #f8fafc;
+        border-color: #e2e8f0;
+        color: #94a3b8;
+    }
+    .btn-matrix-date:hover {
+        background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important;
+        color: #ffffff !important;
+        border-color: #ea580c !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(234, 88, 12, 0.25);
+    }
+
     /* Sticky Columns (Kolom No & Nama Pegawai Freeze di Kiri) */
     .sticky-col-no {
         position: sticky;
@@ -171,6 +206,18 @@
         height: 22px;
         border-radius: 4px;
         background-color: #0284c7 !important;
+        color: #ffffff !important;
+        font-weight: 700;
+        font-size: 12px;
+        text-transform: lowercase;
+    }
+
+    /* Libur (Kotak Abu/Ungu Lembut) */
+    .symbol-libur {
+        width: 22px;
+        height: 22px;
+        border-radius: 4px;
+        background-color: #64748b !important;
         color: #ffffff !important;
         font-weight: 700;
         font-size: 12px;
@@ -297,7 +344,10 @@
                     </a>
                 </div>
 
-                <a href="{{ route('presensi.create') }}" class="btn text-white shadow-sm font-weight-bold"
+                <a href="{{ route('presensi.create', array_filter([
+                    'kepegawaian_master_bulan_id'    => $selectedBulanId,
+                    'kepegawaian_master_kategori_id' => $selectedKategoriId,
+                ])) }}" class="btn text-white shadow-sm font-weight-bold"
                     style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px; border: none; font-size: 13px;">
                     <i class="fa fa-plus-circle mr-1"></i> Input Presensi
                 </a>
@@ -511,6 +561,10 @@
                         <span class="text-dark font-weight-bold">Tugas Luar</span>
                     </span>
                     <span class="d-inline-flex align-items-center" style="gap: 5px;">
+                        <span class="matrix-symbol symbol-libur">l</span>
+                        <span class="text-dark font-weight-bold">Libur (Tidak Dihitung %)</span>
+                    </span>
+                    <span class="d-inline-flex align-items-center" style="gap: 5px;">
                         <span class="symbol-belum-absen">-</span>
                         <span class="text-danger font-weight-bold">Belum Absen (Hari Kerja)</span>
                     </span>
@@ -560,9 +614,19 @@
                     <th class="sticky-col-name" rowspan="2">Nama Pegawai</th>
                     @foreach ($daftarTanggal as $tgl)
                         <th class="{{ $tgl['is_today'] ? 'col-today' : ($tgl['is_weekend'] ? 'col-weekend' : '') }}"
-                            style="min-width: 32px; width: 34px;">
-                            <div style="font-size: 9.5px; opacity: 0.85;">{{ $tgl['day_short'] }}</div>
-                            <div style="font-size: 11px; font-weight: 700;">{{ $tgl['formatted'] }}</div>
+                            style="min-width: 36px; width: 38px; padding: 4px 2px;">
+                            <a href="{{ route('presensi.create', array_filter([
+                                'tanggal'                        => $tgl['date_string'],
+                                'kepegawaian_master_bulan_id'    => $selectedBulanId,
+                                'kepegawaian_master_kategori_id' => $selectedKategoriId,
+                            ])) }}"
+                                class="btn-matrix-date"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Klik untuk input presensi {{ $tgl['day_name'] }}, {{ $tgl['date']->format('d/m/Y') }}">
+                                <span style="font-size: 9.5px; opacity: 0.85; line-height: 1.1;">{{ $tgl['day_short'] }}</span>
+                                <span style="font-size: 11px; font-weight: 700; line-height: 1.2;">{{ $tgl['formatted'] }}</span>
+                            </a>
                         </th>
                     @endforeach
                     <!-- Kolom Rekap Akumulasi di Ujung Kanan -->
@@ -609,12 +673,6 @@
                                         @endif
                                         {{ $karyawan->nama_lengkap }}{{ $karyawan->gelar ? ', ' . $karyawan->gelar : '' }}
                                     </span>
-                                    <div class="text-muted" style="font-size: 10px; font-family: monospace;">
-                                        {{ $karyawan->nipy }}
-                                        @if ($karyawan->unit)
-                                            &bull; {{ $karyawan->unit }}
-                                        @endif
-                                    </div>
                                 </div>
                                 @if (! $isActive)
                                     <span class="badge badge-danger px-1 py-0" style="font-size: 9px;" title="Akun Non-Aktif">OFF</span>
@@ -650,6 +708,12 @@
                                         data-toggle="tooltip" data-placement="top"
                                         title="{{ $karyawan->nama_lengkap }} ({{ $tgl['formatted'] }}): Tugas Luar {{ $rec['catatan'] ? '- ' . $rec['catatan'] : '' }}">
                                         t
+                                    </span>
+                                @elseif ($status === 'libur')
+                                    <span class="matrix-symbol symbol-libur"
+                                        data-toggle="tooltip" data-placement="top"
+                                        title="{{ $karyawan->nama_lengkap }} ({{ $tgl['formatted'] }}): Libur {{ $rec['catatan'] ? '- ' . $rec['catatan'] : '' }}">
+                                        l
                                     </span>
                                 @elseif ($status === 'belum_absen')
                                     <span class="symbol-belum-absen"

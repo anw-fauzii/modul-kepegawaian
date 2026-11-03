@@ -91,6 +91,9 @@
                         <button type="button" class="btn btn-outline-success" onclick="setAllHadir()">
                             <i class="fa fa-check-double mr-1"></i> Set Semua Hadir
                         </button>
+                        <button type="button" class="btn btn-outline-info" onclick="setAllLibur()">
+                            <i class="fa fa-calendar-times mr-1"></i> Set Semua Libur
+                        </button>
                         <button type="button" class="btn btn-outline-secondary" onclick="resetAll()">
                             <i class="fa fa-undo mr-1"></i> Kosongkan Semua
                         </button>
@@ -154,6 +157,7 @@
                                                     <option value="sakit" {{ $defaultStatus == 'sakit' ? 'selected' : '' }}>Sakit</option>
                                                     <option value="cuti" {{ $defaultStatus == 'cuti' ? 'selected' : '' }}>Cuti</option>
                                                     <option value="alpa" {{ $defaultStatus == 'alpa' ? 'selected' : '' }}>Alpa</option>
+                                                    <option value="libur" {{ $defaultStatus == 'libur' ? 'selected' : '' }}>Libur</option>
                                                 </select>
                                             </td>
                                             <td>
@@ -249,6 +253,18 @@
                 if (jamInput && !jamInput.value) {
                     jamInput.value = defaultJam;
                 }
+            });
+        }
+
+        function setAllLibur() {
+            document.querySelectorAll('.status-select').forEach(function(select) {
+                select.value = 'libur';
+            });
+            document.querySelectorAll('.jam-masuk-input').forEach(function(input) {
+                input.value = '';
+            });
+            document.querySelectorAll('.jam-pulang-input').forEach(function(input) {
+                input.value = '';
             });
         }
 

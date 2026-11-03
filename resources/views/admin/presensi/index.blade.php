@@ -259,7 +259,15 @@
                 </div>
             </div>
 
-            <div class="page-title-actions">
+            <div class="page-title-actions d-flex align-items-center">
+                <form action="{{ route('presensi.sync-fingerspot') }}" method="POST" class="mr-2" id="syncFingerspotForm" onsubmit="return handleSyncFingerspot(this);">
+                    @csrf
+                    <input type="hidden" name="tanggal_mulai" value="{{ request('tanggal_mulai') }}">
+                    <input type="hidden" name="tanggal_selesai" value="{{ request('tanggal_selesai') }}">
+                    <button type="submit" class="btn btn-outline-primary shadow-sm font-weight-bold" style="border-radius: 8px;">
+                        <i class="fa fa-sync-alt mr-1"></i> Tarik Fingerspot
+                    </button>
+                </form>
                 <a href="{{ route('presensi.create') }}" class="btn text-white shadow-sm font-weight-bold"
                     style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px;">
                     <i class="fa fa-plus-circle mr-1"></i> Input Presensi
@@ -267,6 +275,23 @@
             </div>
         </div>
     </div>
+
+    @if (session('sukses'))
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 10px;">
+            <i class="fa fa-check-circle mr-1.5"></i> {{ session('sukses') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 10px;">
+            <i class="fa fa-exclamation-triangle mr-1.5"></i> {{ session('error') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
 
     <!-- FILTER CARD (Form & Quick Shortcuts) -->
     <div class="filter-card card mb-4">
@@ -335,7 +360,8 @@
                                 'izin'      => 'Izin',
                                 'sakit'     => 'Sakit',
                                 'cuti'      => 'Cuti',
-                                'alpa'      => 'Alpa'
+                                'alpa'      => 'Alpa',
+                                'libur'     => 'Libur'
                             ] as $key => $val)
                                 <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>
                                     {{ $val }}
@@ -688,6 +714,7 @@
                                                 'sakit'     => 'badge-soft-secondary',
                                                 'cuti'      => 'badge-soft-dark',
                                                 'alpa'      => 'badge-soft-danger',
+                                                'libur'     => 'badge-soft-secondary',
                                                 default     => 'badge-soft-secondary',
                                             };
                                             $iconStatus = match ($item->status) {
@@ -698,6 +725,7 @@
                                                 'sakit'     => 'fa fa-medkit',
                                                 'cuti'      => 'fa fa-calendar-minus',
                                                 'alpa'      => 'fa fa-times-circle',
+                                                'libur'     => 'fa fa-calendar-times',
                                                 default     => 'fa fa-circle',
                                             };
                                         @endphp
@@ -783,4 +811,28 @@
         </div>
     @endif
 </div>
+
+<script>
+    function handleSyncFingerspot(form) {
+        const startInput = document.querySelector('#filterForm input[name="tanggal_mulai"]');
+        const endInput = document.querySelector('#filterForm input[name="tanggal_selesai"]');
+
+        const startVal = startInput ? startInput.value : '';
+        const endVal = endInput ? endInput.value : '';
+
+        form.querySelector('input[name="tanggal_mulai"]').value = startVal;
+        form.querySelector('input[name="tanggal_selesai"]').value = endVal;
+
+        let periodeText = 'hari ini';
+        if (startVal && endVal) {
+            periodeText = startVal === endVal ? `tanggal ${startVal}` : `periode ${startVal} s/d ${endVal}`;
+        } else if (startVal) {
+            periodeText = `tanggal ${startVal}`;
+        } else if (endVal) {
+            periodeText = `tanggal ${endVal}`;
+        }
+
+        return confirm(`Tarik dan sinkronkan data presensi dari mesin Fingerspot untuk ${periodeText}?`);
+    }
+</script>
 @endsection

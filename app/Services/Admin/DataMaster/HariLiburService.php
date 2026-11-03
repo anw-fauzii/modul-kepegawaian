@@ -24,7 +24,7 @@ class HariLiburService
     }
 
     public function update(HariLibur $hariLibur, array $data): bool
-
+    {
         return $hariLibur->update($data);
     }
 

@@ -356,9 +356,9 @@
                 <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between border-bottom">
                     <div>
                         <h6 class="font-weight-bold text-dark mb-0">
-                            <i class="fa fa-chart-line text-primary mr-2"></i> Tren Kehadiran per Master Bulan
+                            <i class="fa fa-chart-line text-primary mr-2"></i> Tren Kehadiran per Master Bulan (%)
                         </h6>
-                        <small class="text-muted">Perbandingan kehadiran tepat waktu, tugas dinas, terlambat, dan ketidakhadiran</small>
+                        <small class="text-muted">Perbandingan persentase kehadiran tepat waktu, terlambat, dan tidak hadir</small>
                     </div>
                 </div>
                 <div class="card-body">
@@ -866,21 +866,21 @@
                     labels: chartLabels,
                     datasets: [
                         {
-                            label: 'Hadir Tepat Waktu',
+                            label: 'Hadir Tepat Waktu (%)',
                             data: hadirData,
                             backgroundColor: '#10b981',
                             borderRadius: 6,
                             stack: 'kehadiran'
                         },
                         {
-                            label: 'Terlambat',
+                            label: 'Terlambat (%)',
                             data: terlambatData,
                             backgroundColor: '#f59e0b',
                             borderRadius: 6,
                             stack: 'kehadiran'
                         },
                         {
-                            label: 'Tidak Hadir (Izin/Sakit/Cuti/Alpa)',
+                            label: 'Tidak Hadir (Izin/Sakit/Cuti/Alpa) (%)',
                             data: tidakHadirData,
                             backgroundColor: '#ef4444',
                             borderRadius: 6,
@@ -901,18 +901,33 @@
                         },
                         tooltip: {
                             padding: 10,
-                            boxPadding: 4
+                            boxPadding: 4,
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.dataset.label ? context.dataset.label.replace(' (%)', '') : '';
+                                    var value = context.parsed.y !== null ? context.parsed.y : 0;
+                                    return label + ': ' + value + '%';
+                                }
+                            }
                         }
                     },
                     scales: {
                         x: {
+                            stacked: true,
                             grid: { display: false },
                             ticks: { font: { size: 11 } }
                         },
                         y: {
+                            stacked: true,
                             beginAtZero: true,
+                            max: 100,
                             grid: { color: '#f1f5f9' },
-                            ticks: { font: { size: 11 } }
+                            ticks: {
+                                font: { size: 11 },
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
                         }
                     }
                 }

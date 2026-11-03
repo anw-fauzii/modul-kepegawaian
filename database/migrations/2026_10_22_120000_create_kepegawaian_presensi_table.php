@@ -37,7 +37,7 @@ return new class extends Migration
             $table->time('jam_masuk')->nullable();
             $table->time('jam_pulang')->nullable();
 
-            $table->enum('status', ['hadir', 'terlambat', 'izin', 'sakit', 'cuti', 'alpa', 'tugas'])
+            $table->enum('status', ['hadir', 'terlambat', 'izin', 'sakit', 'cuti', 'alpa', 'tugas', 'libur'])
                 ->default('hadir');
 
             // Kalkulasi keterlambatan & izin dispensasi

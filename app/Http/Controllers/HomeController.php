@@ -75,7 +75,7 @@ class HomeController extends Controller
         $todayAlpa = $todayPresensi->where('status', 'alpa')->count();
         $todayShaum = $todayPresensi->where('shaum', true)->count();
 
-        $todayTotalTercatat = $todayPresensi->count();
+        $todayTotalTercatat = $todayPresensi->where('status', '!=', 'libur')->count();
         $todayTotalHadirSemua = $todayHadir + $todayTerlambat;
         $todayTingkatKehadiran = $todayTotalTercatat > 0
             ? round(($todayTotalHadirSemua / $todayTotalTercatat) * 100, 1)
@@ -145,7 +145,7 @@ class HomeController extends Controller
             ->get();
 
         // 5. MASTER OPERASIONAL
-        $activeBulan = Bulan::with('tahunAjaran')->where('status', true)->first();
+        $activeBulan = Bulan::with('tahunAjaran')->where('status', true)->orderByDesc('id')->first();
         $activeTahunAjaran = TahunAjaran::where('is_active', true)->first();
         $jamKerjaList = JamKerja::all();
 
@@ -209,14 +209,15 @@ class HomeController extends Controller
     public function userDashboard(Request $request): Renderable
     {
         $user = auth()->user();
-        $userNipy = $user?->no_induk ?? $user?->karyawan?->nipy;
+        $userNipy = trim((string) ($user?->no_induk ?? $user?->karyawan?->nipy ?? ''));
 
         $karyawan = null;
         $isPreview = false;
 
-        if ($userNipy) {
+        if ($userNipy !== '') {
             $karyawan = Karyawan::with(['kategori', 'jamKerja', 'user'])
                 ->where('nipy', $userNipy)
+                ->orWhere('nipy', 'like', $userNipy . '-%')
                 ->first();
         }
 
@@ -227,19 +228,39 @@ class HomeController extends Controller
         }
 
         $today = Carbon::today()->format('Y-m-d');
-        $activeBulan = Bulan::with('tahunAjaran')->where('status', true)->first();
         $activeTahunAjaran = TahunAjaran::where('is_active', true)->first();
 
         // 1. Presensi Hari Ini
         $myPresensiToday = null;
-        if ($karyawan && ! $isPreview) {
+        if ($karyawan) {
             $myPresensiToday = Presensi::where('karyawan_nipy', $karyawan->nipy)
                 ->whereDate('tanggal', $today)
                 ->first();
         }
 
+        // Resolusi Bulan Aktif berdasarkan presensi hari ini / periode berjalan / presensi terakhir pegawai
+        $presensiService = app(\App\Services\Admin\Presensi\PresensiService::class);
+        $determinedBulanId = $presensiService->determineBulanId($today);
+
+        $targetBulanId = $myPresensiToday?->kepegawaian_master_bulan_id
+            ?? ($determinedBulanId && $karyawan && Presensi::where('karyawan_nipy', $karyawan->nipy)->where('kepegawaian_master_bulan_id', $determinedBulanId)->exists()
+                ? $determinedBulanId
+                : null)
+            ?? ($karyawan
+                ? Presensi::where('karyawan_nipy', $karyawan->nipy)
+                    ->whereNotNull('kepegawaian_master_bulan_id')
+                    ->latest('tanggal')
+                    ->value('kepegawaian_master_bulan_id')
+                : null)
+            ?? $determinedBulanId;
+
+        $activeBulan = $targetBulanId
+            ? Bulan::with('tahunAjaran')->find($targetBulanId)
+            : Bulan::with('tahunAjaran')->where('status', true)->orderByDesc('id')->first();
+
         // Syarat konfirmasi shaum: Pegawai harus SUDAH melakukan presensi harian
-        $hasAbsenToday = ($myPresensiToday !== null && (!empty($myPresensiToday->jam_masuk) || in_array($myPresensiToday->status, ['hadir', 'terlambat', 'tugas']))) && ! $isPreview;
+        $hasAbsenToday = $myPresensiToday !== null
+            && (! empty($myPresensiToday->jam_masuk) || in_array($myPresensiToday->status, ['hadir', 'terlambat', 'tugas']));
 
         $todayShaumCount = Presensi::whereDate('tanggal', $today)->where('shaum', true)->count();
 
@@ -257,10 +278,14 @@ class HomeController extends Controller
             $jamToleransi = '07:15';
         }
 
-        // 3. Statistik Presensi Pribadi Bulan Ini
+        // 3. Statistik Presensi Pribadi Bulan Ini & Akumulasi Shaum
         $myPresensiMonthQuery = Presensi::where('karyawan_nipy', $karyawan?->nipy);
         if ($activeBulan) {
-            $myPresensiMonthQuery->where('kepegawaian_master_bulan_id', $activeBulan->id);
+            [$periodeStart, $periodeEnd] = $presensiService->getPeriodeTanggalBulan($activeBulan);
+            $myPresensiMonthQuery->where(function ($q) use ($activeBulan, $periodeStart, $periodeEnd) {
+                $q->where('kepegawaian_master_bulan_id', $activeBulan->id)
+                    ->orWhereBetween('tanggal', [$periodeStart->toDateString(), $periodeEnd->toDateString()]);
+            });
         } else {
             $myPresensiMonthQuery->whereMonth('tanggal', Carbon::today()->month)
                 ->whereYear('tanggal', Carbon::today()->year);
@@ -276,10 +301,15 @@ class HomeController extends Controller
         $mySakit = $myMonthlyRecords->where('status', 'sakit')->count();
         $myCuti = $myMonthlyRecords->where('status', 'cuti')->count();
         $myAlpa = $myMonthlyRecords->where('status', 'alpa')->count();
-        $myShaumDays = $myMonthlyRecords->where('shaum', true)->count();
+
+        $myShaumBulanIni = $myMonthlyRecords->filter(fn ($r) => (bool) $r->shaum)->count();
+        $myTotalShaum = $karyawan
+            ? Presensi::where('karyawan_nipy', $karyawan->nipy)->where('shaum', true)->count()
+            : 0;
+        $myShaumDays = max($myShaumBulanIni, $myTotalShaum);
 
         $totalMasuk = $myHadir + $myTerlambat + $myTugas;
-        $totalTercatat = $myMonthlyRecords->count();
+        $totalTercatat = $myMonthlyRecords->where('status', '!=', 'libur')->count();
         $myAttendanceRate = $totalTercatat > 0 ? round(($totalMasuk / $totalTercatat) * 100, 1) : 100;
 
         // 4. Log Riwayat Presensi 7 Hari Terakhir
@@ -338,6 +368,8 @@ class HomeController extends Controller
             'myCuti',
             'myAlpa',
             'myShaumDays',
+            'myShaumBulanIni',
+            'myTotalShaum',
             'totalMasuk',
             'totalTercatat',
             'myAttendanceRate',

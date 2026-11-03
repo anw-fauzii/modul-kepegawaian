@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -14,9 +13,15 @@ Route::get('/sso/authuser', [SSOController::class, 'connectUser'])->name('sso.au
 
 Auth::routes();
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/data-master/karyawan/{karyawan}/foto', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'foto'])->name('karyawan.foto');
+});
+
 Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class,'index'])->name('home');
     Route::get('/dashboard/user', [App\Http\Controllers\HomeController::class, 'userDashboard'])->name('dashboard.user');
+    Route::get('/profil', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profil/password', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::resource('/data-master/kategori', App\Http\Controllers\Admin\DataMaster\KategoriController::class);      
     Route::resource('/data-master/jam-kerja', App\Http\Controllers\Admin\DataMaster\JamKerjaController::class);
     Route::resource('/data-master/bulan', App\Http\Controllers\Admin\DataMaster\BulanController::class);
@@ -27,7 +32,8 @@ Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     Route::get('/data-master/karyawan/export', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'export'])->name('karyawan.export');
     Route::post('/data-master/karyawan/import', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'import'])->name('karyawan.import');
     Route::get('/data-master/karyawan/unit/{unit}', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'byUnit'])->name('karyawan.unit');
-    Route::get('/data-master/karyawan/{karyawan}/foto', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'foto'])->name('karyawan.foto');
+    Route::post('/data-master/karyawan/{karyawan}/riwayat-jabatan', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'storeRiwayatJabatan'])->name('karyawan.riwayat-jabatan.store');
+    Route::delete('/data-master/karyawan/{karyawan}/riwayat-jabatan/{riwayatJabatan}', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'destroyRiwayatJabatan'])->name('karyawan.riwayat-jabatan.destroy');
     Route::resource('/data-master/karyawan', App\Http\Controllers\Admin\DataMaster\KaryawanController::class);
 
     // Modul Presensi Karyawan
@@ -36,6 +42,7 @@ Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     Route::get('/presensi/matriks/pdf', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'matriksPdf'])->name('presensi.matriks.pdf');
     Route::get('/presensi/matriks', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'matriks'])->name('presensi.matriks');
     Route::post('/presensi/bulk', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'storeBulk'])->name('presensi.store-bulk');
+    Route::post('/presensi/sync-fingerspot', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'syncFingerspot'])->name('presensi.sync-fingerspot');
     Route::patch('/presensi/my-shaum', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'updateMyShaum'])->name('presensi.my-shaum');
     Route::post('/presensi/my-shaum/toggle', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'toggleMyShaum'])->name('presensi.my-shaum.toggle');
     Route::patch('/presensi/{presensi}/shaum', [App\Http\Controllers\Admin\Presensi\PresensiController::class, 'updateShaum'])->name('presensi.update-shaum');

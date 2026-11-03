@@ -67,7 +67,8 @@
                 'izin'      => 'Izin',
                 'sakit'     => 'Sakit',
                 'cuti'      => 'Cuti',
-                'alpa'      => 'Alpa'
+                'alpa'      => 'Alpa',
+                'libur'     => 'Libur'
             ] as $key => $label)
                 <option value="{{ $key }}"
                     {{ old('status', $presensi->status ?? 'hadir') == $key ? 'selected' : '' }}>

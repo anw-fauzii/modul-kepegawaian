@@ -224,9 +224,9 @@ class PresensiController extends Controller
      */
     public function updateMyShaum(PresensiShaumRequest $request): JsonResponse|RedirectResponse
     {
-        $nipy = auth()->user()?->no_induk ?? auth()->user()?->karyawan?->nipy;
+        $nipy = trim((string) (auth()->user()?->no_induk ?? auth()->user()?->karyawan?->nipy ?? $request->input('karyawan_nipy', '')));
 
-        if (! $nipy) {
+        if ($nipy === '') {
             $msg = 'Akun Anda tidak terhubung dengan data NIPY pegawai manapun.';
             if ($request->wantsJson()) {
                 return response()->json(['success' => false, 'message' => $msg], 404);
@@ -264,9 +264,9 @@ class PresensiController extends Controller
      */
     public function toggleMyShaum(Request $request): JsonResponse|RedirectResponse
     {
-        $nipy = auth()->user()?->no_induk ?? auth()->user()?->karyawan?->nipy;
+        $nipy = trim((string) (auth()->user()?->no_induk ?? auth()->user()?->karyawan?->nipy ?? $request->input('karyawan_nipy', '')));
 
-        if (! $nipy) {
+        if ($nipy === '') {
             $msg = 'Akun Anda tidak terhubung dengan data NIPY pegawai manapun.';
             if ($request->wantsJson()) {
                 return response()->json(['success' => false, 'message' => $msg], 404);
@@ -392,5 +392,30 @@ class PresensiController extends Controller
             'selectedTahunAjaranId' => $selectedTahunAjaranId,
             'selectedKategoriId'    => $selectedKategoriId,
         ]));
+    }
+
+    /**
+     * Sinkronisasi data presensi secara manual dari mesin Fingerspot Cloud API.
+     */
+    public function syncFingerspot(Request $request, \App\Services\Fingerspot\FingerspotService $fingerspotService): RedirectResponse|JsonResponse
+    {
+        $startDate = $request->input('tanggal_mulai');
+        $endDate   = $request->input('tanggal_selesai');
+
+        $result = $fingerspotService->syncManual($startDate, $endDate);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json($result);
+        }
+
+        $today = date('Y-m-d');
+        $redirectParams = [
+            'tanggal_mulai'   => $startDate ?: ($endDate ?: $today),
+            'tanggal_selesai' => $endDate ?: ($startDate ?: $today),
+        ];
+
+        return redirect()->route('presensi.index', $redirectParams)
+            ->with('success', $result['message'])
+            ->with('sukses', $result['message']);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services\Admin\DataMaster;
 
 use App\Models\Admin\DataMaster\Karyawan;
 use App\Models\Admin\DataMaster\Kategori;
+use App\Models\Admin\DataMaster\RiwayatJabatan;
 use App\Models\User;
 use App\View\Composers\SidebarComposer;
 use Illuminate\Database\Eloquent\Collection;
@@ -54,7 +55,22 @@ class KaryawanService
                 'password' => "Password",
             ]);
 
-            return Karyawan::create(array_merge($data, ['nipy' => $user->no_induk]));
+            $created = Karyawan::create(array_merge($data, ['nipy' => $user->no_induk]));
+
+            if (! empty($created->jabatan)) {
+                RiwayatJabatan::create([
+                    'karyawan_nipy'                  => $created->nipy,
+                    'kepegawaian_master_kategori_id' => $created->kepegawaian_master_kategori_id,
+                    'jabatan'                        => $created->jabatan,
+                    'unit'                           => $created->unit,
+                    'tanggal_mulai'                  => $created->mulai_tugas ?? now()->toDateString(),
+                    'tanggal_selesai'                => null,
+                    'is_aktif'                       => true,
+                    'keterangan'                     => 'Penetapan jabatan awal pegawai',
+                ]);
+            }
+
+            return $created;
         });
 
         Cache::forget(SidebarComposer::CACHE_KEY);
@@ -72,12 +88,64 @@ class KaryawanService
             unset($data['foto']);
         }
 
-        $result = DB::transaction(function () use ($karyawan, $data) {
+        $oldJabatan = trim((string) ($karyawan->jabatan ?? ''));
+        $oldUnit = trim((string) ($karyawan->unit ?? ''));
+        $oldKategoriId = (int) ($karyawan->kepegawaian_master_kategori_id ?? 0);
+
+        $result = DB::transaction(function () use ($karyawan, $data, $oldJabatan, $oldUnit, $oldKategoriId) {
             unset($data['nipy']);
 
             $karyawan->user?->update(['name' => $data['nama_lengkap']]);
 
-            return $karyawan->update($data);
+            $updated = $karyawan->update($data);
+
+            $newJabatan = trim((string) ($data['jabatan'] ?? $karyawan->jabatan ?? ''));
+            $newUnit = trim((string) ($data['unit'] ?? $karyawan->unit ?? ''));
+            $newKategoriId = (int) ($data['kepegawaian_master_kategori_id'] ?? $karyawan->kepegawaian_master_kategori_id ?? 0);
+
+            $hasPositionChanged = $newJabatan !== '' && (
+                strcasecmp($oldJabatan, $newJabatan) !== 0
+                || strcasecmp($oldUnit, $newUnit) !== 0
+                || $oldKategoriId !== $newKategoriId
+            );
+
+            if ($hasPositionChanged) {
+                $existingCount = RiwayatJabatan::where('karyawan_nipy', $karyawan->nipy)->count();
+
+                // Jika belum ada histori sama sekali tetapi sebelumnya punya jabatan, arsipkan jabatan lama terlebih dahulu
+                if ($existingCount === 0 && $oldJabatan !== '') {
+                    RiwayatJabatan::create([
+                        'karyawan_nipy'                  => $karyawan->nipy,
+                        'kepegawaian_master_kategori_id' => $oldKategoriId ?: null,
+                        'jabatan'                        => $oldJabatan,
+                        'unit'                           => $oldUnit ?: null,
+                        'tanggal_mulai'                  => $karyawan->mulai_tugas,
+                        'tanggal_selesai'                => now()->toDateString(),
+                        'is_aktif'                       => false,
+                        'keterangan'                     => 'Jabatan sebelumnya',
+                    ]);
+                } else {
+                    RiwayatJabatan::where('karyawan_nipy', $karyawan->nipy)
+                        ->where('is_aktif', true)
+                        ->update([
+                            'is_aktif'        => false,
+                            'tanggal_selesai' => DB::raw('COALESCE(tanggal_selesai, CURRENT_DATE)'),
+                        ]);
+                }
+
+                RiwayatJabatan::create([
+                    'karyawan_nipy'                  => $karyawan->nipy,
+                    'kepegawaian_master_kategori_id' => $newKategoriId ?: null,
+                    'jabatan'                        => $newJabatan,
+                    'unit'                           => $newUnit ?: null,
+                    'tanggal_mulai'                  => now()->toDateString(),
+                    'tanggal_selesai'                => null,
+                    'is_aktif'                       => true,
+                    'keterangan'                     => 'Perubahan data jabatan/unit/kategori pegawai',
+                ]);
+            }
+
+            return $updated;
         });
 
         if ($oldFoto) {

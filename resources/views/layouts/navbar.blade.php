@@ -78,6 +78,13 @@
                     <p class="text-xs font-bold text-slate-800">{{ Auth::user()->name ?? 'User' }}</p>
                     <p class="text-[11px] text-slate-500 truncate">{{ Auth::user()->email ?? '' }}</p>
                 </div>
+                <a href="{{ route('profile.index') }}"
+                    class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                    <svg class="h-4 w-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Profil Akun Saya
+                </a>
                 <a href="{{ route('home') }}"
                     class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition-colors">
                     <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -33,6 +33,33 @@
     <!-- Tailwind CSS & App JS via Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <style>
+        /* Global 3-Dots Action Dropdown Styles */
+        .action-dropdown { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-action-dots { width: 34px !important; height: 34px !important; min-width: 34px !important; border-radius: 9px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; background-color: #f8fafc !important; color: #475569 !important; border: 1px solid #e2e8f0 !important; font-size: 0.9rem !important; cursor: pointer !important; transition: all 0.18s ease !important; padding: 0 !important; margin: 0 !important; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important; }
+        .btn-action-dots:hover, .action-dropdown.open .btn-action-dots { background-color: #fff7ed !important; color: #ea580c !important; border-color: #fdba74 !important; box-shadow: 0 4px 10px rgba(234, 88, 12, 0.14) !important; }
+        .action-dropdown-menu { display: none; position: fixed; min-width: 175px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.14), 0 4px 10px -2px rgba(15, 23, 42, 0.07); padding: 6px; z-index: 9999; text-align: left; }
+        .action-dropdown.open .action-dropdown-menu { display: block; }
+        .action-dropdown-menu form { display: block !important; width: 100% !important; margin: 0 !important; }
+        .action-dropdown-item { width: 100%; display: flex !important; align-items: center !important; gap: 10px !important; padding: 7px 10px !important; border-radius: 8px !important; font-size: 0.8125rem !important; font-weight: 600 !important; color: #334155 !important; background: transparent !important; border: 0 !important; text-decoration: none !important; cursor: pointer !important; transition: all 0.15s ease !important; text-align: left !important; white-space: nowrap !important; }
+        .action-dropdown-item:hover { background-color: #f8fafc !important; color: #0f172a !important; }
+        .action-dropdown-item .action-item-icon { width: 26px; height: 26px; border-radius: 7px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.76rem; flex-shrink: 0; }
+        .action-dropdown-item.item-view .action-item-icon { background-color: #e0f2fe; color: #0284c7; }
+        .action-dropdown-item.item-view:hover { background-color: #f0f9ff !important; color: #0369a1 !important; }
+        .action-dropdown-item.item-edit .action-item-icon { background-color: #eef2ff; color: #4f46e5; }
+        .action-dropdown-item.item-edit:hover { background-color: #eef2ff !important; color: #4338ca !important; }
+        .action-dropdown-item.item-success .action-item-icon { background-color: #dcfce7; color: #15803d; }
+        .action-dropdown-item.item-success:hover { background-color: #f0fdf4 !important; color: #15803d !important; }
+        .action-dropdown-item.item-warning .action-item-icon { background-color: #fef3c7; color: #b45309; }
+        .action-dropdown-item.item-warning:hover { background-color: #fffbeb !important; color: #b45309 !important; }
+        .action-dropdown-item.item-delete { color: #e11d48 !important; }
+        .action-dropdown-item.item-delete .action-item-icon { background-color: #ffe4e6; color: #e11d48; }
+        .action-dropdown-item.item-delete:hover { background-color: #fff1f2 !important; color: #be123c !important; }
+        .action-dropdown-item.item-locked { color: #94a3b8 !important; cursor: not-allowed !important; }
+        .action-dropdown-item.item-locked .action-item-icon { background-color: #f1f5f9; color: #94a3b8; }
+        .action-dropdown-divider { height: 1px; background-color: #f1f5f9; margin: 4px 0; }
+    </style>
+
     @stack('css')
 </head>
 
@@ -145,11 +172,66 @@
             if (messageMsg && !successMsg && !errorMsg) toastr.info(messageMsg);
         });
 
+        // Global 3-Dots Action Dropdown Handler (Position Fixed to prevent table overflow clipping)
+        function closeAllActionDropdowns() {
+            document.querySelectorAll('.action-dropdown.open').forEach(function(el) {
+                el.classList.remove('open');
+            });
+        }
+
+        document.addEventListener('click', function(e) {
+            const dotsBtn = e.target.closest('.btn-action-dots');
+            if (dotsBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const wrapper = dotsBtn.closest('.action-dropdown');
+                if (!wrapper) return;
+
+                const isOpen = wrapper.classList.contains('open');
+                closeAllActionDropdowns();
+
+                if (!isOpen) {
+                    wrapper.classList.add('open');
+                    const menu = wrapper.querySelector('.action-dropdown-menu');
+                    if (menu) {
+                        const rect = dotsBtn.getBoundingClientRect();
+                        const menuWidth = menu.offsetWidth || 180;
+                        const menuHeight = menu.offsetHeight || 160;
+                        const viewportHeight = window.innerHeight;
+                        const viewportWidth = window.innerWidth;
+
+                        let left = rect.right - menuWidth;
+                        if (left < 10) left = 10;
+                        if (left + menuWidth > viewportWidth - 10) {
+                            left = viewportWidth - menuWidth - 10;
+                        }
+
+                        let top = rect.bottom + 6;
+                        if (top + menuHeight > viewportHeight - 12 && rect.top > menuHeight + 12) {
+                            top = rect.top - menuHeight - 6;
+                        }
+
+                        menu.style.left = left + 'px';
+                        menu.style.top = top + 'px';
+                    }
+                }
+                return;
+            }
+
+            if (!e.target.closest('.action-dropdown-menu')) {
+                closeAllActionDropdowns();
+            }
+        });
+
+        window.addEventListener('scroll', closeAllActionDropdowns, true);
+        window.addEventListener('resize', closeAllActionDropdowns);
+
         // Global SweetAlert Delete Handler
         document.addEventListener('click', function(e) {
             const deleteBtn = e.target.closest('.delete-button');
             if (deleteBtn) {
                 e.preventDefault();
+                closeAllActionDropdowns();
                 Swal.fire({
                     title: 'Konfirmasi Hapus Data',
                     text: 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.',

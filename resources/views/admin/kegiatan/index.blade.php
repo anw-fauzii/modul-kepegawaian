@@ -132,7 +132,7 @@
                         <th>Tahun Ajaran</th>
                         <th class="text-center">Presensi Hadir</th>
                         <th class="text-center">Status Gerbang</th>
-                        <th class="text-center" width="180">Aksi</th>
+                        <th class="text-center" style="width: 70px;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -193,23 +193,33 @@
                                 </form>
                             </td>
                             <td class="text-center">
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('kegiatan.qr', $kegiatan->id) }}" target="_blank" class="btn btn-sm btn-warning text-dark font-weight-bold" title="Layar QR Proyektor">
-                                        <i class="fa fa-qrcode"></i> QR
-                                    </a>
-                                    <a href="{{ route('kegiatan.show', $kegiatan->id) }}" class="btn btn-sm btn-info" title="Rekap Kehadiran">
-                                        <i class="fa fa-users"></i>
-                                    </a>
-                                    <a href="{{ route('kegiatan.edit', $kegiatan->id) }}" class="btn btn-sm btn-outline-secondary" title="Edit Kegiatan">
-                                        <i class="fa fa-edit"></i>
-                                    </a>
-                                    <form action="{{ route('kegiatan.destroy', $kegiatan->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kegiatan ini beserta riwayat kehadirannya?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus Kegiatan">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </form>
+                                <div class="action-dropdown">
+                                    <button type="button" class="btn-action-dots" title="Menu Aksi">
+                                        <i class="fa fa-ellipsis-v"></i>
+                                    </button>
+                                    <div class="action-dropdown-menu">
+                                        <a href="{{ route('kegiatan.qr', $kegiatan->id) }}" target="_blank" class="action-dropdown-item item-warning">
+                                            <span class="action-item-icon"><i class="fa fa-qrcode"></i></span>
+                                            <span>Layar QR Proyektor</span>
+                                        </a>
+                                        <a href="{{ route('kegiatan.show', $kegiatan->id) }}" class="action-dropdown-item item-view">
+                                            <span class="action-item-icon"><i class="fa fa-users"></i></span>
+                                            <span>Rekap Kehadiran</span>
+                                        </a>
+                                        <a href="{{ route('kegiatan.edit', $kegiatan->id) }}" class="action-dropdown-item item-edit">
+                                            <span class="action-item-icon"><i class="fa fa-edit"></i></span>
+                                            <span>Edit Kegiatan</span>
+                                        </a>
+                                        <div class="action-dropdown-divider"></div>
+                                        <form action="{{ route('kegiatan.destroy', $kegiatan->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kegiatan ini beserta riwayat kehadirannya?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="action-dropdown-item item-delete">
+                                                <span class="action-item-icon"><i class="fa fa-trash"></i></span>
+                                                <span>Hapus Kegiatan</span>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </td>
                         </tr>

@@ -8,6 +8,7 @@ use App\Models\Admin\DataMaster\JenjangPendidikan;
 use App\Models\Admin\DataMaster\Karyawan;
 use App\Models\Admin\DataMaster\Kategori;
 use App\Models\Admin\DataMaster\JamKerja;
+use App\Models\Admin\DataMaster\RiwayatJabatan;
 use App\Services\Admin\DataMaster\KaryawanService;
 use App\Exports\KaryawanExport;
 use App\Exports\KaryawanTemplateExport;
@@ -78,6 +79,7 @@ class KaryawanController extends Controller
             'jenjangPendidikan',
             'jamKerja',
             'user',
+            'riwayatJabatan' => fn ($q) => $q->with('kategori')->orderByDesc('is_aktif')->orderByDesc('tanggal_mulai')->orderByDesc('id'),
             'fasilitas' => fn ($q) => $q->orderBy('status', 'asc')->latest('tahun_terima'),
             'diklat' => fn ($q) => $q->with('kegiatanLembaga')->latest('tanggal'),
             'rapotKinerja' => fn ($q) => $q->with('tahunAjaran')->latest('id'),
@@ -89,6 +91,7 @@ class KaryawanController extends Controller
         ]);
 
         $karyawan->loadCount([
+            'riwayatJabatan',
             'fasilitas',
             'diklat',
             'rapotKinerja',
@@ -99,7 +102,68 @@ class KaryawanController extends Controller
             'presensi',
         ]);
 
-        return view('admin.dataMaster.karyawan.show', compact('karyawan'));
+        $kategoriList = Kategori::orderBy('nama_kategori')->get();
+
+        return view('admin.dataMaster.karyawan.show', compact('karyawan', 'kategoriList'));
+    }
+
+    public function storeRiwayatJabatan(Request $request, Karyawan $karyawan): RedirectResponse
+    {
+        $validated = $request->validate([
+            'jabatan'                        => ['required', 'string', 'max:255'],
+            'unit'                           => ['nullable', 'string', 'max:255'],
+            'kepegawaian_master_kategori_id' => ['nullable', 'exists:kepegawaian_master_kategori,id'],
+            'tanggal_mulai'                  => ['nullable', 'date'],
+            'tanggal_selesai'                => ['nullable', 'date', 'after_or_equal:tanggal_mulai'],
+            'is_aktif'                       => ['nullable', 'boolean'],
+            'sync_karyawan'                  => ['nullable', 'boolean'],
+            'keterangan'                     => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $isAktif = $request->boolean('is_aktif');
+
+        if ($isAktif) {
+            RiwayatJabatan::where('karyawan_nipy', $karyawan->nipy)
+                ->where('is_aktif', true)
+                ->update([
+                    'is_aktif'        => false,
+                    'tanggal_selesai' => $validated['tanggal_mulai'] ?? now()->toDateString(),
+                ]);
+        }
+
+        RiwayatJabatan::create([
+            'karyawan_nipy'                  => $karyawan->nipy,
+            'kepegawaian_master_kategori_id' => $validated['kepegawaian_master_kategori_id'] ?? $karyawan->kepegawaian_master_kategori_id,
+            'jabatan'                        => $validated['jabatan'],
+            'unit'                           => $validated['unit'] ?? $karyawan->unit,
+            'tanggal_mulai'                  => $validated['tanggal_mulai'] ?? null,
+            'tanggal_selesai'                => $isAktif ? null : ($validated['tanggal_selesai'] ?? null),
+            'is_aktif'                       => $isAktif,
+            'keterangan'                     => $validated['keterangan'] ?? null,
+        ]);
+
+        if ($isAktif && $request->boolean('sync_karyawan')) {
+            $karyawan->update(array_filter([
+                'jabatan'                        => $validated['jabatan'],
+                'unit'                           => $validated['unit'] ?? $karyawan->unit,
+                'kepegawaian_master_kategori_id' => $validated['kepegawaian_master_kategori_id'] ?? $karyawan->kepegawaian_master_kategori_id,
+            ], fn ($v) => $v !== null));
+        }
+
+        return redirect()->route('karyawan.show', $karyawan->nipy)
+            ->with('success', 'Histori jabatan karyawan berhasil ditambahkan.');
+    }
+
+    public function destroyRiwayatJabatan(Karyawan $karyawan, RiwayatJabatan $riwayatJabatan): RedirectResponse
+    {
+        if ($riwayatJabatan->karyawan_nipy !== $karyawan->nipy) {
+            abort(403);
+        }
+
+        $riwayatJabatan->delete();
+
+        return redirect()->route('karyawan.show', $karyawan->nipy)
+            ->with('success', 'Histori jabatan berhasil dihapus.');
     }
 
     public function edit(Karyawan $karyawan): View

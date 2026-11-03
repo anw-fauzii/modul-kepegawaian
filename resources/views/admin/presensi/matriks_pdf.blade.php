@@ -243,6 +243,12 @@
             font-size: 7.2pt;
         }
 
+        .sym-libur {
+            font-weight: bold;
+            color: #475569;
+            font-size: 7.2pt;
+        }
+
         .sym-belum {
             font-weight: bold;
             color: #dc2626;
@@ -519,6 +525,8 @@
                                 <span class="sym-cuti">c</span>
                             @elseif ($status === 'tugas')
                                 <span class="sym-tugas">t</span>
+                            @elseif ($status === 'libur')
+                                <span class="sym-libur">l</span>
                             @elseif ($status === 'belum_absen')
                                 <span class="sym-belum">-</span>
                             @else
@@ -668,6 +676,7 @@
                         <div class="legenda-item"><strong style="color: #b91c1c;">s</strong> = Sakit</div>
                         <div class="legenda-item"><strong style="color: #c2410c;">c</strong> = Cuti</div>
                         <div class="legenda-item"><strong style="color: #0369a1;">t</strong> = Tugas Luar</div>
+                        <div class="legenda-item"><strong style="color: #475569;">l</strong> = Libur</div>
                         <div class="legenda-item"><strong style="color: #dc2626; background: #fee2e2; padding: 0 2px;">-</strong> = Belum Absen (Hari Kerja)</div>
                         <div class="legenda-item"><strong style="color: #64748b;">&middot;</strong> = Hari Libur / Belum Berjalan</div>
                     </div>

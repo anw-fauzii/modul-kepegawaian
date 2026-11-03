@@ -195,7 +195,7 @@
                             <th class="py-3 px-3">Rentang & Durasi</th>
                             <th class="py-3 px-3">Kontak & Alamat</th>
                             <th class="py-3 px-3 text-center">Status ACC</th>
-                            <th class="py-3 px-3 text-center" style="width: 15%;">Aksi</th>
+                            <th class="py-3 px-3 text-center" style="width: 70px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -275,42 +275,38 @@
                                     @endif
                                 </td>
                                 <td class="px-3 text-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        {{-- TOMBOL TOGGLE ACC --}}
-                                        <form action="{{ route('cuti.toggle-acc', $cuti->id) }}" method="POST" class="d-inline mx-1">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm {{ $cuti->acc ? 'btn-outline-danger' : 'btn-success' }} shadow-sm"
-                                                style="border-radius: 6px; padding: 4px 9px; font-size: 11.5px; font-weight: 600;"
-                                                title="{{ $cuti->acc ? 'Batalkan persetujuan ACC' : 'Setujui (ACC) permohonan cuti ini' }}"
-                                                onclick="return confirm('{{ $cuti->acc ? 'Batalkan ACC untuk cuti ini?' : 'Setujui (ACC) pengajuan cuti pegawai ini?' }}')">
-                                                @if ($cuti->acc)
-                                                    <i class="fa fa-times mr-1"></i> Batal ACC
-                                                @else
-                                                    <i class="fa fa-check mr-1"></i> ACC
-                                                @endif
-                                            </button>
-                                        </form>
+                                    <div class="action-dropdown">
+                                        <button type="button" class="btn-action-dots" title="Menu Aksi">
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </button>
+                                        <div class="action-dropdown-menu">
+                                            {{-- TOMBOL TOGGLE ACC --}}
+                                            <form action="{{ route('cuti.toggle-acc', $cuti->id) }}" method="POST" onsubmit="return confirm('{{ $cuti->acc ? 'Batalkan ACC untuk cuti ini?' : 'Setujui (ACC) pengajuan cuti pegawai ini?' }}')">
+                                                @csrf
+                                                <button type="submit" class="action-dropdown-item {{ $cuti->acc ? 'item-warning' : 'item-success' }}">
+                                                    <span class="action-item-icon"><i class="fa {{ $cuti->acc ? 'fa-undo' : 'fa-check' }}"></i></span>
+                                                    <span>{{ $cuti->acc ? 'Batalkan ACC' : 'Setujui (ACC)' }}</span>
+                                                </button>
+                                            </form>
 
-                                        {{-- TOMBOL EDIT --}}
-                                        <a href="{{ route('cuti.edit', $cuti->id) }}"
-                                            class="btn btn-sm btn-primary shadow-sm mx-1"
-                                            style="border-radius: 6px; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;"
-                                            data-toggle="tooltip" data-placement="top" title="Edit Pengajuan">
-                                            <i class="fa fa-edit" style="font-size: 11px;"></i>
-                                        </a>
+                                            {{-- TOMBOL EDIT --}}
+                                            <a href="{{ route('cuti.edit', $cuti->id) }}" class="action-dropdown-item item-edit">
+                                                <span class="action-item-icon"><i class="fa fa-edit"></i></span>
+                                                <span>Edit Pengajuan</span>
+                                            </a>
 
-                                        {{-- TOMBOL HAPUS --}}
-                                        <form action="{{ route('cuti.destroy', $cuti->id) }}" method="POST"
-                                            class="delete-form d-inline mx-1">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button"
-                                                class="btn btn-sm btn-warning shadow-sm delete-button p-0 text-white"
-                                                style="border-radius: 6px; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;"
-                                                data-toggle="tooltip" data-placement="top" title="Hapus Data Cuti">
-                                                <i class="fa fa-trash" style="font-size: 11px;"></i>
-                                            </button>
-                                        </form>
+                                            <div class="action-dropdown-divider"></div>
+
+                                            {{-- TOMBOL HAPUS --}}
+                                            <form action="{{ route('cuti.destroy', $cuti->id) }}" method="POST" class="delete-form">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="action-dropdown-item item-delete delete-button">
+                                                    <span class="action-item-icon"><i class="fa fa-trash"></i></span>
+                                                    <span>Hapus Data Cuti</span>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

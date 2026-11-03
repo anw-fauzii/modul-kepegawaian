@@ -24,6 +24,7 @@
 
     $tabs = [
         'profil'      => ['label' => 'Profil Pegawai',   'icon' => 'pe-7s-user',        'count' => null],
+        'jabatan'     => ['label' => 'Histori Jabatan',  'icon' => 'pe-7s-portfolio',   'count' => $karyawan->riwayat_jabatan_count],
         'fasilitas'   => ['label' => 'Fasilitas & Aset', 'icon' => 'pe-7s-box2',        'count' => $karyawan->fasilitas_count],
         'diklat'      => ['label' => 'Diklat',           'icon' => 'pe-7s-culture',     'count' => $karyawan->diklat_count],
         'rapot'       => ['label' => 'Rapor Kinerja',    'icon' => 'pe-7s-graph1',      'count' => $karyawan->rapot_kinerja_count],
@@ -421,6 +422,143 @@
                     </dl>
                 </div>
             </aside>
+        </div>
+    </div>
+
+    {{-- ============ PANE 1B: HISTORI JABATAN ============ --}}
+    <div class="kd-pane" data-kd-pane="jabatan">
+        <div class="kd-card mb-3">
+            <div class="kd-card__head">
+                <span class="kd-card__icon"><i class="pe-7s-portfolio"></i></span>
+                <div>
+                    <h2 class="kd-card__title">Histori &amp; Riwayat Jabatan Pegawai</h2>
+                    <p class="kd-card__sub">Catatan kronologis perjalanan jabatan, unit kerja, dan kategori kepegawaian</p>
+                </div>
+                <div class="kd-ml-auto">
+                    <button type="button" class="kd-btn kd-btn--primary kd-btn--sm" onclick="document.getElementById('formAddRiwayatJabatan').classList.toggle('d-none')">
+                        <i class="fa fa-plus"></i> Tambah Histori Jabatan
+                    </button>
+                </div>
+            </div>
+
+            {{-- Form Tambah Histori Jabatan Inline --}}
+            <div id="formAddRiwayatJabatan" class="d-none p-3 border-bottom" style="background: #f8fafc;">
+                <form action="{{ route('karyawan.riwayat-jabatan.store', $karyawan->nipy) }}" method="POST">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <label class="small font-weight-bold text-dark mb-1">Nama Jabatan <span class="text-danger">*</span></label>
+                            <input type="text" name="jabatan" class="form-control form-control-sm" placeholder="Contoh: Kepala Sekolah / Guru Kelas" value="{{ $karyawan->jabatan }}" required>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label class="small font-weight-bold text-dark mb-1">Unit Kerja</label>
+                            <input type="text" name="unit" class="form-control form-control-sm" placeholder="Contoh: SDIT / SMPIT / Yayasan" value="{{ $karyawan->unit }}">
+                        </div>
+                        <div class="col-md-5 mb-2">
+                            <label class="small font-weight-bold text-dark mb-1">Kategori Pegawai</label>
+                            <select name="kepegawaian_master_kategori_id" class="form-control form-control-sm">
+                                <option value="">-- Pilih Kategori --</option>
+                                @foreach ($kategoriList ?? [] as $kat)
+                                    <option value="{{ $kat->id }}" @selected($karyawan->kepegawaian_master_kategori_id == $kat->id)>{{ $kat->nama_kategori }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label class="small font-weight-bold text-dark mb-1">Tanggal Mulai (TMT)</label>
+                            <input type="date" name="tanggal_mulai" class="form-control form-control-sm" value="{{ date('Y-m-d') }}">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label class="small font-weight-bold text-dark mb-1">Tanggal Selesai</label>
+                            <input type="date" name="tanggal_selesai" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="small font-weight-bold text-dark mb-1">Keterangan / Dasar Penetapan</label>
+                            <input type="text" name="keterangan" class="form-control form-control-sm" placeholder="Contoh: Mutasi unit / Promosi jabatan / SK Yayasan">
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap align-items-center justify-content-between mt-2 pt-2 border-top">
+                        <div class="d-flex flex-wrap align-items-center" style="gap: 16px;">
+                            <label class="d-inline-flex align-items-center mb-0 small font-weight-bold text-dark" style="cursor: pointer;">
+                                <input type="checkbox" name="is_aktif" value="1" checked class="mr-1.5"> Status Jabatan Aktif Saat Ini
+                            </label>
+                            <label class="d-inline-flex align-items-center mb-0 small text-muted" style="cursor: pointer;">
+                                <input type="checkbox" name="sync_karyawan" value="1" checked class="mr-1.5"> Perbarui juga Jabatan &amp; Unit utama pada Profil Karyawan
+                            </label>
+                        </div>
+                        <div class="mt-2 mt-sm-0">
+                            <button type="button" class="btn btn-sm btn-outline-secondary mr-1" onclick="document.getElementById('formAddRiwayatJabatan').classList.add('d-none')">Batal</button>
+                            <button type="submit" class="btn btn-sm btn-primary font-weight-bold"><i class="fa fa-save mr-1"></i> Simpan Histori</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            @forelse ($karyawan->riwayatJabatan as $rj)
+                @if ($loop->first)
+                    <div class="kd-table-wrap">
+                        <table class="kd-table">
+                            <thead>
+                                <tr>
+                                    <th class="kd-center" style="width: 48px;">#</th>
+                                    <th>Nama Jabatan</th>
+                                    <th>Unit Kerja</th>
+                                    <th>Kategori Pegawai</th>
+                                    <th>Periode Menjabat</th>
+                                    <th>Status</th>
+                                    <th>Keterangan</th>
+                                    <th class="kd-right" style="width: 70px;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                @endif
+                <tr>
+                    <td class="kd-center kd-muted kd-strong">{{ $loop->iteration }}</td>
+                    <td class="kd-strong">
+                        <i class="fa fa-briefcase text-primary mr-1.5"></i> {{ $rj->jabatan }}
+                    </td>
+                    <td>{{ $rj->unit ?: '-' }}</td>
+                    <td>
+                        @if ($rj->kategori)
+                            <span class="kd-chip kd-chip--orange">{{ $rj->kategori->nama_kategori }}</span>
+                        @else
+                            <span class="kd-muted">-</span>
+                        @endif
+                    </td>
+                    <td class="kd-nowrap">
+                        {{ $rj->tanggal_mulai ? $rj->tanggal_mulai->translatedFormat('d M Y') : '-' }}
+                        <span class="kd-muted mx-1">&rarr;</span>
+                        {{ $rj->tanggal_selesai ? $rj->tanggal_selesai->translatedFormat('d M Y') : 'Sekarang' }}
+                        @if ($rj->masa_jabatan && $rj->masa_jabatan !== '-')
+                            <span class="kd-muted ml-1">({{ $rj->masa_jabatan }})</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if ($rj->is_aktif)
+                            <span class="kd-chip kd-chip--green"><i class="fa fa-check-circle"></i> Aktif</span>
+                        @else
+                            <span class="kd-chip kd-chip--neutral"><i class="fa fa-history"></i> Selesai</span>
+                        @endif
+                    </td>
+                    <td class="kd-muted kd-clip">{{ $rj->keterangan ?: '-' }}</td>
+                    <td class="kd-right kd-nowrap">
+                        <form action="{{ route('karyawan.riwayat-jabatan.destroy', [$karyawan->nipy, $rj->id]) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus histori jabatan ini?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="kd-icon-btn kd-icon-btn--danger" title="Hapus Histori"><i class="fa fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                @if ($loop->last)
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+            @empty
+                <div class="p-4 text-center text-muted small">
+                    <i class="pe-7s-portfolio" style="font-size: 2rem; display: block; margin-bottom: 6px; opacity: 0.5;"></i>
+                    Belum ada catatan histori jabatan. Klik <strong>Tambah Histori Jabatan</strong> atau ubah jabatan karyawan untuk mencatat histori secara otomatis.
+                </div>
+            @endforelse
         </div>
     </div>
 

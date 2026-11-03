@@ -94,6 +94,7 @@ class Presensi extends Model
                 'sakit'     => ['label' => 'Sakit', 'class' => 'badge-secondary', 'color' => '#64748b'],
                 'cuti'      => ['label' => 'Cuti',  'class' => 'badge-primary', 'color' => '#8b5cf6'],
                 'alpa'      => ['label' => 'Alpa',  'class' => 'badge-danger',  'color' => '#ef4444'],
+                'libur'     => ['label' => 'Libur', 'class' => 'badge-secondary', 'color' => '#64748b'],
                 default     => ['label' => ucfirst((string) $this->status), 'class' => 'badge-light', 'color' => '#94a3b8'],
             };
         });

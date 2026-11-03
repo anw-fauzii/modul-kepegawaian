@@ -239,7 +239,7 @@
                                 <th>Jabatan</th>
                                 <th>Golongan</th>
                                 <th>Lama Kerja</th>
-                                <th style="width: 16%; min-width: 130px; text-align: center;">Aksi</th>
+                                <th style="width: 70px; text-align: center;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -270,10 +270,6 @@
                                             <span class="font-weight-bold text-dark" style="font-size: 0.92rem;">
                                                 {{ $item->nama_lengkap }}{{ $item->gelar ? ', ' . $item->gelar : '' }}
                                             </span>
-                                            <span class="badge {{ $badge['class'] }} px-2 py-0 shadow-sm font-weight-bold"
-                                                style="border-radius: 4px; font-size: 0.7rem;">
-                                                {{ $badge['label'] }}
-                                            </span>
                                             @if ($isActive)
                                                 <span class="badge badge-success px-2 py-0 shadow-sm font-weight-bold"
                                                     style="border-radius: 4px; font-size: 0.68rem;" title="Akun User Aktif">
@@ -291,9 +287,6 @@
                                             @if ($item->unit)
                                                 &nbsp; | &nbsp; <i class="pe-7s-map-marker text-danger"></i> {{ $item->unit }}
                                             @endif
-                                            @if ($item->perguruan)
-                                                &nbsp; | &nbsp; <i class="pe-7s-study text-info"></i> {{ $item->perguruan }}
-                                            @endif
                                         </small>
                                         </div>
                                         </div>
@@ -309,32 +302,36 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        <div class="d-flex justify-content-center align-items-center">
-                                            <a href="{{ route('karyawan.show', $item->nipy) }}"
-                                                class="btn btn-sm text-white shadow-sm mx-1"
-                                                style="border-radius: 6px; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; background: #0284c7; border: none;"
-                                                data-toggle="tooltip" data-placement="top" title="Detail Data">
-                                                <i class="fa fa-eye" style="font-size: 0.75rem;"></i>
-                                            </a>
+                                        <div class="action-dropdown">
+                                            <button type="button" class="btn-action-dots" title="Menu Aksi">
+                                                <i class="fa fa-ellipsis-v"></i>
+                                            </button>
+                                            <div class="action-dropdown-menu">
+                                                <a href="{{ route('karyawan.show', $item->nipy) }}"
+                                                    class="action-dropdown-item item-view">
+                                                    <span class="action-item-icon"><i class="fa fa-eye"></i></span>
+                                                    <span>Detail Karyawan</span>
+                                                </a>
 
-                                            <a href="{{ route('karyawan.edit', $item->nipy) }}"
-                                                class="btn btn-sm btn-primary shadow-sm mx-1"
-                                                style="border-radius: 6px; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;"
-                                                data-toggle="tooltip" data-placement="top" title="Edit Data">
-                                                <i class="fa fa-edit" style="font-size: 0.75rem;"></i>
-                                            </a>
+                                                <a href="{{ route('karyawan.edit', $item->nipy) }}"
+                                                    class="action-dropdown-item item-edit">
+                                                    <span class="action-item-icon"><i class="fa fa-edit"></i></span>
+                                                    <span>Edit Data</span>
+                                                </a>
 
-                                            <form action="{{ route('karyawan.destroy', $item->nipy) }}" method="POST"
-                                                class="delete-form d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button"
-                                                    class="btn btn-sm btn-warning shadow-sm delete-button mx-1 p-0 text-white"
-                                                    style="border-radius: 6px; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;"
-                                                    data-toggle="tooltip" data-placement="top" title="Hapus Data">
-                                                    <i class="fa fa-trash" style="font-size: 0.75rem;"></i>
-                                                </button>
-                                            </form>
+                                                <div class="action-dropdown-divider"></div>
+
+                                                <form action="{{ route('karyawan.destroy', $item->nipy) }}" method="POST"
+                                                    class="delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button"
+                                                        class="action-dropdown-item item-delete delete-button">
+                                                        <span class="action-item-icon"><i class="fa fa-trash"></i></span>
+                                                        <span>Hapus Karyawan</span>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
