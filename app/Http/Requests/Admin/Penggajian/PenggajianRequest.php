@@ -53,10 +53,7 @@ class PenggajianRequest extends FormRequest
         ];
 
         foreach (array_keys(Penggajian::PENERIMAAN) as $field) {
-            // Pembulatan boleh bernilai negatif
-            $rules[$field] = $field === 'pembulatan'
-                ? ['required', 'numeric', 'between:-9999999999999,9999999999999']
-                : ['required', 'numeric', 'min:0', 'max:9999999999999'];
+            $rules[$field] = ['required', 'numeric', 'min:0', 'max:9999999999999'];
         }
 
         foreach (array_keys(Penggajian::POTONGAN) as $field) {

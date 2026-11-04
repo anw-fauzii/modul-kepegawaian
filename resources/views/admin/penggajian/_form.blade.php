@@ -103,7 +103,7 @@
                         <label for="{{ $f }}">{{ $label }}</label>
                         <div class="input-group">
                             <div class="input-group-prepend"><span class="input-group-text">Rp</span></div>
-                            <input type="number" step="1" {{ $f === 'pembulatan' ? '' : 'min=0' }} name="{{ $f }}" id="{{ $f }}"
+                            <input type="number" step="1" min=0 name="{{ $f }}" id="{{ $f }}"
                                 class="form-control pg-in pg-in--plus @error($f) is-invalid @enderror"
                                 value="{{ $val($f, 0) + 0 }}">
                             @error($f) <div class="invalid-feedback">{{ $message }}</div> @enderror

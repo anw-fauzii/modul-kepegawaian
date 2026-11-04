@@ -65,6 +65,21 @@
                         </a>
                         <div class="sidebar-tooltip">Presensi Saya</div>
                     </div>
+
+                    <div class="relative group/tooltip">
+                        <a href="{{ route('user.penggajian.index') }}"
+                            class="group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('user.penggajian*') ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
+                            <div class="flex items-center gap-3">
+                                <svg class="h-4 w-4 shrink-0 {{ request()->routeIs('user.penggajian*') ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                <span class="menu-text">Slip Gaji Saya</span>
+                            </div>
+                        </a>
+                        <div class="sidebar-tooltip">Slip Gaji Saya</div>
+                    </div>
                 @endrole
                 
                 @role('super admin')

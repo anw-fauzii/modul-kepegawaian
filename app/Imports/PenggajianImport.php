@@ -24,7 +24,6 @@ class PenggajianImport implements ToCollection, WithHeadingRow
     protected const FIELD_ALIASES = [
         'gaji_pokok'        => ['gaji_pokok', 'gajipokok', 'gaji_pokok_rp'],
         'tpp'               => ['tpp'],
-        'pembulatan'        => ['pembulatan'],
         't_struktural'      => ['t_struktural', 'tunj_struktural', 'tunjangan_struktural', 'struktural'],
         't_fungsional'      => ['t_fungsional', 'tunj_fungsional', 'tunjangan_fungsional', 'fungsional'],
         't_amanah_tambahan' => ['t_amanah_tambahan', 'tunj_amanah_tambahan', 'tunjangan_amanah_tambahan', 'amanah_tambahan'],
@@ -33,8 +32,7 @@ class PenggajianImport implements ToCollection, WithHeadingRow
         't_kesehatan'       => ['t_kesehatan', 'tunj_kesehatan', 'tunjangan_kesehatan', 'kesehatan'],
         't_keluarga'        => ['t_keluarga', 'tunj_keluarga', 'tunjangan_keluarga', 'keluarga'],
         't_pendidikan_anak' => ['t_pendidikan_anak', 'tunj_pendidikan_anak', 'tunjangan_pendidikan_anak', 'pendidikan_anak'],
-        't_kuota'           => ['t_kuota', 'tunj_kuota', 'tunjangan_kuota', 'kuota'],
-        'lain_lain'         => ['lain_lain', 'lainlain', 'tunjangan_lain_lain'],
+        'badal'             => ['badal', 't_badal', 'tunj_badal', 'tunjangan_badal'],
         'reward_kehadiran'  => ['reward_kehadiran', 'rewardkehadiran', 'reward'],
         'kekurangan_gaji'   => ['kekurangan_gaji', 'kekurangan_gaji_bulan_lalu', 'kurang_gaji'],
         // Potongan
@@ -45,6 +43,7 @@ class PenggajianImport implements ToCollection, WithHeadingRow
         'infaq'             => ['infaq', 'infak'],
         'adm_sekolah'       => ['adm_sekolah', 'administrasi_sekolah', 'adm'],
         'kelebihan_gaji'    => ['kelebihan_gaji', 'kelebihan_gaji_bulan_lalu', 'lebih_gaji'],
+        'lain_lain'         => ['lain_lain', 'lainlain', 'potongan_lain_lain'],
     ];
 
     public function __construct(

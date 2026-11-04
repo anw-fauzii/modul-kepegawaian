@@ -19,7 +19,6 @@ class Penggajian extends Model
     public const PENERIMAAN = [
         'gaji_pokok'        => 'Gaji Pokok',
         'tpp'               => 'TPP',
-        'pembulatan'        => 'Pembulatan',
         't_struktural'      => 'Tunj. Struktural',
         't_fungsional'      => 'Tunj. Fungsional',
         't_amanah_tambahan' => 'Tunj. Amanah Tambahan',
@@ -28,8 +27,7 @@ class Penggajian extends Model
         't_kesehatan'       => 'Tunj. Kesehatan',
         't_keluarga'        => 'Tunj. Keluarga',
         't_pendidikan_anak' => 'Tunj. Pendidikan Anak',
-        't_kuota'           => 'Tunj. Kuota',
-        'lain_lain'         => 'Lain-lain',
+        'badal'             => 'Badal',
         'reward_kehadiran'  => 'Reward Kehadiran',
         'kekurangan_gaji'   => 'Kekurangan Gaji (bulan lalu)',
     ];
@@ -43,6 +41,7 @@ class Penggajian extends Model
         'infaq'          => 'Infaq',
         'adm_sekolah'    => 'Administrasi Sekolah',
         'kelebihan_gaji' => 'Kelebihan Gaji (bulan lalu)',
+        'lain_lain'      => 'Lain-lain',
     ];
 
     public const STATUS = [
@@ -72,7 +71,6 @@ class Penggajian extends Model
         'golongan',
         'gaji_pokok',
         'tpp',
-        'pembulatan',
         't_struktural',
         't_fungsional',
         't_amanah_tambahan',
@@ -81,8 +79,7 @@ class Penggajian extends Model
         't_kesehatan',
         't_keluarga',
         't_pendidikan_anak',
-        't_kuota',
-        'lain_lain',
+        'badal',
         'reward_kehadiran',
         'kekurangan_gaji',
         'pot_makan',
@@ -92,6 +89,7 @@ class Penggajian extends Model
         'infaq',
         'adm_sekolah',
         'kelebihan_gaji',
+        'lain_lain',
         'penerimaan',
         'potongan',
         'gaji_bersih',
