@@ -23,7 +23,10 @@ class TupoksiController extends Controller
      */
     public function __construct(
         protected TupoksiService $service
-    ) {}
+    ) {
+        // Lapis 1: proteksi rute berbasis Role (Spatie)
+        $this->middleware('role:super admin');
+    }
 
     /**
      * Menampilkan daftar Tupoksi dengan filter dan pagination.

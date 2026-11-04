@@ -1,7 +1,7 @@
 @extends('layouts.appui')
 
 @section('title')
-    <title>Pindai QR Kegiatan - SIPIT Kepegawaian</title>
+    <title>Pindai QR Kegiatan - PION Kepegawaian</title>
 @endsection
 
 @section('content')

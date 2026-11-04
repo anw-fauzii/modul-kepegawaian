@@ -22,7 +22,9 @@ class PenggajianController extends Controller
 {
     public function __construct(
         protected PenggajianService $service
-    ) {}
+    ) {
+        $this->middleware('role:super admin');
+    }
 
     public function index(PenggajianFilterRequest $request): View
     {

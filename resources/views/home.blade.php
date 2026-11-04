@@ -1,7 +1,7 @@
 @extends('layouts.appui')
 
 @section('title')
-    <title>Dashboard Kepegawaian - SIPIT Yayasan Prima Insani</title>
+    <title>Dashboard Kepegawaian - PION Yayasan Prima Insani</title>
 @endsection
 
 @section('content')

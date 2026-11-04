@@ -21,7 +21,10 @@ class SertifikatPenghargaanController extends Controller
      */
     public function __construct(
         protected SertifikatPenghargaanService $service
-    ) {}
+    ) {
+        // Lapis 1: proteksi rute berbasis Role (Spatie)
+        $this->middleware('role:super admin');
+    }
 
     /**
      * Menampilkan daftar data Sertifikat Penghargaan dengan filter dan pagination.

@@ -24,12 +24,10 @@ class PresensiController extends Controller
 {
     public function __construct(
         protected PresensiService $service
-    ) {}
+    ) {
+        $this->middleware('role:super admin')->except(['updateMyShaum', 'toggleMyShaum']);
+    }
 
-    /**
-     * Menampilkan daftar riwayat presensi karyawan (terpaginasi & terfilter by Kategori & Bulan).
-     * Data hanya dieksekusi query-nya ketika filter/pencarian dipilih agar performa tetap cepat.
-     */
     public function index(PresensiFilterRequest $request): View
     {
         $filters = $request->validated();

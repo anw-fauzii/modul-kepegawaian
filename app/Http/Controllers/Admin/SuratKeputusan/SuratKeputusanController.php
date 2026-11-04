@@ -23,7 +23,10 @@ class SuratKeputusanController extends Controller
      */
     public function __construct(
         protected SuratKeputusanService $service
-    ) {}
+    ) {
+        // Lapis 1: proteksi rute berbasis Role (Spatie)
+        $this->middleware('role:super admin');
+    }
 
     /**
      * Menampilkan daftar data Surat Keputusan dengan filter dan pagination.

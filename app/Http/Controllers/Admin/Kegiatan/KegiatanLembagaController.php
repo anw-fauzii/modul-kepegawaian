@@ -24,7 +24,10 @@ class KegiatanLembagaController extends Controller
      */
     public function __construct(
         protected KegiatanLembagaService $service
-    ) {}
+    ) {
+        // Lapis 1: proteksi rute berbasis Role (Spatie); scanner dipakai pegawai biasa
+        $this->middleware('role:super admin')->except(['scannerUser', 'presensiDirect', 'scanQr']);
+    }
 
     /**
      * Menampilkan daftar kegiatan lembaga dengan pagination & filter performan tinggi.

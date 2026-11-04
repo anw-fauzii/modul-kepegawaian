@@ -69,7 +69,7 @@
                 <i class="fa fa-qrcode mr-1"></i> PRESENSI RESMI KEGIATAN
             </span>
             <div class="text-white-50 small">
-                {{ $kegiatan->tahunAjaran->nama_tahun_ajaran ?? 'SIPIT Kepegawaian' }}
+                {{ $kegiatan->tahunAjaran->nama_tahun_ajaran ?? 'PION Kepegawaian' }}
             </div>
         </div>
         <div class="text-right">

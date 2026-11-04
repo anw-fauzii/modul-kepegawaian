@@ -18,12 +18,11 @@ use Illuminate\View\View;
 
 class CutiController extends Controller
 {
-    /**
-     * Dependency Injection CutiService untuk Clean Architecture & Decoupled Controller.
-     */
     public function __construct(
         protected CutiService $service
-    ) {}
+    ) {
+        $this->middleware('role:super admin');
+    }
 
     /**
      * Menampilkan daftar data pengajuan cuti dengan pagination, filter, dan rekap KPI.

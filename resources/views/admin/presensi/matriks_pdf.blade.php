@@ -702,7 +702,7 @@
                             <strong>Petugas Presensi / Kepegawaian</strong>
                             <div class="signature-space"></div>
                             <div class="signature-name">( {{ auth()->user()->name ?? 'Administrator' }} )</div>
-                            <div style="font-size: 6.5pt; color: #64748b;">SIPIT Yayasan Prima Insani</div>
+                            <div style="font-size: 6.5pt; color: #64748b;">PION Yayasan Prima Insani</div>
                         </td>
                     </tr>
                 </table>
@@ -720,7 +720,7 @@
         $h = $pdf->get_height();
 
         // Footer Kiri: Informasi Dokumen
-        $pdf->page_text(18, $h - 20, "SIPIT - Sistem Informasi Prima Insani Terpadu | Laporan Matriks Presensi Harian (Kertas A3 Landscape)", $font, $size, $color);
+        $pdf->page_text(18, $h - 20, "PION - Sistem Informasi Prima Insani Terpadu | Laporan Matriks Presensi Harian (Kertas A3 Landscape)", $font, $size, $color);
 
         // Footer Kanan: Nomor Halaman
         $pageText = "Halaman {PAGE_NUM} dari {PAGE_COUNT}";

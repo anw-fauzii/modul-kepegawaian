@@ -15,7 +15,10 @@ class HariLiburController extends Controller
 {
     public function __construct(
         protected HariLiburService $service
-    ) {}
+    ) {
+        // Lapis 1: proteksi rute berbasis Role (Spatie)
+        $this->middleware('role:super admin');
+    }
 
     public function index(): View
     {

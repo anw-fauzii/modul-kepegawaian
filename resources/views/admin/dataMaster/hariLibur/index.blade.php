@@ -101,15 +101,15 @@
                                 </td>
                                 <td class="text-center">
                                     @if ($item->is_cuti)
-                                        <span class="badge badge-warning text-dark px-2.5 py-1 font-weight-bold" style="border-radius: 6px; font-size: 11px;">
+                                        <span class="badge font-weight-bold" style="background-color: #ffc107 !important; color: #212529 !important; border-radius: 6px; font-size: 11px; padding: 4px 10px;">
                                             Cuti Bersama
                                         </span>
                                     @elseif ($item->is_libur_nasional)
-                                        <span class="badge badge-danger px-2.5 py-1 text-white font-weight-bold" style="border-radius: 6px; font-size: 11px;">
+                                        <span class="badge font-weight-bold" style="background-color: #dc3545 !important; color: #ffffff !important; border-radius: 6px; font-size: 11px; padding: 4px 10px;">
                                             Libur Nasional
                                         </span>
                                     @else
-                                        <span class="badge badge-info px-2.5 py-1 text-white font-weight-bold" style="border-radius: 6px; font-size: 11px;">
+                                        <span class="badge font-weight-bold" style="background-color: #0dcaf0 !important; color: #ffffff !important; border-radius: 6px; font-size: 11px; padding: 4px 10px;">
                                             Libur Yayasan
                                         </span>
                                     @endif

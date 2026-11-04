@@ -13,7 +13,10 @@ class JenisCutiController extends Controller
 {
     public function __construct(
         protected JenisCutiService $service
-    ) {}
+    ) {
+        // Lapis 1: proteksi rute berbasis Role (Spatie)
+        $this->middleware('role:super admin');
+    }
 
     public function index(): View
     {

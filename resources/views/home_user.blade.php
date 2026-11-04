@@ -1,7 +1,7 @@
 @extends('layouts.appui')
 
 @section('title')
-    <title>Dashboard Pegawai - {{ $karyawan->nama_lengkap ?? Auth::user()->name }} | SIPIT Prima Insani</title>
+    <title>Dashboard Pegawai - {{ $karyawan->nama_lengkap ?? Auth::user()->name }} | PION Prima Insani</title>
 @endsection
 
 @section('content')

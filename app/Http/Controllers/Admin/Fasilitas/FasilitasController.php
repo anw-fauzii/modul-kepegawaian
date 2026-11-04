@@ -20,7 +20,10 @@ class FasilitasController extends Controller
      */
     public function __construct(
         protected FasilitasService $service
-    ) {}
+    ) {
+        // Lapis 1: proteksi rute berbasis Role (Spatie)
+        $this->middleware('role:super admin');
+    }
 
     /**
      * Menampilkan daftar data fasilitas dengan filter dan pagination.

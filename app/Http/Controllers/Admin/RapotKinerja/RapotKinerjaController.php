@@ -22,7 +22,9 @@ class RapotKinerjaController extends Controller
      */
     public function __construct(
         protected RapotKinerjaService $service
-    ) {}
+    ) {
+        $this->middleware('role:super admin');
+    }
 
     /**
      * Menampilkan daftar Rapot Kinerja dengan filter dan pagination.

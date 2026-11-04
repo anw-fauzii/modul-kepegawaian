@@ -1192,7 +1192,7 @@
 @push('css')
 <style>
     /* ==========================================================================
-       SIPIT Karyawan Detail - Ultra Compact & Modern Clean Design System
+       PION Karyawan Detail - Ultra Compact & Modern Clean Design System
        ========================================================================== */
     .kd {
         --kd-primary: #ea580c;

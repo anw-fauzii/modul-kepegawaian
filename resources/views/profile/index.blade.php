@@ -31,7 +31,6 @@
     $tabs = [
         'profil'   => ['label' => 'Detail Profil & Kepegawaian', 'icon' => 'pe-7s-user',      'count' => null],
         'jabatan'  => ['label' => 'Histori Jabatan',             'icon' => 'pe-7s-portfolio', 'count' => $karyawan?->riwayat_jabatan_count ?? 0],
-        'password' => ['label' => 'Keamanan & Ubah Password',    'icon' => 'pe-7s-lock',      'count' => null],
     ];
 @endphp
 
@@ -62,14 +61,16 @@
         </div>
     @endif
 
-    {{-- ============ HERO SECTION ============ --}}
+    {{-- ============ HERO SECTION (MODERN & CLEAN) ============ --}}
     <section class="kd-hero">
         <div class="kd-hero__cover">
             <a href="{{ route('dashboard.user') }}" class="kd-hero__back">
-                <i class="fa fa-arrow-left"></i> Dashboard Pegawai
+                <i class="fa fa-arrow-left"></i>
+                <span>Dashboard Pegawai</span>
             </a>
             <div class="kd-hero__badge-top">
-                <i class="pe-7s-portfolio mr-1"></i> {{ $karyawan?->kategori?->nama_kategori ?? 'Akun Pengguna SIPIT' }}
+                <i class="pe-7s-portfolio mr-1 text-orange-600"></i>
+                <span>{{ $karyawan?->kategori?->nama_kategori ?? 'Akun Pengguna SIPIT' }}</span>
             </div>
         </div>
 
@@ -88,113 +89,135 @@
             </div>
 
             <div class="kd-hero__info">
-                <h1 class="kd-hero__name">
-                    {{ $fullName }}@if ($karyawan?->gelar)<span class="kd-hero__gelar">, {{ $karyawan->gelar }}</span>@endif
-                </h1>
+                <div class="kd-hero__title-row">
+                    <h1 class="kd-hero__name">
+                        {{ $fullName }}@if ($karyawan?->gelar)<span class="kd-hero__gelar">, {{ $karyawan->gelar }}</span>@endif
+                    </h1>
+                    @if($karyawan)
+                        <span class="kd-status-pill" style="--status-color: {{ $statusBadge['color'] }};">
+                            <span class="kd-status-pill__dot"></span>
+                            <span>Pegawai {{ $statusBadge['label'] }}</span>
+                        </span>
+                    @else
+                        <span class="kd-status-pill" style="--status-color: #10b981;">
+                            <span class="kd-status-pill__dot"></span>
+                            <span>Akun Sistem Aktif</span>
+                        </span>
+                    @endif
+                </div>
 
-                <div class="kd-hero__meta">
-                    <span><i class="pe-7s-portfolio"></i> {{ $karyawan?->jabatan ?: 'Administrator / Pengguna' }}</span>
-                    <span><i class="pe-7s-culture"></i> {{ $karyawan?->unit ?: 'Yayasan Prima Insani' }}</span>
-                    <span class="kd-meta-id">
-                        <i class="pe-7s-id"></i> NIPY: <strong class="ml-1">{{ $karyawan?->nipy ?? $user->no_induk ?? '-' }}</strong>
+                <div class="kd-hero__subline">
+                    <span class="kd-subline-item font-weight-bold text-dark">
+                        <i class="pe-7s-portfolio text-orange-600 mr-1"></i>
+                        {{ $karyawan?->jabatan ?: 'Administrator / Pengguna' }}
+                    </span>
+                    <span class="kd-subline-dot">&bull;</span>
+                    <span class="kd-subline-item text-muted">
+                        <i class="pe-7s-culture text-orange-600 mr-1"></i>
+                        {{ $karyawan?->unit ?: 'Yayasan Prima Insani' }}
+                    </span>
+                    @if ($karyawan?->lama_kerja)
+                        <span class="kd-subline-dot">&bull;</span>
+                        <span class="kd-subline-item text-orange-700">
+                            <i class="fa fa-business-time text-orange-500 mr-1"></i>
+                            {{ $karyawan->lama_kerja }}
+                        </span>
+                    @endif
+                </div>
+
+                <div class="kd-hero__pills">
+                    <span class="kd-pill-meta">
+                        <i class="pe-7s-id text-orange-600"></i>
+                        <span>NIPY: <strong class="ml-1 text-dark">{{ $karyawan?->nipy ?? $user->no_induk ?? '-' }}</strong></span>
                         @if($karyawan?->nipy || $user->no_induk)
-                            <button type="button" class="kd-copy" data-clipboard="{{ $karyawan?->nipy ?? $user->no_induk }}" title="Salin NIPY">
+                            <button type="button" class="kd-copy-btn" data-clipboard="{{ $karyawan?->nipy ?? $user->no_induk }}" title="Salin NIPY">
                                 <i class="fa fa-copy"></i>
                             </button>
                         @endif
                     </span>
-                    @if ($cleanWa)
-                        <a href="https://wa.me/{{ $cleanWa }}" target="_blank" rel="noopener" class="kd-hero-link kd-hero-link--wa" title="WhatsApp">
-                            <i class="fab fa-whatsapp"></i> {{ $karyawan->whatsapp }}
-                        </a>
-                    @endif
                     @if ($email)
-                        <a href="mailto:{{ $email }}" class="kd-hero-link" title="Kirim Email">
-                            <i class="pe-7s-mail"></i> {{ $email }}
+                        <a href="mailto:{{ $email }}" class="kd-pill-meta kd-pill-meta--link" title="Kirim Email">
+                            <i class="pe-7s-mail text-orange-600"></i>
+                            <span>{{ $email }}</span>
                         </a>
                     @endif
-                </div>
-
-                <div class="kd-hero__chips">
-                    @if($karyawan)
-                        <span class="kd-chip" style="--chip: {{ $statusBadge['color'] }};">
-                            <span class="kd-chip__dot"></span> Pegawai {{ $statusBadge['label'] }}
-                        </span>
-                        <span class="kd-chip kd-chip--orange">
-                            <i class="fa fa-business-time"></i> {{ $karyawan->lama_kerja }}
-                        </span>
-                        @if ($karyawan->golongan)
-                            <span class="kd-chip kd-chip--neutral">
-                                <i class="pe-7s-ribbon"></i> Gol. {{ $karyawan->golongan }}
-                            </span>
-                        @endif
-                        @if ($karyawan->sertifikasi)
-                            <span class="kd-chip kd-chip--green"><i class="fa fa-check-circle"></i> Bersertifikasi</span>
-                        @else
-                            <span class="kd-chip kd-chip--neutral"><i class="fa fa-minus-circle"></i> Belum Sertifikasi</span>
-                        @endif
-                    @else
-                        <span class="kd-chip kd-chip--green">
-                            <span class="kd-chip__dot"></span> Akun Sistem Aktif
-                        </span>
+                    @if ($cleanWa)
+                        <a href="https://wa.me/{{ $cleanWa }}" target="_blank" rel="noopener" class="kd-pill-meta kd-pill-meta--wa" title="WhatsApp">
+                            <i class="fab fa-whatsapp text-success"></i>
+                            <span>{{ $karyawan->whatsapp }}</span>
+                        </a>
                     @endif
                 </div>
             </div>
 
             <div class="kd-hero__actions">
-                <button type="button" class="kd-btn kd-btn--ghost kd-btn--sm" onclick="window.print()">
-                    <i class="fa fa-print"></i> Cetak Profil
+                <button type="button" class="kd-btn-modern kd-btn-modern--ghost" onclick="window.print()" title="Cetak Profil Pegawai">
+                    <i class="fa fa-print"></i>
+                    <span>Cetak</span>
                 </button>
-                <button type="button" class="kd-btn kd-btn--primary kd-btn--sm" data-kd-tab="password">
-                    <i class="fa fa-key"></i> Ubah Password
+                <button type="button" class="kd-btn-modern kd-btn-modern--primary" data-kd-tab="password" title="Ubah Kata Sandi Akun">
+                    <i class="fa fa-key"></i>
+                    <span>Ubah Password</span>
                 </button>
             </div>
         </div>
 
-        {{-- Stat Strip Ringkasan Portofolio --}}
+        {{-- Stat Strip Ringkasan Portofolio (Ramping & Modern) --}}
         @if($karyawan)
-            <div class="kd-stats">
-                <div class="kd-stat" style="cursor: default;">
-                    <span class="kd-stat__icon"><i class="pe-7s-box2"></i></span>
-                    <span class="kd-stat__text">
-                        <span class="kd-stat__num">{{ $karyawan->fasilitas_count ?? 0 }}</span>
-                        <span class="kd-stat__label">Fasilitas &amp; Aset</span>
-                    </span>
+            <div class="kd-stats-bar">
+                <div class="kd-stat-card">
+                    <div class="kd-stat-card__icon bg-orange-soft text-orange">
+                        <i class="pe-7s-box2"></i>
+                    </div>
+                    <div class="kd-stat-card__info">
+                        <span class="kd-stat-card__num">{{ $karyawan->fasilitas_count ?? 0 }}</span>
+                        <span class="kd-stat-card__lbl">Fasilitas</span>
+                    </div>
                 </div>
-                <div class="kd-stat" style="cursor: default;">
-                    <span class="kd-stat__icon"><i class="pe-7s-culture"></i></span>
-                    <span class="kd-stat__text">
-                        <span class="kd-stat__num">{{ $karyawan->diklat_count ?? 0 }}</span>
-                        <span class="kd-stat__label">Riwayat Diklat</span>
-                    </span>
+                <div class="kd-stat-card">
+                    <div class="kd-stat-card__icon bg-blue-soft text-blue">
+                        <i class="pe-7s-culture"></i>
+                    </div>
+                    <div class="kd-stat-card__info">
+                        <span class="kd-stat-card__num">{{ $karyawan->diklat_count ?? 0 }}</span>
+                        <span class="kd-stat-card__lbl">Diklat</span>
+                    </div>
                 </div>
-                <div class="kd-stat" style="cursor: default;">
-                    <span class="kd-stat__icon"><i class="pe-7s-graph1"></i></span>
-                    <span class="kd-stat__text">
-                        <span class="kd-stat__num">{{ $karyawan->rapot_kinerja_count ?? 0 }}</span>
-                        <span class="kd-stat__label">Rapor Kinerja</span>
-                    </span>
+                <div class="kd-stat-card">
+                    <div class="kd-stat-card__icon bg-emerald-soft text-emerald">
+                        <i class="pe-7s-graph1"></i>
+                    </div>
+                    <div class="kd-stat-card__info">
+                        <span class="kd-stat-card__num">{{ $karyawan->rapot_kinerja_count ?? 0 }}</span>
+                        <span class="kd-stat-card__lbl">Rapor</span>
+                    </div>
                 </div>
-                <div class="kd-stat" style="cursor: default;">
-                    <span class="kd-stat__icon"><i class="pe-7s-news-paper"></i></span>
-                    <span class="kd-stat__text">
-                        <span class="kd-stat__num">{{ $karyawan->surat_keputusan_count ?? 0 }}</span>
-                        <span class="kd-stat__label">Surat Keputusan</span>
-                    </span>
+                <div class="kd-stat-card">
+                    <div class="kd-stat-card__icon bg-purple-soft text-purple">
+                        <i class="pe-7s-news-paper"></i>
+                    </div>
+                    <div class="kd-stat-card__info">
+                        <span class="kd-stat-card__num">{{ $karyawan->surat_keputusan_count ?? 0 }}</span>
+                        <span class="kd-stat-card__lbl">SK</span>
+                    </div>
                 </div>
-                <div class="kd-stat" style="cursor: default;">
-                    <span class="kd-stat__icon"><i class="pe-7s-medal"></i></span>
-                    <span class="kd-stat__text">
-                        <span class="kd-stat__num">{{ $karyawan->sertifikat_penghargaan_count ?? 0 }}</span>
-                        <span class="kd-stat__label">Penghargaan</span>
-                    </span>
+                <div class="kd-stat-card">
+                    <div class="kd-stat-card__icon bg-amber-soft text-amber">
+                        <i class="pe-7s-medal"></i>
+                    </div>
+                    <div class="kd-stat-card__info">
+                        <span class="kd-stat-card__num">{{ $karyawan->sertifikat_penghargaan_count ?? 0 }}</span>
+                        <span class="kd-stat-card__lbl">Penghargaan</span>
+                    </div>
                 </div>
-                <div class="kd-stat" style="cursor: default;">
-                    <span class="kd-stat__icon"><i class="pe-7s-note2"></i></span>
-                    <span class="kd-stat__text">
-                        <span class="kd-stat__num">{{ $karyawan->tupoksi_count ?? 0 }}</span>
-                        <span class="kd-stat__label">Dokumen Tupoksi</span>
-                    </span>
+                <div class="kd-stat-card">
+                    <div class="kd-stat-card__icon bg-slate-soft text-slate">
+                        <i class="pe-7s-note2"></i>
+                    </div>
+                    <div class="kd-stat-card__info">
+                        <span class="kd-stat-card__num">{{ $karyawan->tupoksi_count ?? 0 }}</span>
+                        <span class="kd-stat-card__lbl">Tupoksi</span>
+                    </div>
                 </div>
             </div>
         @endif
@@ -575,7 +598,7 @@
                     <span class="kd-card__icon"><i class="pe-7s-lock"></i></span>
                     <div>
                         <h2 class="kd-card__title">Ubah Password Akun</h2>
-                        <p class="kd-card__sub">Perbarui kata sandi masuk (login) untuk keamanan akun SIPIT Anda</p>
+                        <p class="kd-card__sub">Perbarui kata sandi masuk (login) untuk keamanan akun PION Anda</p>
                     </div>
                 </div>
                 <div class="p-4">
@@ -681,97 +704,99 @@
     .kd h1, .kd h2, .kd h3, .kd p, .kd dl, .kd dd { margin: 0; }
     .kd a { text-decoration: none; }
 
-    /* ---------- HERO SECTION ---------- */
+    /* ---------- MODERN HERO SECTION ---------- */
     .kd-hero {
         background: #ffffff;
-        border: 1px solid var(--kd-line);
-        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
         overflow: hidden;
-        margin-bottom: 10px;
-        box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04);
+        margin-bottom: 14px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 6px 16px -4px rgba(234, 88, 12, 0.04);
     }
     .kd-hero__cover {
-        height: 68px;
+        height: 74px;
         background:
-            radial-gradient(circle at 1px 1px, rgba(255,255,255,.15) 1px, transparent 0) 0 0 / 18px 18px,
-            linear-gradient(135deg, #0f172a 0%, #1e293b 45%, #ea580c 100%);
-        padding: 8px 16px;
+            radial-gradient(circle at 10% 20%, rgba(255,255,255,.2) 0%, transparent 40%),
+            linear-gradient(135deg, #ea580c 0%, #f97316 55%, #fb923c 100%);
+        padding: 10px 18px;
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
+        align-items: center;
+        position: relative;
     }
     .kd-hero__back {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        color: rgba(255, 255, 255, 0.9) !important;
-        font-size: 0.72rem;
+        color: #ffffff !important;
+        font-size: 0.74rem;
         font-weight: 600;
-        padding: 3px 10px;
+        padding: 5px 12px;
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.28);
         transition: all 0.2s ease;
     }
     .kd-hero__back:hover {
-        background: rgba(255, 255, 255, 0.25);
-        color: #ffffff !important;
+        background: rgba(255, 255, 255, 0.32);
         transform: translateX(-2px);
     }
     .kd-hero__badge-top {
         display: inline-flex;
         align-items: center;
-        color: #ea580c;
+        color: #9a3412;
         background: #ffffff;
-        font-size: 0.7rem;
+        font-size: 0.72rem;
         font-weight: 700;
-        padding: 3px 8px;
+        padding: 4px 12px;
         border-radius: 999px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border: 1px solid #ffedd5;
     }
     .kd-hero__body {
         display: flex;
         align-items: flex-end;
-        gap: 14px;
-        padding: 0 16px 12px;
+        gap: 16px;
+        padding: 0 20px 16px;
         flex-wrap: wrap;
     }
     .kd-avatar {
         position: relative;
-        width: 74px;
-        height: 74px;
+        width: 78px;
+        height: 78px;
         flex-shrink: 0;
-        margin-top: -37px;
-        border-radius: 16px;
-        background: var(--kd-grad);
+        margin-top: -39px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #ea580c 0%, #d97706 100%);
         color: #ffffff;
-        font-size: 1.55rem;
-        font-weight: 700;
+        font-size: 1.6rem;
+        font-weight: 800;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 3px solid #ffffff;
-        box-shadow: 0 6px 16px -4px rgba(234, 88, 12, 0.45);
+        border: 4px solid #ffffff;
+        box-shadow: 0 8px 20px -4px rgba(234, 88, 12, 0.35);
     }
     .kd-avatar--photo {
-        width: 88px;
-        height: 108px;
-        margin-top: -54px;
-        background: #f1f5f9;
-        overflow: visible;
+        width: 84px;
+        height: 104px;
+        margin-top: -52px;
+        background: #f8fafc;
+        border-radius: 16px;
+        border: 4px solid #ffffff;
     }
     .kd-avatar__img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         object-position: center top;
-        border-radius: 13px;
+        border-radius: 12px;
         cursor: zoom-in;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .kd-avatar__img:hover {
-        transform: scale(1.04);
-        box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.35);
+        transform: scale(1.03);
     }
     .kd-lightbox {
         position: fixed;
@@ -823,13 +848,20 @@
 
     .kd-hero__info {
         flex: 1;
-        min-width: 240px;
-        padding-top: 6px;
+        min-width: 260px;
+        padding-top: 8px;
+    }
+    .kd-hero__title-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        margin-bottom: 4px;
     }
     .kd-hero__name {
-        font-size: 1.25rem;
+        font-size: 1.35rem;
         font-weight: 800;
-        color: var(--kd-ink);
+        color: #0f172a;
         letter-spacing: -0.02em;
         line-height: 1.25;
     }
@@ -837,106 +869,181 @@
         font-weight: 600;
         color: #64748b;
     }
-    .kd-hero__meta {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 3px 12px;
-        margin-top: 3px;
-        color: #64748b;
-        font-size: 0.78rem;
-    }
-    .kd-hero__meta span, .kd-hero__meta a {
+    .kd-status-pill {
         display: inline-flex;
         align-items: center;
         gap: 5px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #334155;
     }
-    .kd-hero__meta i {
-        font-size: 0.95rem;
-        color: var(--kd-primary);
+    .kd-status-pill__dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background-color: var(--status-color, #10b981);
     }
-    .kd-hero-link {
-        color: var(--kd-primary) !important;
-        font-weight: 600;
-    }
-    .kd-hero-link--wa, .kd-hero-link--wa i {
-        color: #16a34a !important;
-    }
-    .kd-hero__chips {
+    .kd-hero__subline {
         display: flex;
         flex-wrap: wrap;
-        gap: 4px;
-        margin-top: 5px;
+        align-items: center;
+        gap: 6px 8px;
+        font-size: 0.8125rem;
+        margin-bottom: 8px;
+    }
+    .kd-subline-item {
+        display: inline-flex;
+        align-items: center;
+    }
+    .kd-subline-dot {
+        color: #cbd5e1;
+        font-size: 0.75rem;
+    }
+    .kd-hero__pills {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 10px;
+    }
+    .kd-pill-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 4px 10px;
+        font-size: 0.76rem;
+        color: #475569;
+        font-weight: 500;
+        transition: all 0.15s ease;
+    }
+    .kd-pill-meta--link:hover {
+        background: #fff7ed;
+        border-color: #fdba74;
+        color: #ea580c !important;
+    }
+    .kd-pill-meta--wa:hover {
+        background: #f0fdf4;
+        border-color: #86efac;
+        color: #16a34a !important;
+    }
+    .kd-copy-btn {
+        border: 0;
+        background: transparent;
+        color: #94a3b8;
+        padding: 0 2px;
+        cursor: pointer;
+        font-size: 0.72rem;
+        transition: color 0.15s ease;
+    }
+    .kd-copy-btn:hover {
+        color: #ea580c;
     }
     .kd-hero__actions {
         display: flex;
-        gap: 6px;
-        padding-top: 6px;
+        align-items: center;
+        gap: 8px;
+        padding-top: 8px;
     }
-    .kd-copy {
-        border: 0;
-        background: transparent;
-        color: var(--kd-muted);
-        padding: 2px 5px;
-        border-radius: 4px;
+    .kd-btn-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 7px 14px;
+        border-radius: 10px;
         cursor: pointer;
-        font-size: 0.72rem;
+        transition: all 0.2s ease;
+        text-decoration: none !important;
     }
-    .kd-copy:hover {
-        color: var(--kd-primary);
-        background: var(--kd-soft);
+    .kd-btn-modern--ghost {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+    .kd-btn-modern--ghost:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #0f172a;
+        transform: translateY(-1px);
+    }
+    .kd-btn-modern--primary {
+        background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+        border: 0;
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.28);
+    }
+    .kd-btn-modern--primary:hover {
+        background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+        box-shadow: 0 6px 16px rgba(234, 88, 12, 0.38);
+        transform: translateY(-1px);
     }
 
-    /* ---------- STAT STRIP ---------- */
-    .kd-stats {
+    /* ---------- MODERN STATS BAR ---------- */
+    .kd-stats-bar {
         display: grid;
         grid-template-columns: repeat(6, 1fr);
-        border-top: 1px solid var(--kd-line);
+        border-top: 1px solid #f1f5f9;
         background: #fafbfc;
+        padding: 8px 12px;
+        gap: 8px;
     }
-    .kd-stat {
-        position: relative;
+    .kd-stat-card {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 8px 12px;
-        background: transparent;
-        border: 0;
-        text-align: left;
-        border-right: 1px solid var(--kd-line);
-    }
-    .kd-stat:last-child { border-right: 0; }
-    .kd-stat__icon {
-        width: 28px;
-        height: 28px;
-        border-radius: 6px;
-        flex-shrink: 0;
+        padding: 6px 10px;
+        border-radius: 10px;
         background: #ffffff;
-        color: var(--kd-primary);
-        border: 1px solid var(--kd-line);
+        border: 1px solid #f1f5f9;
+        transition: all 0.15s ease;
+    }
+    .kd-stat-card:hover {
+        border-color: #fed7aa;
+        background: #fffdfb;
+        transform: translateY(-1px);
+    }
+    .kd-stat-card__icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        flex-shrink: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
-    .kd-stat__text {
+    .bg-orange-soft { background: #fff7ed; color: #ea580c; }
+    .bg-blue-soft   { background: #eff6ff; color: #2563eb; }
+    .bg-emerald-soft{ background: #f0fdf4; color: #16a34a; }
+    .bg-purple-soft { background: #faf5ff; color: #9333ea; }
+    .bg-amber-soft  { background: #fffbeb; color: #d97706; }
+    .bg-slate-soft  { background: #f1f5f9; color: #475569; }
+    .kd-stat-card__info {
         display: flex;
         flex-direction: column;
         line-height: 1.15;
         min-width: 0;
     }
-    .kd-stat__num {
-        font-size: 1.05rem;
+    .kd-stat-card__num {
+        font-size: 0.98rem;
         font-weight: 800;
-        color: var(--kd-ink);
+        color: #0f172a;
     }
-    .kd-stat__label {
-        font-size: 0.7rem;
+    .kd-stat-card__lbl {
+        font-size: 0.67rem;
         color: #64748b;
+        font-weight: 600;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-weight: 600;
     }
 
     /* ---------- STICKY TABS ---------- */
@@ -1285,23 +1392,21 @@
     .kd-pad { padding: 16px; }
 
     @media (max-width: 1199px) {
-        .kd-stats { grid-template-columns: repeat(3, 1fr); }
-        .kd-stat:nth-child(3n) { border-right: 0; }
-        .kd-stat:nth-child(-n+3) { border-bottom: 1px solid var(--kd-line); }
+        .kd-stats-bar { grid-template-columns: repeat(3, 1fr); }
         .kd-grid { grid-template-columns: minmax(0, 1fr) 260px; }
     }
     @media (max-width: 991px) {
         .kd-grid { grid-template-columns: 1fr; }
         .kd-subgrid-2 { grid-template-columns: 1fr; }
+        .kd-stats-bar { grid-template-columns: repeat(3, 1fr); }
     }
     @media (max-width: 767px) {
-        .kd-hero__cover { height: 60px; }
-        .kd-hero__body { padding: 0 12px 10px; }
+        .kd-hero__cover { height: 64px; padding: 8px 12px; }
+        .kd-hero__body { padding: 0 14px 14px; gap: 12px; }
+        .kd-hero__info { min-width: 100%; }
         .kd-hero__actions { width: 100%; }
-        .kd-hero__actions .kd-btn { flex: 1; justify-content: center; }
-        .kd-stats { grid-template-columns: repeat(2, 1fr); }
-        .kd-stat { border-bottom: 1px solid var(--kd-line); }
-        .kd-stat:nth-child(2n) { border-right: 0; }
+        .kd-hero__actions .kd-btn-modern { flex: 1; justify-content: center; }
+        .kd-stats-bar { grid-template-columns: repeat(2, 1fr); }
         .kd-dl > div { grid-template-columns: 1fr; gap: 3px; padding: 6px 10px; }
     }
 </style>
@@ -1336,7 +1441,7 @@
         });
 
         // Copy NIPY
-        root.querySelectorAll('.kd-copy').forEach(function (btn) {
+        root.querySelectorAll('.kd-copy, .kd-copy-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 var text = this.dataset.clipboard;
                 var icon = this.querySelector('i');
