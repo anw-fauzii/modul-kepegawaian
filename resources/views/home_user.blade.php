@@ -406,31 +406,7 @@
 @endphp
 
 <div class="app-main__inner">
-    <!-- MODE SWITCHER & REALTIME BAR -->
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 bg-white p-2.5 px-3 rounded-xl border border-slate-200 shadow-sm" style="border-radius: 12px;">
-        <div class="d-flex align-items-center flex-wrap gap-2 mb-1 mb-sm-0">
-            <span class="badge px-2.5 py-1 text-white font-weight-bold" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); border-radius: 7px; font-size: 11.5px;">
-                <i class="fa fa-user mr-1"></i> Dashboard Pegawai
-            </span>
-            <a href="{{ route('home', ['view' => 'admin']) }}" class="btn btn-outline-secondary btn-sm font-weight-bold" style="border-radius: 7px; font-size: 11.5px; padding: 4px 10px;">
-                <i class="fa fa-chart-pie mr-1"></i> Dashboard Admin
-            </a>
-            @if ($isPreview)
-                <span class="badge badge-soft-warning font-weight-bold px-2 py-0.5" style="font-size: 10.5px;">
-                    <i class="fa fa-eye mr-1"></i> Mode Pratinjau
-                </span>
-            @endif
-        </div>
-        <div class="text-muted small d-flex align-items-center flex-wrap">
-            <span class="d-inline-flex align-items-center mr-2">
-                <i class="fa fa-calendar-alt text-primary mr-1"></i> {{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y') }}
-            </span>
-            <span class="d-none d-sm-inline text-slate-300 mr-2">|</span>
-            <span class="d-inline-flex align-items-center font-weight-bold text-dark">
-                <i class="fa fa-clock text-warning mr-1"></i> {{ \Carbon\Carbon::now()->format('H:i') }} WIB
-            </span>
-        </div>
-    </div>
+
 
     <!-- MODERN USER HERO GREETING CARD (FOKUS OPERASIONAL & BEBAS BIODATA BERAT) -->
     <div class="user-hero-card mb-4">
@@ -471,7 +447,7 @@
                         @endif
                     </div>
 
-                    <h4 class="font-weight-bold text-white mb-1 text-truncate" style="font-size: calc(1.1rem + 0.3vw);">
+                    <h4 class="font-weight-bold text-white mb-1 text-truncate" style="font-size: calc(0.9rem + 0.3vw);">
                         {{ $salam }}, {{ $karyawan?->nama_gelar ?? Auth::user()->name }}!
                     </h4>
 

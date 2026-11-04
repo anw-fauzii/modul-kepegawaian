@@ -207,25 +207,6 @@
 @endphp
 
 <div class="app-main__inner">
-    <!-- MODE SWITCHER & TIMESTAMP BAR -->
-    <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 bg-white p-2 px-3 rounded-lg border border-slate-200 shadow-sm" style="border-radius: 12px;">
-        <div class="d-flex align-items-center flex-wrap gap-2 mb-2 mb-md-0">
-            <span class="badge px-3 py-1 text-white font-weight-bold" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 8px; font-size: 12px;">
-                <i class="fa fa-chart-pie mr-1"></i> Dashboard Admin Lembaga
-            </span>
-            <a href="{{ route('dashboard.user') }}" class="btn btn-outline-warning btn-sm font-weight-bold ml-1" style="border-radius: 8px; font-size: 11.5px; color: #ea580c; border-color: #ea580c;">
-                <i class="fa fa-user mr-1"></i> Beralih ke Dashboard Pegawai Saya
-            </a>
-        </div>
-        <div class="text-muted small d-flex align-items-center">
-            <i class="fa fa-calendar-alt text-primary mr-2"></i>
-            <span>{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y') }}</span>
-            <span class="mx-2 text-slate-300">|</span>
-            <i class="fa fa-clock text-warning mr-1"></i>
-            <span class="font-weight-bold text-dark">{{ \Carbon\Carbon::now()->format('H:i') }} WIB</span>
-        </div>
-    </div>
-
     <!-- HERO WELCOME BANNER -->
     <div class="dashboard-hero mb-4">
         <div class="hero-decor-circle"></div>

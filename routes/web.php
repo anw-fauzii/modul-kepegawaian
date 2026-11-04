@@ -20,6 +20,7 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class,'index'])->name('home');
     Route::get('/dashboard/user', [App\Http\Controllers\HomeController::class, 'userDashboard'])->name('dashboard.user');
+    Route::get('/user/presensi', [App\Http\Controllers\User\UserPresensiController::class, 'index'])->name('user.presensi.index');
     Route::get('/profil', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index');
     Route::put('/profil/password', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::resource('/data-master/kategori', App\Http\Controllers\Admin\DataMaster\KategoriController::class);      

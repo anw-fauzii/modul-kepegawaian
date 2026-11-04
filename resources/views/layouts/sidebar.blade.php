@@ -34,37 +34,77 @@
                 Menu Utama
             </p>
             <nav class="space-y-1">
-                <!-- Dashboard Admin -->
-                <div class="relative group/tooltip">
-                    <a href="{{ route('home') }}"
-                        class="group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('home') && request('view') !== 'user' ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
-                        <div class="flex items-center gap-3">
-                            <svg class="h-4 w-4 shrink-0 {{ request()->routeIs('home') && request('view') !== 'user' ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                            </svg>
-                            <span class="menu-text">Dashboard Admin</span>
-                        </div>
-                    </a>
-                    <div class="sidebar-tooltip">Dashboard Admin</div>
-                </div>
+                @role('user')
+                    <div class="relative group/tooltip">
+                        <a href="{{ route('dashboard.user') }}"
+                            class="group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('dashboard.user') || request('view') === 'user' ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
+                            <div class="flex items-center gap-3">
+                                <svg class="h-4 w-4 shrink-0 {{ request()->routeIs('dashboard.user') || request('view') === 'user' ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                                <span class="menu-text">Dashboard Pegawai</span>
+                            </div>
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500 text-white">SAYA</span>
+                        </a>
+                        <div class="sidebar-tooltip">Dashboard Pegawai</div>
+                    </div>
 
-                <div class="relative group/tooltip">
-                    <a href="{{ route('dashboard.user') }}"
-                        class="group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('dashboard.user') || request('view') === 'user' ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
-                        <div class="flex items-center gap-3">
-                            <svg class="h-4 w-4 shrink-0 {{ request()->routeIs('dashboard.user') || request('view') === 'user' ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}"
+                    <div class="relative group/tooltip">
+                        <a href="{{ route('user.presensi.index') }}"
+                            class="group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ request()->routeIs('user.presensi*') ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
+                            <div class="flex items-center gap-3">
+                                <svg class="h-4 w-4 shrink-0 {{ request()->routeIs('user.presensi*') ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span class="menu-text">Presensi Saya</span>
+                            </div>
+                        </a>
+                        <div class="sidebar-tooltip">Presensi Saya</div>
+                    </div>
+                @endrole
+                
+                @role('super admin')
+                    @php
+                        $isDashboardActive = request()->is('home*', 'dashboard/user*');
+                    @endphp
+                    <div class="has-submenu relative group/submenu">
+                        <button type="button" data-sidebar-toggle="submenu-data-master"
+                            aria-expanded="{{ $isDashboardActive ? 'true' : 'false' }}"
+                            class="w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all {{ $isDashboardActive ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/30' : 'text-slate-300 hover:text-white hover:bg-slate-800/80' }}">
+                            <div class="flex items-center gap-3">
+                                <svg class="h-4 w-4 shrink-0 {{ $isDashboardActive ? 'text-white' : 'text-slate-400 group-hover:text-orange-400' }}"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                                <span class="menu-text">Dashboard</span>
+                            </div>
+                            <svg class="menu-chevron h-3.5 w-3.5 text-slate-400 transition-transform duration-200 {{ $isDashboardActive ? 'rotate-180' : '' }}"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
-                            <span class="menu-text">Dashboard Pegawai</span>
+                        </button>
+
+                        <div id="submenu-data-master"
+                            class="{{ $isDashboardActive ? '' : 'hidden' }} submenu-flyout mt-1 space-y-1 pl-4 border-l border-slate-800 ml-5 py-1">
+                            <div class="flyout-header hidden">
+                                <span>Data Master</span>
+                            </div>
+                            <a href="{{ route('home') }}"
+                                class="block px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->is('home*') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
+                                Panel Admin
+                            </a>
+                            <a href="{{ route('dashboard.user') }}"
+                                class="block px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->is('dashboard/user*') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
+                                Panel User
+                            </a>
                         </div>
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500 text-white">SAYA</span>
-                    </a>
-                    <div class="sidebar-tooltip">Dashboard Pegawai</div>
-                </div>
+                    </div>
+                @endrole
 
                 @php
                     $isDataMasterActive = request()->is('data-master/kategori*', 'data-master/jam-kerja*', 'data-master/bulan*', 'data-master/jenis-cuti*', 'data-master/hari-libur*');
