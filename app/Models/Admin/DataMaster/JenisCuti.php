@@ -30,4 +30,22 @@ class JenisCuti extends Model
     {
         return $this->hasMany(\App\Models\Admin\Cuti\Cuti::class, 'kepegawaian_master_jenis_cuti_id');
     }
+
+    /**
+     * Memeriksa apakah jenis cuti ini adalah Cuti Melahirkan (untuk karyawati/ibu yang bersalin)
+     * yang memiliki ketentuan khusus 90 hari kalender penuh.
+     * Catatan: "Cuti Istri Melahirkan" (untuk suami) berdurasi 2 hari kerja biasa, bukan 90 hari.
+     */
+    public function isMelahirkan(): bool
+    {
+        $nama = strtolower($this->nama ?? '');
+
+        // Pengecualian: Cuti istri melahirkan (untuk suami/pendamping) dihitung hari kerja biasa (misal 2 hari)
+        if (str_contains($nama, 'istri') || str_contains($nama, 'suami') || str_contains($nama, 'mendampingi')) {
+            return false;
+        }
+
+        // Cuti Melahirkan ibu/karyawati (90 hari kalender penuh)
+        return str_contains($nama, 'melahirkan');
+    }
 }

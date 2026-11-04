@@ -53,7 +53,11 @@ class CutiService
         return DB::transaction(function () use ($data) {
             // Hitung otomatis durasi jumlah hari jika belum ada
             if (empty($data['jumlah_hari']) && ! empty($data['awal_cuti']) && ! empty($data['akhir_cuti'])) {
-                $data['jumlah_hari'] = Cuti::hitungJumlahHari($data['awal_cuti'], $data['akhir_cuti']);
+                $jenisCuti = ! empty($data['kepegawaian_master_jenis_cuti_id'])
+                    ? \App\Models\Admin\DataMaster\JenisCuti::find($data['kepegawaian_master_jenis_cuti_id'])
+                    : null;
+                $isMelahirkan = $jenisCuti?->isMelahirkan() ?? false;
+                $data['jumlah_hari'] = Cuti::hitungJumlahHari($data['awal_cuti'], $data['akhir_cuti'], null, $isMelahirkan);
             }
 
             // Jika status ACC bernilai true saat dibuat, catat waktu dan user
@@ -74,7 +78,10 @@ class CutiService
         return DB::transaction(function () use ($cuti, $data) {
             // Hitung ulang jumlah hari jika tanggal berubah
             if (! empty($data['awal_cuti']) && ! empty($data['akhir_cuti'])) {
-                $data['jumlah_hari'] = Cuti::hitungJumlahHari($data['awal_cuti'], $data['akhir_cuti']);
+                $jenisCutiId = $data['kepegawaian_master_jenis_cuti_id'] ?? $cuti->kepegawaian_master_jenis_cuti_id;
+                $jenisCuti = $jenisCutiId ? \App\Models\Admin\DataMaster\JenisCuti::find($jenisCutiId) : null;
+                $isMelahirkan = $jenisCuti?->isMelahirkan() ?? false;
+                $data['jumlah_hari'] = Cuti::hitungJumlahHari($data['awal_cuti'], $data['akhir_cuti'], null, $isMelahirkan);
             }
 
             // Kelola status acc

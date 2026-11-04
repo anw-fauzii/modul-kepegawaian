@@ -35,10 +35,18 @@
             class="form-control select2 @error('kepegawaian_master_jenis_cuti_id') is-invalid @enderror" required>
             <option value="">-- Pilih Kategori Jenis Cuti --</option>
             @foreach ($jenisCutiList as $jc)
+                @php
+                    $namaLower = strtolower($jc->nama ?? '');
+                    $isIstri = str_contains($namaLower, 'istri') || str_contains($namaLower, 'suami') || str_contains($namaLower, 'mendampingi');
+                    $isMlh = !$isIstri && (method_exists($jc, 'isMelahirkan')
+                        ? $jc->isMelahirkan()
+                        : str_contains($namaLower, 'melahirkan'));
+                @endphp
                 <option value="{{ $jc->id }}"
                     data-kuota="{{ $jc->lama_hari }}"
+                    data-melahirkan="{{ $isMlh ? '1' : '0' }}"
                     {{ old('kepegawaian_master_jenis_cuti_id', $isEdit ? $cuti->kepegawaian_master_jenis_cuti_id : null) == $jc->id ? 'selected' : '' }}>
-                    {{ $jc->nama }} (Kuota Maks. {{ $jc->lama_hari }} Hari)
+                    {{ $jc->nama }} (Kuota Maks. {{ $jc->lama_hari }} Hari{{ $isMlh ? ' Kalender' : ' Kerja' }})
                 </option>
             @endforeach
         </select>
@@ -273,15 +281,39 @@
             return true;
         }
 
-        // Hitung tanggal akhir cuti berdasarkan tanggal awal dan jumlah hari kerja
-        // (Sabtu, Minggu & Hari Libur Nasional dilewati)
+        function isMelahirkanSelected() {
+            if (!jenisCutiSelect) return false;
+            const selected = jenisCutiSelect.options[jenisCutiSelect.selectedIndex];
+            if (!selected || !selected.value) return false;
+
+            const isMlh = selected.getAttribute('data-melahirkan');
+            if (isMlh === '1' || isMlh === 'true') return true;
+            if (isMlh === '0' || isMlh === 'false') return false;
+
+            const text = (selected.text || '').toLowerCase();
+            // Pengecualian Cuti Istri Melahirkan (2 hari kerja)
+            if (text.includes('istri') || text.includes('suami') || text.includes('mendampingi')) {
+                return false;
+            }
+
+            return text.includes('melahirkan');
+        }
+
+        // Hitung tanggal akhir cuti berdasarkan tanggal awal dan jumlah hari
+        // (Jika Cuti Melahirkan: 90 hari kalender penuh; Jika Reguler: Sabtu, Minggu & Hari Libur Nasional dilewati)
         function hitungAkhirCuti(awalStr, lamaHari) {
             if (!awalStr || !lamaHari || lamaHari <= 0) return '';
 
+            const isMlh = isMelahirkanSelected();
             let curr = parseIso(awalStr);
-            let counted = 0;
             const target = parseInt(lamaHari, 10);
 
+            if (isMlh) {
+                curr.setDate(curr.getDate() + (target - 1));
+                return formatIso(curr);
+            }
+
+            let counted = 0;
             while (counted < target) {
                 if (isHariKerja(curr)) {
                     counted++;
@@ -295,7 +327,8 @@
             return formatIso(curr);
         }
 
-        // Hitung jumlah hari kerja antara 2 tanggal (Sabtu, Minggu & Hari Libur Nasional tidak dihitung)
+        // Hitung durasi cuti antara 2 tanggal
+        // (Cuti Melahirkan: hari kalender; Cuti Reguler: hari kerja efektif)
         function hitungHariKerja(awalStr, akhirStr) {
             if (!awalStr || !akhirStr) return 0;
 
@@ -303,6 +336,12 @@
             const d2 = parseIso(akhirStr);
 
             if (d2 < d1) return 0;
+
+            const isMlh = isMelahirkanSelected();
+            if (isMlh) {
+                const diffTime = d2.getTime() - d1.getTime();
+                return Math.max(1, Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1);
+            }
 
             let workingDays = 0;
             let curr = new Date(d1.getTime());
@@ -360,26 +399,33 @@
                 return;
             }
 
-            const hariKerja = hitungHariKerja(awalInput.value, akhirInput.value);
+            const isMlh = isMelahirkanSelected();
+            const durasi = hitungHariKerja(awalInput.value, akhirInput.value);
             const liburNasional = getLiburDalamRentang(awalInput.value, akhirInput.value);
 
             if (previewBox) {
                 previewBox.style.display = 'block';
                 previewBox.className = 'p-3 rounded text-dark small';
-                previewBox.style.background = '#f0fdf4';
-                previewBox.style.border = '1px solid #bbf7d0';
+                previewBox.style.background = isMlh ? '#fff7ed' : '#f0fdf4';
+                previewBox.style.border = isMlh ? '1px solid #fdba74' : '1px solid #bbf7d0';
 
-                let html = `<div><i class="fa fa-calendar-check text-success mr-1.5"></i> <strong>Rentang Cuti:</strong> ${formatTanggalIndo(d1)} s/d ${formatTanggalIndo(d2)} &bull; <strong class="text-success">${hariKerja} Hari Kerja Terhitung</strong></div>`;
-                html += `<div class="text-muted mt-1"><i class="fa fa-info-circle text-info mr-1"></i> Sabtu, Minggu, & Libur Nasional otomatis <strong>tidak memotong</strong> kuota cuti.</div>`;
+                let html = '';
+                if (isMlh) {
+                    html += `<div><i class="fa fa-baby text-warning mr-1.5"></i> <strong>Rentang Cuti Melahirkan:</strong> ${formatTanggalIndo(d1)} s/d ${formatTanggalIndo(d2)} &bull; <strong class="text-warning">${durasi} Hari Kalender Penuh</strong></div>`;
+                    html += `<div class="text-muted mt-1"><i class="fa fa-info-circle text-info mr-1"></i> Sesuai regulasi yayasan, masa cuti melahirkan dihitung 90 hari kalender penuh (termasuk Sabtu, Minggu, & Libur Nasional).</div>`;
+                } else {
+                    html += `<div><i class="fa fa-calendar-check text-success mr-1.5"></i> <strong>Rentang Cuti:</strong> ${formatTanggalIndo(d1)} s/d ${formatTanggalIndo(d2)} &bull; <strong class="text-success">${durasi} Hari Kerja Terhitung</strong></div>`;
+                    html += `<div class="text-muted mt-1"><i class="fa fa-info-circle text-info mr-1"></i> Sabtu, Minggu, & Libur Nasional otomatis <strong>tidak memotong</strong> kuota cuti.</div>`;
 
-                if (liburNasional.length > 0) {
-                    html += `<div class="mt-2 pt-2 border-top" style="border-color: #dcfce7 !important;">`;
-                    html += `<div class="font-weight-bold text-danger mb-1"><i class="fa fa-calendar-times text-danger mr-1"></i> ${liburNasional.length} Hari Libur Nasional dilewati (bebas cuti):</div>`;
-                    html += `<ul class="mb-0 pl-3">`;
-                    liburNasional.forEach(l => {
-                        html += `<li><strong>${l.formatted}:</strong> <span class="text-dark">${l.nama}</span></li>`;
-                    });
-                    html += `</ul></div>`;
+                    if (liburNasional.length > 0) {
+                        html += `<div class="mt-2 pt-2 border-top" style="border-color: #dcfce7 !important;">`;
+                        html += `<div class="font-weight-bold text-danger mb-1"><i class="fa fa-calendar-times text-danger mr-1"></i> ${liburNasional.length} Hari Libur Nasional dilewati (bebas cuti):</div>`;
+                        html += `<ul class="mb-0 pl-3">`;
+                        liburNasional.forEach(l => {
+                            html += `<li><strong>${l.formatted}:</strong> <span class="text-dark">${l.nama}</span></li>`;
+                        });
+                        html += `</ul></div>`;
+                    }
                 }
 
                 previewText.innerHTML = html;
@@ -391,8 +437,17 @@
             if (!jenisCutiSelect) return;
             const selected = jenisCutiSelect.options[jenisCutiSelect.selectedIndex];
             const kuota = selected ? selected.getAttribute('data-kuota') : null;
+            const isMlh = isMelahirkanSelected();
 
-            if (kuota && parseInt(kuota, 10) > 0) {
+            if (isMlh) {
+                durasiInput.value = 90;
+                durasiNote.innerHTML = `<span class="text-warning font-weight-bold"><i class="fa fa-baby mr-1"></i> Cuti Melahirkan: 90 hari kalender penuh (termasuk Sabtu, Minggu & Libur Nasional).</span>`;
+
+                if (awalInput.value) {
+                    akhirInput.value = hitungAkhirCuti(awalInput.value, 90);
+                    updatePreview();
+                }
+            } else if (kuota && parseInt(kuota, 10) > 0) {
                 durasiInput.value = parseInt(kuota, 10);
                 durasiNote.innerHTML = `<span class="text-success font-weight-bold"><i class="fa fa-check mr-1"></i> Kuota jenis cuti: ${kuota} hari kerja.</span>`;
 

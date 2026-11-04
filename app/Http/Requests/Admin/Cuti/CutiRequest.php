@@ -26,15 +26,26 @@ class CutiRequest extends FormRequest
             $mergeData['acc'] = filter_var($this->input('acc'), FILTER_VALIDATE_BOOLEAN);
         }
 
+        $jenisCutiId = $this->input('kepegawaian_master_jenis_cuti_id');
+        $isMelahirkan = false;
+        if ($jenisCutiId) {
+            $jc = \App\Models\Admin\DataMaster\JenisCuti::find($jenisCutiId);
+            $isMelahirkan = $jc?->isMelahirkan() ?? false;
+        }
+
         if ($this->filled(['awal_cuti', 'akhir_cuti'])) {
             $mergeData['jumlah_hari'] = Cuti::hitungJumlahHari(
                 $this->input('awal_cuti'),
-                $this->input('akhir_cuti')
+                $this->input('akhir_cuti'),
+                null,
+                $isMelahirkan
             );
         } elseif ($this->filled(['awal_cuti', 'jumlah_hari']) && ! $this->filled('akhir_cuti')) {
             $mergeData['akhir_cuti'] = Cuti::hitungAkhirCuti(
                 $this->input('awal_cuti'),
-                (int) $this->input('jumlah_hari')
+                (int) $this->input('jumlah_hari'),
+                null,
+                $isMelahirkan
             )->toDateString();
         }
 

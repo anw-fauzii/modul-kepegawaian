@@ -260,6 +260,7 @@
     </script>
 
     @yield('js')
+    @stack('js')
 </body>
 
 </html>

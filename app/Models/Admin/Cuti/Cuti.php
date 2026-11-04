@@ -174,22 +174,28 @@ class Cuti extends Model
     }
 
     /**
-     * Kalkulasi otomatis durasi jumlah hari kerja cuti:
-     * - Mengecualikan Sabtu & Minggu (Weekend)
-     * - Mengecualikan Hari Libur Nasional & Cuti Bersama resmi.
+     * Kalkulasi otomatis durasi jumlah hari cuti:
+     * - Cuti Melahirkan: Pengecualian khusus dihitung 90 hari kalender penuh (termasuk Sabtu, Minggu & Libur Nasional).
+     * - Cuti Reguler: Hari kerja efektif (mengecualikan Sabtu, Minggu & Hari Libur Nasional).
      *
      * @param string|Carbon $awal
      * @param string|Carbon $akhir
      * @param array<string, string>|null $holidays Map tanggal libur ['YYYY-MM-DD' => 'Keterangan']
+     * @param bool $isMelahirkan Pengecualian jika cuti melahirkan
      * @return int
      */
-    public static function hitungJumlahHari(string|Carbon $awal, string|Carbon $akhir, ?array $holidays = null): int
+    public static function hitungJumlahHari(string|Carbon $awal, string|Carbon $akhir, ?array $holidays = null, bool $isMelahirkan = false): int
     {
         $startDate = Carbon::parse($awal)->startOfDay();
         $endDate = Carbon::parse($akhir)->startOfDay();
 
         if ($endDate->lessThan($startDate)) {
             return 0;
+        }
+
+        // Pengecualian khusus jika cuti melahirkan: hitung seluruh hari kalender berturut-turut
+        if ($isMelahirkan) {
+            return (int) $startDate->diffInDays($endDate) + 1;
         }
 
         if ($holidays === null) {
@@ -214,19 +220,25 @@ class Cuti extends Model
     }
 
     /**
-     * Hitung tanggal akhir cuti berdasarkan tanggal awal dan jumlah hari kerja:
-     * - Sabtu & Minggu dilewati.
-     * - Hari Libur Nasional & Cuti Bersama dilewati (tidak dihitung sebagai cuti).
+     * Hitung tanggal akhir cuti berdasarkan tanggal awal dan durasi hari:
+     * - Cuti Melahirkan: Dihitung berurutan sesuai hari kalender (Sabtu, Minggu & Libur Nasional tetap dihitung).
+     * - Cuti Reguler: Sabtu & Minggu serta Hari Libur Nasional dilewati (hanya hari kerja yang dihitung).
      *
      * @param string|Carbon $awal
      * @param int $lamaHari
      * @param array<string, string>|null $holidays Map tanggal libur ['YYYY-MM-DD' => 'Keterangan']
+     * @param bool $isMelahirkan Pengecualian jika cuti melahirkan
      * @return Carbon
      */
-    public static function hitungAkhirCuti(string|Carbon $awal, int $lamaHari, ?array $holidays = null): Carbon
+    public static function hitungAkhirCuti(string|Carbon $awal, int $lamaHari, ?array $holidays = null, bool $isMelahirkan = false): Carbon
     {
         $current = Carbon::parse($awal)->startOfDay();
         $targetDays = max(1, $lamaHari);
+
+        // Pengecualian khusus jika cuti melahirkan: 90 hari kalender penuh
+        if ($isMelahirkan) {
+            return $current->copy()->addDays($targetDays - 1);
+        }
 
         if ($holidays === null) {
             $holidays = HariLibur::getHolidayMap();
