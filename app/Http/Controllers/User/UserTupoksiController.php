@@ -21,7 +21,7 @@ class UserTupoksiController extends Controller
         protected UserTupoksiService $tupoksiService,
         protected UserBerkasService $berkasService
     ) {
-        $this->middleware(['auth', 'role:user']);
+        $this->middleware(['auth', 'role:user|super admin']);
     }
 
     /**

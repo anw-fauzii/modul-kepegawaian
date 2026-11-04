@@ -20,7 +20,7 @@ class UserCutiController extends Controller
     public function __construct(
         protected UserCutiService $cutiService
     ) {
-        $this->middleware(['auth', 'role:user']);
+        $this->middleware(['auth', 'role:user|super admin']);
     }
 
     /**

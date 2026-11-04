@@ -16,7 +16,7 @@ class UserFasilitasController extends Controller
     public function __construct(
         protected UserFasilitasService $fasilitasService
     ) {
-        $this->middleware(['auth', 'role:user']);
+        $this->middleware(['auth', 'role:user|super admin']);
     }
 
     /**

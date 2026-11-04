@@ -17,7 +17,7 @@ class UserPenggajianController extends Controller
     public function __construct(
         protected UserPenggajianService $penggajianService
     ) {
-        $this->middleware(['auth', 'role:user']);
+        $this->middleware(['auth', 'role:user|super admin']);
     }
 
     /**

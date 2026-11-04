@@ -21,7 +21,7 @@ class UserRapotKinerjaController extends Controller
         protected UserRapotKinerjaService $rapotService,
         protected UserBerkasService $berkasService
     ) {
-        $this->middleware(['auth', 'role:user']);
+        $this->middleware(['auth', 'role:user|super admin']);
     }
 
     /**

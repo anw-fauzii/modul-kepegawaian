@@ -21,7 +21,7 @@ class UserSuratKeputusanController extends Controller
         protected UserSuratKeputusanService $skService,
         protected UserBerkasService $berkasService
     ) {
-        $this->middleware(['auth', 'role:user']);
+        $this->middleware(['auth', 'role:user|super admin']);
     }
 
     /**
