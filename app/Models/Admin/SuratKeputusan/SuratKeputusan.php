@@ -25,6 +25,7 @@ class SuratKeputusan extends Model
      */
     protected $fillable = [
         'nomor_sk',
+        'kode_verifikasi',
         'karyawan_nipy',
         'akademik_master_tahun_ajaran_id',
         'jabatan',
@@ -49,6 +50,18 @@ class SuratKeputusan extends Model
         'berkas_filename',
         'formatted_tanggal_sk',
     ];
+
+    /**
+     * Membuat kode verifikasi unik (dipakai pada QR code dokumen).
+     */
+    public static function generateKode(): string
+    {
+        do {
+            $kode = strtoupper(\Illuminate\Support\Str::random(12));
+        } while (static::where('kode_verifikasi', $kode)->exists());
+
+        return $kode;
+    }
 
     /**
      * Relasi ke Master Karyawan via foreign key karyawan_nipy (String Key ke nipy).

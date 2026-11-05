@@ -254,7 +254,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-2 col-sm-12">
+                    <div class="col-md-2 col-sm-12 mb-2 mb-md-0">
                         <a href="{{ route('presensi.rekap') }}" class="btn btn-light border btn-block font-weight-bold shadow-sm d-flex align-items-center justify-content-center"
                             style="border-radius: 8px; height: 38px;" title="Reset Filter">
                             <i class="fa fa-undo mr-1"></i> Reset

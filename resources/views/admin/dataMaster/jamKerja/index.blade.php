@@ -25,7 +25,7 @@
                 <div class="page-title-actions">
                     <a href="{{ route('jam-kerja.create') }}" class="btn text-white shadow-sm"
                         style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px;">
-                        <i class="fa fa-plus-circle mr-1"></i> TAMBAH BARU
+                        <i class="fa fa-plus-circle mr-1"></i> Tambah Baru
                     </a>
                 </div>
             </div>

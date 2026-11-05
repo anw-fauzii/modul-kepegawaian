@@ -184,7 +184,6 @@
                             <i class="fa fa-calendar-alt mr-1 text-warning"></i> Periode Bulan
                         </label>
                         <select name="kepegawaian_master_bulan_id" class="form-control form-filter-control select2">
-                            <option value="">Semua Bulan</option>
                             @foreach ($bulanList as $b)
                                 <option value="{{ $b->id }}" {{ request('kepegawaian_master_bulan_id') == $b->id ? 'selected' : '' }}>
                                     {{ $b->nama_bulan }} {{ $b->tahunAjaran ? '(' . $b->tahunAjaran->nama_tahun_ajaran . ')' : '' }} {{ $b->status ? ' [Aktif]' : '' }}

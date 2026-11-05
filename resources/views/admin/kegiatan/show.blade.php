@@ -381,7 +381,7 @@
         <div class="d-flex flex-wrap justify-content-between align-items-center" style="gap: 16px;">
             {{-- Left: Back Navigation + Event Title + Clean Meta Line --}}
             <div class="d-flex align-items-center" style="gap: 14px;">
-                <a href="{{ route('kegiatan.index') }}" class="header-back-btn" title="Kembali ke Daftar Kegiatan">
+                <a href="{{ route('kegiatan.index') }}" class="header-back-btn" title="Kembali Kegiatan">
                     <i class="fa fa-arrow-left"></i>
                 </a>
                 <div>

@@ -23,7 +23,7 @@
             </div>
             <div class="page-title-actions">
                 <a href="{{ route('cuti.index') }}" class="btn btn-outline-secondary font-weight-bold" style="border-radius: 8px;">
-                    <i class="fa fa-arrow-left mr-1.5"></i> Kembali ke Daftar
+                    <i class="fa fa-arrow-left mr-1.5"></i> Kembali
                 </a>
             </div>
         </div>

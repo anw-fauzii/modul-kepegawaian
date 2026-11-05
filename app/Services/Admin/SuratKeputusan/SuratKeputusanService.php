@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SuratKeputusanService
 {
+    public function __construct(protected SuratKeputusanQrStamper $qrStamper) {}
+
     /**
      * Nama disk storage yang digunakan untuk menyimpan berkas dokumen SK.
      */
@@ -95,7 +97,9 @@ class SuratKeputusanService
             if ($file instanceof UploadedFile) {
                 $nipy = $data['karyawan_nipy'] ?? ($data['nipy'] ?? 'unknown');
                 $tahunAjaranId = (int) ($data['akademik_master_tahun_ajaran_id'] ?? 0);
+                $data['kode_verifikasi'] = $data['kode_verifikasi'] ?? SuratKeputusan::generateKode();
                 $uploadedPath = $this->uploadBerkas($file, $nipy, $tahunAjaranId);
+                $this->stampQr($uploadedPath, $data['kode_verifikasi']);
                 $data['berkas'] = $uploadedPath;
             }
 
@@ -147,7 +151,10 @@ class SuratKeputusanService
             if ($newFile instanceof UploadedFile) {
                 $nipy = $data['karyawan_nipy'] ?? $sk->karyawan_nipy;
                 $tahunAjaranId = (int) ($data['akademik_master_tahun_ajaran_id'] ?? $sk->akademik_master_tahun_ajaran_id);
+                $kode = $sk->kode_verifikasi ?: SuratKeputusan::generateKode();
+                $data['kode_verifikasi'] = $kode;
                 $newUploadedPath = $this->uploadBerkas($newFile, $nipy, $tahunAjaranId);
+                $this->stampQr($newUploadedPath, $kode);
                 $data['berkas'] = $newUploadedPath;
             }
 
@@ -328,5 +335,22 @@ class SuratKeputusanService
             }
             Log::info("Berkas fisik dihapus dari storage: {$path}");
         }
+    }
+
+    /**
+     * Tempel QR verifikasi di halaman terakhir berkas PDF. Berkas non-PDF dilewati.
+     * Kegagalan menempel QR tidak membatalkan upload (hanya dicatat di log).
+     */
+    protected function stampQr(string $path, string $kode): void
+    {
+        if (strtolower(pathinfo($path, PATHINFO_EXTENSION)) !== 'pdf') {
+            return;
+        }
+
+        $this->qrStamper->stamp(
+            Storage::disk(self::DISK)->path($path),
+            $kode,
+            route('verifikasi.sk', $kode)
+        );
     }
 }

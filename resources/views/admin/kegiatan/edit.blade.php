@@ -21,7 +21,7 @@
             </div>
             <div class="page-title-actions">
                 <a href="{{ route('kegiatan.index') }}" class="btn btn-outline-secondary font-weight-bold">
-                    <i class="fa fa-arrow-left mr-1"></i> Kembali ke Daftar
+                    <i class="fa fa-arrow-left mr-1"></i> Kembali
                 </a>
             </div>
         </div>

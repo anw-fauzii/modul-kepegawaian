@@ -34,16 +34,16 @@
                             @endfor
                         </select>
                         <div class="input-group-append">
-                            <button type="submit" class="btn btn-sm btn-outline-primary shadow-sm font-weight-bold" style="border-radius: 0 8px 8px 0;">
+                            <button type="submit" class="btn btn-outline-primary shadow-sm font-weight-bold" style="border-radius: 0 8px 8px 0;">
                                 <i class="fa fa-sync-alt mr-1"></i> Sinkron API
                             </button>
                         </div>
                     </div>
                 </form>
 
-                <a href="{{ route('hari-libur.create') }}" class="btn btn-sm text-white shadow-sm font-weight-bold py-2 px-3"
+                <a href="{{ route('hari-libur.create') }}" class="btn text-white shadow-sm font-weight-bold py-2 px-3"
                     style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px;">
-                    <i class="fa fa-plus-circle mr-1.5"></i> TAMBAH HARI LIBUR
+                    <i class="fa fa-plus-circle mr-1.5"></i> Tambah Baru
                 </a>
             </div>
         </div>

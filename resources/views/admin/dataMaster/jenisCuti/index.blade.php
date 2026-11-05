@@ -25,7 +25,7 @@
                 <div class="page-title-actions">
                     <a href="{{ route('jenis-cuti.create') }}" class="btn text-white shadow-sm font-weight-bold"
                         style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px;">
-                        <i class="fa fa-plus-circle mr-1.5"></i> TAMBAH JENIS CUTI
+                        <i class="fa fa-plus-circle mr-1.5"></i> Tambah Baru
                     </a>
                 </div>
             </div>

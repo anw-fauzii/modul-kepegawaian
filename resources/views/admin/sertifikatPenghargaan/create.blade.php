@@ -21,7 +21,7 @@
             </div>
             <div class="page-title-actions">
                 <a href="{{ route('sertifikat-penghargaan.index') }}" class="btn btn-secondary shadow-sm">
-                    <i class="fa fa-arrow-left mr-1"></i> Kembali ke Daftar
+                    <i class="fa fa-arrow-left mr-1"></i> Kembali
                 </a>
             </div>
         </div>

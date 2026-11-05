@@ -27,7 +27,7 @@
                 <div class="page-title-actions">
                     <a href="{{ route('presensi.index') }}" class="btn text-white shadow-sm"
                         style="background: linear-gradient(135deg, #64748b 0%, #475569 100%) !important; border-radius: 8px;">
-                        <i class="fa fa-reply mr-1"></i> Kembali ke Daftar
+                        <i class="fa fa-reply mr-1"></i> Kembali
                     </a>
                 </div>
             </div>

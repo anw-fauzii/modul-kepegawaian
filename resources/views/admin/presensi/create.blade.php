@@ -204,7 +204,7 @@
             <div class="page-title-actions">
                 <a href="{{ route('presensi.index') }}" class="btn btn-light border shadow-sm font-weight-bold"
                     style="border-radius: 8px;">
-                    <i class="fa fa-arrow-left mr-1"></i> Kembali ke Daftar
+                    <i class="fa fa-arrow-left mr-1"></i> Kembali
                 </a>
             </div>
         </div>

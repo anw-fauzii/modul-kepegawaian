@@ -382,7 +382,7 @@
                 <div>
                     Matriks Presensi Harian
                     <div class="page-title-subheading">
-                        Pantau kehadiran seluruh pegawai per tanggal secara visual dan deteksi pegawai yang belum absen.
+                        Pantau kehadiran seluruh pegawai per tanggal secara visual.
                     </div>
                 </div>
             </div>
@@ -393,21 +393,13 @@
                     <i class="fa fa-table mr-1"></i> Rekap Bulanan
                 </a>
 
-                <div class="btn-group shadow-sm">
-                    <a href="{{ route('presensi.matriks.pdf', request()->query()) }}"
-                        target="_blank"
-                        class="btn text-white font-weight-bold btn-cetak-pdf"
-                        style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important; border-radius: 8px 0 0 8px; border: none; font-size: 13px;"
-                        title="Buka Dokumen PDF Matriks Presensi (Kertas A3 Landscape)">
-                        <i class="fa fa-file-pdf-o mr-1"></i> Cetak PDF (A3)
-                    </a>
-                    <a href="{{ route('presensi.matriks.pdf', array_merge(request()->query(), ['download' => 1])) }}"
-                        class="btn text-white btn-cetak-pdf"
-                        style="background: #dc2626 !important; border-radius: 0 8px 8px 0; border: none; border-left: 1px solid rgba(255,255,255,0.25);"
-                        title="Unduh (Download) Langsung PDF A3">
-                        <i class="fa fa-download"></i>
-                    </a>
-                </div>
+                <a href="{{ route('presensi.matriks.pdf', request()->query()) }}"
+                    target="_blank"
+                    class="btn text-white font-weight-bold btn-cetak-pdf"
+                    style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important; border-radius: 8px; border: none; font-size: 13px;"
+                    title="Buka Dokumen PDF Matriks Presensi (Kertas A3 Landscape)">
+                    <i class="fa fa-download"></i> Download
+                </a>
 
                 <a href="{{ route('presensi.create', array_filter([
                     'kepegawaian_master_bulan_id'    => $selectedBulanId,
@@ -510,10 +502,9 @@
         <div class="card-body p-3">
             <form action="{{ route('presensi.matriks') }}" method="GET" id="filterMatriksForm">
                 <div class="row align-items-end">
-                    <div class="col-md-4 col-sm-6 mb-2 mb-md-0">
+                    <div class="col-md-3 mb-2 mb-md-0">
                         <label class="form-filter-label d-flex justify-content-between">
                             <span><i class="fa fa-calendar-alt mr-1 text-warning"></i> Periode Master Bulan</span>
-                            <span class="text-warning" style="text-transform: none;"><i class="fa fa-info-circle"></i> Cut-off tgl 28</span>
                         </label>
                         <select name="bulan_id" class="form-control form-filter-control" onchange="document.getElementById('filterMatriksForm').submit();">
                             @foreach ($bulanList as $b)
@@ -524,7 +515,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-4 col-sm-6 mb-2 mb-md-0">
+                    <div class="col-md-3 mb-2 mb-md-0">
                         <label class="form-filter-label">
                             <i class="fa fa-layer-group mr-1 text-primary"></i> Kategori Pegawai
                         </label>
@@ -538,7 +529,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-3 col-sm-8 mb-2 mb-md-0">
+                    <div class="col-md-4 mb-2 mb-md-0">
                         <label class="form-filter-label">
                             <i class="fa fa-search mr-1 text-secondary"></i> Cari Nama Pegawai
                         </label>
@@ -546,7 +537,7 @@
                             placeholder="Ketik nama pegawai...">
                     </div>
 
-                    <div class="col-md-1 col-sm-4">
+                    <div class="col-md-2 col-sm-12 mb-2 mb-md-0">
                         <a href="{{ route('presensi.matriks') }}" class="btn btn-light border btn-block shadow-sm d-flex align-items-center justify-content-center"
                             style="border-radius: 8px; height: 38px;" title="Reset Filter">
                             <i class="fa fa-undo"></i>

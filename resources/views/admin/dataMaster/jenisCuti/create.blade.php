@@ -25,7 +25,7 @@
                 <div class="page-title-actions">
                     <a href="{{ route('jenis-cuti.index') }}" class="btn text-white shadow-sm font-weight-bold"
                         style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px;">
-                        <i class="fa fa-reply mr-1.5"></i> Kembali ke Daftar
+                        <i class="fa fa-reply mr-1.5"></i> Kembali
                     </a>
                 </div>
             </div>

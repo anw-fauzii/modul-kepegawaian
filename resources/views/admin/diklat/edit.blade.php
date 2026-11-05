@@ -22,7 +22,7 @@
             </div>
             <div class="page-title-actions">
                 <a href="{{ route('diklat.index') }}" class="btn btn-outline-secondary font-weight-bold mr-1">
-                    <i class="fa fa-arrow-left mr-1"></i> Kembali ke Daftar
+                    <i class="fa fa-arrow-left mr-1"></i> Kembali
                 </a>
                 <a href="{{ route('diklat.show', $diklat->id) }}" class="btn btn-info font-weight-bold shadow-sm">
                     <i class="fa fa-eye mr-1"></i> Lihat Detail
