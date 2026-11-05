@@ -35,6 +35,30 @@
     .table td, .table th {
         vertical-align: middle;
     }
+    .form-filter-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #475569;
+        letter-spacing: 0.04em;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .form-filter-control {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        font-size: 13px;
+        height: 38px;
+        width: 100%;
+        transition: all 0.2s ease;
+        color: #1e293b;
+        background-color: #fff;
+    }
+    .form-filter-control:focus {
+        border-color: #ea580c;
+        box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+        outline: none;
+    }
 </style>
 
 <div class="app-main__inner">
@@ -129,54 +153,64 @@
         </div>
     </div>
 
-    {{-- FILTER DATA CARD --}}
-    <div class="main-card card border-0 shadow-sm mb-3" style="border-radius: 12px;">
+    <!-- FILTER CARD -->
+    <div class="main-card card mb-3 shadow-sm border-0" style="border-radius: 12px;">
         <div class="card-body p-3">
-            <form action="{{ route('cuti.index') }}" method="GET" class="form-row align-items-end">
-                <div class="col-md-3 col-sm-6 mb-2">
-                    <label class="small font-weight-bold text-muted mb-1">Pencarian</label>
-                    <div class="input-group input-group-sm">
-                        <input type="text" name="search" class="form-control" placeholder="NIPY, nama pegawai, alamat, telp..."
+            <form action="{{ route('cuti.index') }}" method="GET" class="w-100 mb-0">
+                <div class="row align-items-end">
+                    <div class="col-md-3 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-search mr-1 text-warning"></i> Pencarian
+                        </label>
+                        <input type="text" name="search" class="form-control form-filter-control" placeholder="NIPY, nama, alamat, telp..."
                             value="{{ request('search') }}">
                     </div>
-                </div>
 
-                <div class="col-md-3 col-sm-6 mb-2">
-                    <label class="small font-weight-bold text-muted mb-1">Kategori Jenis Cuti</label>
-                    <select name="kepegawaian_master_jenis_cuti_id" class="form-control form-control-sm">
-                        <option value="">-- Semua Jenis Cuti --</option>
-                        @foreach ($jenisCutiOptions as $jopt)
-                            <option value="{{ $jopt->id }}" {{ request('kepegawaian_master_jenis_cuti_id') == $jopt->id ? 'selected' : '' }}>
-                                {{ $jopt->nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                    <div class="col-md-3 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-layer-group mr-1 text-warning"></i> Jenis Cuti
+                        </label>
+                        <select name="kepegawaian_master_jenis_cuti_id" class="form-control form-filter-control">
+                            <option value="">-- Semua Jenis Cuti --</option>
+                            @foreach ($jenisCutiOptions as $jopt)
+                                <option value="{{ $jopt->id }}" {{ request('kepegawaian_master_jenis_cuti_id') == $jopt->id ? 'selected' : '' }}>
+                                    {{ $jopt->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <div class="col-md-2 col-sm-6 mb-2">
-                    <label class="small font-weight-bold text-muted mb-1">Status ACC</label>
-                    <select name="acc" class="form-control form-control-sm">
-                        <option value="">-- Semua Status --</option>
-                        <option value="1" {{ request('acc') === '1' ? 'selected' : '' }}>Sudah ACC (Disetujui)</option>
-                        <option value="0" {{ request('acc') === '0' ? 'selected' : '' }}>Menunggu ACC</option>
-                    </select>
-                </div>
+                    <div class="col-md-2 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-check-circle mr-1 text-warning"></i> Status ACC
+                        </label>
+                        <select name="acc" class="form-control form-filter-control">
+                            <option value="">-- Semua Status --</option>
+                            <option value="1" {{ request('acc') === '1' ? 'selected' : '' }}>Disetujui (ACC)</option>
+                            <option value="0" {{ request('acc') === '0' ? 'selected' : '' }}>Menunggu ACC</option>
+                        </select>
+                    </div>
 
-                <div class="col-md-2 col-sm-6 mb-2">
-                    <label class="small font-weight-bold text-muted mb-1">Tahun Cuti</label>
-                    <input type="number" name="tahun" class="form-control form-control-sm" placeholder="Contoh: {{ date('Y') }}"
-                        value="{{ request('tahun') }}">
-                </div>
+                    <div class="col-md-2 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-calendar-alt mr-1 text-warning"></i> Tahun Cuti
+                        </label>
+                        <input type="number" name="tahun" class="form-control form-filter-control" placeholder="Contoh: {{ date('Y') }}"
+                            value="{{ request('tahun') }}">
+                    </div>
 
-                <div class="col-md-2 mb-2 d-flex gap-1">
-                    <button type="submit" class="btn btn-sm btn-primary font-weight-bold flex-grow-1" style="border-radius: 7px;">
-                        <i class="fa fa-filter mr-1"></i> Filter
-                    </button>
-                    @if(request()->anyFilled(['search', 'kepegawaian_master_jenis_cuti_id', 'acc', 'tahun']))
-                        <a href="{{ route('cuti.index') }}" class="btn btn-sm btn-outline-secondary ml-1" style="border-radius: 7px;" title="Reset Filter">
-                            <i class="fa fa-sync-alt"></i>
-                        </a>
-                    @endif
+                    <div class="col-md-2 col-sm-12 mb-2 mb-md-0">
+                        <div class="d-flex w-100" style="gap: 6px; width: 100%;">
+                            <button type="submit" class="btn text-white font-weight-bold d-flex align-items-center justify-content-center"
+                                style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px; height: 38px; border: none; flex: 1 1 auto; width: 100%; box-shadow: 0 2px 6px rgba(234, 88, 12, 0.2);">
+                                <i class="fa fa-filter mr-1"></i> Filter
+                            </button>
+                            <a href="{{ route('cuti.index') }}" class="btn btn-light border font-weight-bold shadow-sm d-flex align-items-center justify-content-center"
+                                style="border-radius: 8px; height: 38px; width: 38px; min-width: 38px; flex-shrink: 0;" title="Reset Filter">
+                                <i class="fa fa-undo"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

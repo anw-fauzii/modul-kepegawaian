@@ -155,22 +155,18 @@
                 <a href="{{ route('presensi.matriks') }}"
                     class="flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->routeIs('presensi.matriks') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
                     <span>Matriks Presensi</span>
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-orange-500 text-white">GRID</span>
                 </a>
                 <a href="{{ route('presensi.statistik-tahunan') }}"
                     class="flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->routeIs('presensi.statistik-tahunan') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
                     <span>Statistik Tahunan</span>
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-orange-500 text-white">NEW</span>
                 </a>
                 <a href="{{ route('kegiatan.scanner') }}"
                     class="flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->routeIs('kegiatan.scanner') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
                     <span>Scan QR Kegiatan</span>
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500 text-white">SCAN</span>
                 </a>
                 <a href="{{ route('kegiatan.index') }}"
                     class="flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-medium transition-colors {{ request()->routeIs('kegiatan.index', 'kegiatan.show', 'kegiatan.create', 'kegiatan.edit') ? 'text-orange-400 bg-orange-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50' }}">
                     <span>Agenda Kegiatan</span>
-                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-500 text-slate-900">ADMIN</span>
                 </a>
             </div>
         </div>

@@ -51,7 +51,6 @@
 
     </div>
 
-    <!-- Section: Akun & Logout (Pinned Bottom) -->
     <div class="shrink-0 p-3 border-t border-slate-800/80 bg-slate-950/40 relative group/tooltip">
         <a href="{{ route('logout') }}"
             onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();"

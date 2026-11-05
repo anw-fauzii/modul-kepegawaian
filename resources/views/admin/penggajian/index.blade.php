@@ -69,29 +69,55 @@
         from { opacity: 0; transform: scale(0.96) translateY(-8px); }
         to { opacity: 1; transform: scale(1) translateY(0); }
     }
+    .form-filter-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #475569;
+        letter-spacing: 0.04em;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .form-filter-control {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        font-size: 13px;
+        height: 38px;
+        width: 100%;
+        transition: all 0.2s ease;
+        color: #1e293b;
+        background-color: #fff;
+    }
+    .form-filter-control:focus {
+        border-color: #ea580c;
+        box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+        outline: none;
+    }
 </style>
 
 <div class="app-main__inner">
     <div class="app-page-title mb-3">
         <div class="page-title-wrapper">
             <div class="page-title-heading">
-                <div class="page-title-icon bg-success text-white shadow-sm" style="border-radius: 12px;">
-                    <i class="pe-7s-cash"></i>
+                <div class="page-title-icon text-white shadow-sm"
+                    style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 14px;">
+                    <i class="pe-7s-cash" style="color: white;"></i>
                 </div>
                 <div>
-                    <strong>Penggajian &amp; Kompensasi</strong>
+                    Penggajian &amp; Kompensasi
                     <div class="page-title-subheading">Slip gaji bulanan, Tunjangan Hari Raya (THR), dan Bonus Kinerja karyawan.</div>
                 </div>
             </div>
-            <div class="page-title-actions d-flex flex-wrap align-items-center">
-                <a href="{{ route('penggajian.template') }}" class="btn btn-outline-success font-weight-bold shadow-sm mr-2 mb-1" title="Unduh Template Excel">
-                    <i class="fa fa-download mr-1"></i> Format Excel
+            <div class="page-title-actions d-flex flex-wrap align-items-center" style="gap: 8px;">
+                <a href="{{ route('penggajian.template') }}" class="btn btn-outline-secondary bg-white font-weight-bold shadow-sm" style="border-radius: 8px; height: 38px; display: inline-flex; align-items: center;" title="Unduh Template Excel">
+                    <i class="fa fa-download mr-1.5 text-success"></i> Format Excel
                 </a>
-                <button type="button" class="btn btn-success font-weight-bold shadow-sm mr-2 mb-1" id="btnOpenModalImport" onclick="openImportModal()">
-                    <i class="fa fa-file-excel mr-1"></i> Upload Excel
+                <button type="button" class="btn btn-outline-success bg-white font-weight-bold shadow-sm" style="border-radius: 8px; height: 38px; display: inline-flex; align-items: center;" id="btnOpenModalImport" onclick="openImportModal()">
+                    <i class="fa fa-file-excel mr-1.5"></i> Upload Excel
                 </button>
-                <a href="{{ route('penggajian.create', ['jenis' => $currentJenis ?: 'gaji']) }}" class="btn btn-primary font-weight-bold shadow-sm mb-1">
-                    <i class="fa fa-plus-circle mr-1"></i> Tambah Slip
+                <a href="{{ route('penggajian.create', ['jenis' => $currentJenis ?: 'gaji']) }}" class="btn text-white font-weight-bold shadow-sm"
+                    style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px; height: 38px; display: inline-flex; align-items: center;">
+                    <i class="fa fa-plus-circle mr-1.5"></i> Tambah Slip
                 </a>
             </div>
         </div>
@@ -147,60 +173,75 @@
         @endforeach
     </div>
 
-    {{-- Filter --}}
-    <div class="main-card card border-0 shadow-sm mb-4" style="border-radius: 12px;">
+    <!-- FILTER CARD -->
+    <div class="main-card card mb-3 shadow-sm border-0" style="border-radius: 12px;">
         <div class="card-body p-3">
-            <form method="GET" action="{{ route('penggajian.index') }}" class="row align-items-end">
-                <div class="col-lg-3 mb-2 mb-lg-0">
-                    <label class="font-weight-bold small text-muted mb-1">Pencarian</label>
-                    <input type="text" name="search" class="form-control" placeholder="Cari NIPY, nama, unit, jabatan..." value="{{ $filters['search'] ?? '' }}">
-                </div>
-                <div class="col-lg-3 mb-2 mb-lg-0">
-                    <label class="font-weight-bold small text-muted mb-1">
-                        @if ($currentJenis === 'thr')
-                            Tahun THR
-                        @elseif ($currentJenis === 'bonus')
-                            Tahun Ajaran
-                        @else
-                            Periode Bulan
-                        @endif
-                    </label>
-                    <select name="kepegawaian_master_bulan_id" class="form-control font-weight-bold" required>
-                        @foreach ($bulanList as $b)
-                            <option value="{{ $b->id }}" @selected(($filters['kepegawaian_master_bulan_id'] ?? '') == $b->id)>
-                                @if ($currentJenis === 'thr')
-                                    Tahun {{ $b->created_at ? $b->created_at->format('Y') : date('Y') }}{{ $b->status ? ' [Aktif]' : '' }}
-                                @elseif ($currentJenis === 'bonus')
-                                    TA {{ $b->tahunAjaran ? $b->tahunAjaran->nama_tahun_ajaran : date('Y') }}{{ $b->status ? ' [Aktif]' : '' }}
-                                @else
-                                    {{ $b->nama_bulan }}{{ $b->tahunAjaran ? ' - ' . $b->tahunAjaran->nama_tahun_ajaran : '' }}{{ $b->status ? ' [Aktif]' : '' }}
-                                @endif
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-lg-2 mb-2 mb-lg-0">
-                    <label class="font-weight-bold small text-muted mb-1">Jenis Pembayaran</label>
-                    <select name="jenis" class="form-control">
-                        <option value="">-- Semua Jenis --</option>
-                        @foreach ($jenisList as $key => $label)
-                            <option value="{{ $key }}" @selected(($filters['jenis'] ?? '') === $key)>{{ $label }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-lg-2 mb-2 mb-lg-0">
-                    <label class="font-weight-bold small text-muted mb-1">Status</label>
-                    <select name="status" class="form-control">
-                        <option value="">-- Semua --</option>
-                        @foreach ($statusList as $key => $label)
-                            <option value="{{ $key }}" @selected(($filters['status'] ?? '') === $key)>{{ $label }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-lg-2 d-flex justify-content-lg-end">
-                    <div class="filter-actions-wrap d-flex align-items-center" style="gap: 6px;">
-                        <button type="submit" class="btn btn-primary font-weight-bold" style="white-space: nowrap; border-radius: 8px;"><i class="fas fa-filter mr-1"></i> Filter</button>
-                        <a href="{{ route('penggajian.index') }}" class="btn btn-outline-secondary font-weight-bold" title="Reset Filter" style="white-space: nowrap; border-radius: 8px;"><i class="fas fa-redo"></i></a>
+            <form method="GET" action="{{ route('penggajian.index') }}" class="w-100 mb-0">
+                <div class="row align-items-end">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-12 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-search mr-1 text-warning"></i> Pencarian
+                        </label>
+                        <input type="text" name="search" class="form-control form-filter-control" placeholder="Cari NIPY, nama, unit, jabatan..." value="{{ $filters['search'] ?? '' }}">
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-12 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-calendar-alt mr-1 text-warning"></i>
+                            @if ($currentJenis === 'thr')
+                                Tahun THR
+                            @elseif ($currentJenis === 'bonus')
+                                Tahun Ajaran
+                            @else
+                                Periode Bulan
+                            @endif
+                        </label>
+                        <select name="kepegawaian_master_bulan_id" class="form-control form-filter-control font-weight-bold" required>
+                            @foreach ($bulanList as $b)
+                                <option value="{{ $b->id }}" @selected(($filters['kepegawaian_master_bulan_id'] ?? '') == $b->id)>
+                                    @if ($currentJenis === 'thr')
+                                         Tahun {{ $b->created_at ? $b->created_at->format('Y') : date('Y') }}{{ $b->status ? ' [Aktif]' : '' }}
+                                    @elseif ($currentJenis === 'bonus')
+                                        TA {{ $b->tahunAjaran ? $b->tahunAjaran->nama_tahun_ajaran : date('Y') }}{{ $b->status ? ' [Aktif]' : '' }}
+                                    @else
+                                        {{ $b->nama_bulan }}{{ $b->tahunAjaran ? ' - ' . $b->tahunAjaran->nama_tahun_ajaran : '' }}{{ $b->status ? ' [Aktif]' : '' }}
+                                    @endif
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-tags mr-1 text-warning"></i> Jenis Pembayaran
+                        </label>
+                        <select name="jenis" class="form-control form-filter-control">
+                            <option value="">-- Semua Jenis --</option>
+                            @foreach ($jenisList as $key => $label)
+                                <option value="{{ $key }}" @selected(($filters['jenis'] ?? '') === $key)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-check-circle mr-1 text-warning"></i> Status
+                        </label>
+                        <select name="status" class="form-control form-filter-control">
+                            <option value="">-- Semua --</option>
+                            @foreach ($statusList as $key => $label)
+                                <option value="{{ $key }}" @selected(($filters['status'] ?? '') === $key)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-4 col-12 mb-2 mb-md-0">
+                        <div class="d-flex w-100" style="gap: 6px; width: 100%;">
+                            <button type="submit" class="btn text-white font-weight-bold d-flex align-items-center justify-content-center"
+                                style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px; height: 38px; border: none; flex: 1 1 auto; width: 100%; box-shadow: 0 2px 6px rgba(234, 88, 12, 0.2);">
+                                <i class="fa fa-filter mr-1"></i> Filter
+                            </button>
+                            <a href="{{ route('penggajian.index') }}" class="btn btn-light border font-weight-bold shadow-sm d-flex align-items-center justify-content-center"
+                                style="border-radius: 8px; height: 38px; width: 38px; min-width: 38px; flex-shrink: 0;" title="Reset Filter">
+                                <i class="fa fa-undo"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </form>

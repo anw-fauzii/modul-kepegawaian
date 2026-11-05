@@ -82,9 +82,29 @@
         background: linear-gradient(135deg, #ea580c 0%, #d97706 100%);
         flex-shrink: 0;
     }
-    @media (max-width: 767.98px) {
-        .filter-actions-wrap { width: 100%; display: flex; gap: 8px; margin-top: 4px; }
-        .filter-actions-wrap .btn { flex: 1; justify-content: center; }
+    .form-filter-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #475569;
+        letter-spacing: 0.04em;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .form-filter-control {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        font-size: 13px;
+        height: 38px;
+        width: 100%;
+        transition: all 0.2s ease;
+        color: #1e293b;
+        background-color: #fff;
+    }
+    .form-filter-control:focus {
+        border-color: #ea580c;
+        box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+        outline: none;
     }
 </style>
 
@@ -93,18 +113,20 @@
     <div class="app-page-title mb-3">
         <div class="page-title-wrapper">
             <div class="page-title-heading">
-                <div class="page-title-icon bg-success text-white shadow-sm" style="border-radius: 12px;">
-                    <i class="pe-7s-box2"></i>
+                <div class="page-title-icon text-white shadow-sm"
+                    style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 14px;">
+                    <i class="pe-7s-box2" style="color: white;"></i>
                 </div>
                 <div>
-                    <strong>Fasilitas &amp; Aset Karyawan</strong>
+                    Fasilitas &amp; Aset Karyawan
                     <div class="page-title-subheading">
                         Pencatatan inventaris sarana kerja yang dipinjamkan atau diserahkan kepada karyawan beserta status pengembaliannya.
                     </div>
                 </div>
             </div>
-            <div class="page-title-actions">
-                <a href="{{ route('fasilitas.create') }}" class="btn btn-primary font-weight-bold shadow-sm" style="border-radius: 9px;">
+            <div class="page-title-actions d-flex align-items-center" style="gap: 8px;">
+                <a href="{{ route('fasilitas.create') }}" class="btn text-white shadow-sm font-weight-bold"
+                    style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px;">
                     <i class="fa fa-plus-circle mr-1"></i> Tambah Fasilitas
                 </a>
             </div>
@@ -176,37 +198,47 @@
         </div>
     </div>
 
-    {{-- Filter Card --}}
-    <div class="main-card card border-0 shadow-sm mb-4" style="border-radius: 14px;">
+    <!-- FILTER CARD -->
+    <div class="main-card card mb-3 shadow-sm border-0" style="border-radius: 12px;">
         <div class="card-body p-3">
-            <form action="{{ route('fasilitas.index') }}" method="GET" class="row align-items-end">
-                <div class="col-lg-4 col-md-4 col-sm-12 mb-2 mb-lg-0">
-                    <label class="font-weight-bold small text-muted mb-1"><i class="fa fa-search mr-1 text-primary"></i> Pencarian</label>
-                    <input type="text" name="search" class="form-control" placeholder="Cari fasilitas, karyawan, NIPY..." value="{{ request('search') }}">
-                </div>
+            <form action="{{ route('fasilitas.index') }}" method="GET" class="w-100 mb-0">
+                <div class="row align-items-end">
+                    <div class="col-md-4 col-sm-12 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-search mr-1 text-warning"></i> Pencarian
+                        </label>
+                        <input type="text" name="search" class="form-control form-filter-control" placeholder="Cari fasilitas, karyawan, NIPY..." value="{{ request('search') }}">
+                    </div>
 
-                <div class="col-lg-3 col-md-3 col-sm-6 mb-2 mb-lg-0">
-                    <label class="font-weight-bold small text-muted mb-1"><i class="fa fa-exchange-alt mr-1 text-primary"></i> Status Pengembalian</label>
-                    <select name="status" class="form-control">
-                        <option value="">-- Semua Status --</option>
-                        <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Belum Dikembalikan</option>
-                        <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Sudah Dikembalikan</option>
-                    </select>
-                </div>
+                    <div class="col-md-3 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-exchange-alt mr-1 text-warning"></i> Status Pengembalian
+                        </label>
+                        <select name="status" class="form-control form-filter-control">
+                            <option value="">-- Semua Status --</option>
+                            <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Belum Dikembalikan</option>
+                            <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Sudah Dikembalikan</option>
+                        </select>
+                    </div>
 
-                <div class="col-lg-3 col-md-3 col-sm-6 mb-2 mb-lg-0">
-                    <label class="font-weight-bold small text-muted mb-1"><i class="fa fa-calendar-alt mr-1 text-primary"></i> Tahun Terima</label>
-                    <input type="number" name="tahun_terima" class="form-control" placeholder="Contoh: {{ date('Y') }}" value="{{ request('tahun_terima') }}">
-                </div>
+                    <div class="col-md-3 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-calendar-alt mr-1 text-warning"></i> Tahun Terima
+                        </label>
+                        <input type="number" name="tahun_terima" class="form-control form-filter-control" placeholder="Contoh: {{ date('Y') }}" value="{{ request('tahun_terima') }}">
+                    </div>
 
-                <div class="col-lg-2 col-md-2 col-sm-12 d-flex align-items-center justify-content-md-end">
-                    <div class="filter-actions-wrap d-flex align-items-center" style="gap: 6px;">
-                        <button type="submit" class="btn btn-primary font-weight-bold" style="white-space: nowrap; border-radius: 8px;">
-                            <i class="fas fa-filter mr-1"></i> Filter
-                        </button>
-                        <a href="{{ route('fasilitas.index') }}" class="btn btn-outline-secondary font-weight-bold" title="Reset Filter" style="white-space: nowrap; border-radius: 8px;">
-                            <i class="fas fa-redo"></i>
-                        </a>
+                    <div class="col-md-2 col-sm-12 mb-2 mb-md-0">
+                        <div class="d-flex w-100" style="gap: 6px; width: 100%;">
+                            <button type="submit" class="btn text-white font-weight-bold d-flex align-items-center justify-content-center"
+                                style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px; height: 38px; border: none; flex: 1 1 auto; width: 100%; box-shadow: 0 2px 6px rgba(234, 88, 12, 0.2);">
+                                <i class="fa fa-filter mr-1"></i> Filter
+                            </button>
+                            <a href="{{ route('fasilitas.index') }}" class="btn btn-light border font-weight-bold shadow-sm d-flex align-items-center justify-content-center"
+                                style="border-radius: 8px; height: 38px; width: 38px; min-width: 38px; flex-shrink: 0;" title="Reset Filter">
+                                <i class="fa fa-undo"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </form>

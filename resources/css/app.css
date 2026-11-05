@@ -474,6 +474,18 @@ body {
     display: inline-flex !important;
 }
 
+.flex-fill {
+    flex: 1 1 auto !important;
+}
+
+.flex-grow-1 {
+    flex-grow: 1 !important;
+}
+
+.flex-shrink-0 {
+    flex-shrink: 0 !important;
+}
+
 .d-none {
     display: none !important;
 }

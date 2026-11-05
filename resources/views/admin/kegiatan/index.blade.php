@@ -17,6 +17,40 @@
         transform: translateY(-2px);
         box-shadow: 0 8px 16px rgba(0,0,0,0.06);
     }
+    .filter-panel {
+        background: #ffffff;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
+    .form-filter-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #475569;
+        letter-spacing: 0.04em;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .form-filter-control {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        font-size: 13px;
+        height: 38px;
+        transition: all 0.2s ease;
+        color: #1e293b;
+        background-color: #ffffff;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    .form-filter-control:focus {
+        border-color: #ea580c;
+        box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+        outline: none;
+    }
     .badge-soft-success {
         background-color: #dcfce7;
         color: #15803d;
@@ -29,6 +63,38 @@
         background-color: #e0f2fe;
         color: #0369a1;
     }
+
+    /* Responsive Enhancements */
+    @media (max-width: 991.98px) {
+        .app-page-title .page-title-wrapper {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 12px !important;
+        }
+        .app-page-title .page-title-heading {
+            width: 100% !important;
+        }
+        .app-page-title .page-title-actions {
+            width: 100% !important;
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+            margin-left: 0 !important;
+        }
+        .app-page-title .page-title-actions > .btn,
+        .app-page-title .page-title-actions > a {
+            flex: 1 1 auto !important;
+            width: 100% !important;
+            justify-content: center !important;
+        }
+    }
+    @media (min-width: 576px) and (max-width: 991.98px) {
+        .app-page-title .page-title-actions > .btn,
+        .app-page-title .page-title-actions > a {
+            width: auto !important;
+            flex: 0 1 auto !important;
+        }
+    }
 </style>
 
 <div class="app-main__inner">
@@ -36,77 +102,83 @@
     <div class="app-page-title mb-3">
         <div class="page-title-wrapper">
             <div class="page-title-heading">
-                <div class="page-title-icon bg-warning text-white">
-                    <i class="pe-7s-id icon-gradient bg-warm-flame"></i>
+                <div class="page-title-icon text-white shadow-sm"
+                    style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 14px; box-shadow: 0 4px 10px rgba(234, 88, 12, 0.25);">
+                    <i class="pe-7s-id" style="color: white; font-size: 26px;"></i>
                 </div>
                 <div>
-                    <strong>Absen Kegiatan Lembaga (QR Code)</strong>
-                    <div class="page-title-subheading">
-                        Manajemen kegiatan lembaga, presensi real-time via QR Code, dan monitoring kehadiran karyawan.
+                    <span class="font-weight-bold" style="font-size: 18px; color: #1e293b;">Agenda Kegiatan Lembaga</span>
+                    <div class="page-title-subheading text-muted mt-0.5" style="font-size: 12.5px;">
+                        Manajemen agenda kegiatan lembaga, presensi real-time via QR Code, dan monitoring kehadiran karyawan.
                     </div>
                 </div>
             </div>
-            <div class="page-title-actions">
-                <a href="{{ route('kegiatan.create') }}" class="btn btn-primary btn-shadow font-weight-bold">
-                    <i class="fa fa-plus mr-1"></i> Tambah Kegiatan
+            <div class="page-title-actions d-flex align-items-center" style="gap: 8px;">
+                <a href="{{ route('kegiatan.create') }}" class="btn text-white shadow-sm font-weight-bold"
+                    style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%); border-radius: 8px; height: 38px; display: inline-flex; align-items: center; border: none; box-shadow: 0 4px 10px rgba(234, 88, 12, 0.25);">
+                    <i class="fa fa-plus mr-1.5"></i> Tambah Kegiatan
                 </a>
             </div>
         </div>
     </div>
 
-    {{-- Alert Messages --}}
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fa fa-check-circle mr-1"></i> {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
+    <!-- FILTER CARD -->
+    <div class="main-card card mb-3 shadow-sm border-0" style="border-radius: 12px;">
+        <div class="card-body p-3">
+            <form method="GET" action="{{ route('kegiatan.index') }}" class="w-100 mb-0">
+                <div class="row align-items-end">
+                    <!-- 1. Pencarian Kata Kunci -->
+                    <div class="col-md-3 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-search mr-1 text-warning"></i> Cari Kata Kunci
+                        </label>
+                        <input type="text" name="search" class="form-control form-filter-control" placeholder="Kegiatan, pengisi, lokasi..." value="{{ request('search') }}">
+                    </div>
 
-    @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fa fa-exclamation-circle mr-1"></i> {{ session('error') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
+                    <!-- 2. Tahun Ajaran -->
+                    <div class="col-md-3 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-graduation-cap mr-1 text-warning"></i> Tahun Ajaran
+                        </label>
+                        <select name="akademik_master_tahun_ajaran_id" class="form-control form-filter-control">
+                            <option value="">Semua Tahun Ajaran</option>
+                            @foreach($tahunAjaranList as $ta)
+                                <option value="{{ $ta->id }}" {{ request('akademik_master_tahun_ajaran_id') == $ta->id ? 'selected' : '' }}>
+                                    {{ $ta->nama_tahun_ajaran }} (Sem. {{ $ta->semester }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-    {{-- Filter Card --}}
-    <div class="card mb-4 border-0 shadow-sm" style="border-radius: 12px;">
-        <div class="card-body py-3">
-            <form method="GET" action="{{ route('kegiatan.index') }}" class="row align-items-end">
-                <div class="col-md-3 mb-2 mb-md-0">
-                    <label class="small text-muted font-weight-bold">Cari Nama / Pengisi / Lokasi</label>
-                    <input type="text" name="search" class="form-control form-control-sm" placeholder="Ketik kata kunci..." value="{{ request('search') }}">
-                </div>
-                <div class="col-md-2 mb-2 mb-md-0">
-                    <label class="small text-muted font-weight-bold">Tahun Ajaran</label>
-                    <select name="akademik_master_tahun_ajaran_id" class="form-control form-control-sm">
-                        <option value="">Semua Tahun Ajaran</option>
-                        @foreach($tahunAjaranList as $ta)
-                            <option value="{{ $ta->id }}" {{ request('akademik_master_tahun_ajaran_id') == $ta->id ? 'selected' : '' }}>
-                                {{ $ta->nama_tahun_ajaran }} (Sem. {{ $ta->semester }})
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-2 mb-2 mb-md-0">
-                    <label class="small text-muted font-weight-bold">Dari Tanggal</label>
-                    <input type="date" name="tanggal_mulai" class="form-control form-control-sm" value="{{ request('tanggal_mulai') }}">
-                </div>
-                <div class="col-md-2 mb-2 mb-md-0">
-                    <label class="small text-muted font-weight-bold">Sampai Tanggal</label>
-                    <input type="date" name="tanggal_selesai" class="form-control form-control-sm" value="{{ request('tanggal_selesai') }}">
-                </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-sm btn-dark mr-1">
-                        <i class="fa fa-filter mr-1"></i> Filter
-                    </button>
-                    <a href="{{ route('kegiatan.index') }}" class="btn btn-sm btn-outline-secondary">
-                        <i class="fa fa-redo mr-1"></i> Reset
-                    </a>
+                    <!-- 3. Tanggal Mulai -->
+                    <div class="col-md-2 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-calendar-alt mr-1 text-warning"></i> Mulai Dari
+                        </label>
+                        <input type="date" name="tanggal_mulai" class="form-control form-filter-control" value="{{ request('tanggal_mulai') }}">
+                    </div>
+
+                    <!-- 4. Tanggal Selesai -->
+                    <div class="col-md-2 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-calendar-check mr-1 text-warning"></i> Sampai Tgl
+                        </label>
+                        <input type="date" name="tanggal_selesai" class="form-control form-filter-control" value="{{ request('tanggal_selesai') }}">
+                    </div>
+
+                    <!-- 5. Tombol Aksi Filter & Reset -->
+                    <div class="col-md-2 col-sm-12 mb-2 mb-md-0">
+                        <div class="d-flex w-100" style="gap: 6px; width: 100%;">
+                            <button type="submit" class="btn text-white font-weight-bold d-flex align-items-center justify-content-center"
+                                style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px; height: 38px; border: none; flex: 1 1 auto; width: 100%; box-shadow: 0 2px 6px rgba(234, 88, 12, 0.2);">
+                                <i class="fa fa-filter mr-1"></i> Filter
+                            </button>
+                            <a href="{{ route('kegiatan.index') }}" class="btn btn-light border font-weight-bold shadow-sm d-flex align-items-center justify-content-center"
+                                style="border-radius: 8px; height: 38px; width: 38px; min-width: 38px; flex-shrink: 0;" title="Reset Filter">
+                                <i class="fa fa-undo"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -114,16 +186,28 @@
 
     {{-- Kegiatan List Table --}}
     <div class="main-card mb-4 card border-0 shadow-sm" style="border-radius: 12px; overflow: hidden;">
-        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-dark">
-                <i class="fa fa-calendar-alt text-warning mr-1"></i> Daftar Agenda Kegiatan Lembaga
-            </h6>
-            <span class="badge badge-pill badge-light border">
-                Total: {{ $kegiatanList->total() }} Kegiatan
-            </span>
+        <div class="card-header bg-white py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center" style="gap: 10px;">
+            <div class="d-flex align-items-center">
+                <div class="d-inline-flex align-items-center justify-content-center text-white mr-2"
+                    style="width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #ea580c 0%, #d97706 100%); box-shadow: 0 2px 5px rgba(234, 88, 12, 0.25); flex-shrink: 0;">
+                    <i class="fa fa-calendar-alt" style="font-size: 12px;"></i>
+                </div>
+                <span class="font-weight-bold text-dark" style="font-size: 14.5px;">Daftar Agenda Kegiatan Lembaga</span>
+            </div>
+            <div class="d-flex align-items-center flex-wrap" style="gap: 8px;">
+                @if(request()->hasAny(['search', 'akademik_master_tahun_ajaran_id', 'tanggal_mulai', 'tanggal_selesai']))
+                    <span class="badge px-2.5 py-1 text-white font-weight-bold" style="font-size: 11px; border-radius: 6px; background-color: #f59e0b;">
+                        <i class="fa fa-filter mr-1"></i> Terfilter
+                    </span>
+                @endif
+                <span class="badge badge-pill px-3 py-1.5 font-weight-bold"
+                    style="background-color: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; font-size: 11.5px;">
+                    Total: {{ $kegiatanList->total() }} Kegiatan
+                </span>
+            </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0" style="min-width: 780px;">
                 <thead class="thead-light">
                     <tr>
                         <th class="text-center" width="50">#</th>
@@ -235,11 +319,11 @@
             </table>
         </div>
         @if($kegiatanList->hasPages())
-            <div class="card-footer bg-white border-top py-2 d-flex justify-content-between align-items-center">
-                <small class="text-muted">
+            <div class="card-footer bg-white border-top py-2.5 px-3 d-flex flex-column flex-sm-row justify-content-between align-items-center" style="gap: 10px;">
+                <small class="text-muted text-center text-sm-left">
                     Menampilkan {{ $kegiatanList->firstItem() }} - {{ $kegiatanList->lastItem() }} dari {{ $kegiatanList->total() }} kegiatan
                 </small>
-                <div>
+                <div class="overflow-auto" style="max-width: 100%;">
                     {{ $kegiatanList->links() }}
                 </div>
             </div>

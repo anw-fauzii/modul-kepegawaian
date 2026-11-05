@@ -25,7 +25,8 @@ class PresensiController extends Controller
     public function __construct(
         protected PresensiService $service
     ) {
-        $this->middleware('role:super admin')->except(['updateMyShaum', 'toggleMyShaum']);
+        $this->middleware('role:super admin')->except(['updateMyShaum', 'toggleMyShaum', 'rekap', 'matriks', 'matriksPdf']);
+        $this->middleware('role:super admin|bendahara')->only(['rekap', 'matriks', 'matriksPdf']);
     }
 
     public function index(PresensiFilterRequest $request): View

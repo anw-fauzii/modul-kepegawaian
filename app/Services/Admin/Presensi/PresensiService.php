@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class PresensiService
 {
@@ -392,9 +393,12 @@ class PresensiService
      */
     public function getRekapBulanan(int $bulanId, ?int $kategoriId = null): Collection
     {
+        $isBendahara = Auth::user()->hasRole('bendahara');
+
         return Karyawan::query()
             ->select('nipy', 'nama_lengkap', 'gelar', 'unit', 'foto', 'kepegawaian_master_kategori_id')
             ->with(['kategori:id,nama_kategori'])
+            ->when($isBendahara, fn ($q) => $q->where('sertifikasi', true))
             ->when($kategoriId, fn ($q) => $q->where('kepegawaian_master_kategori_id', $kategoriId))
             ->withCount([
                 'presensi as total_hadir' => fn ($q) => $q->where('kepegawaian_master_bulan_id', $bulanId)->where('status', 'hadir'),
@@ -941,7 +945,9 @@ class PresensiService
         }
 
         // Ambil seluruh karyawan
+        $isBendahara = Auth::user()->hasRole('bendahara');
         $karyawanList = Karyawan::query()
+            ->when($isBendahara, fn ($q) => $q->where('sertifikasi', true))
             ->select('nipy', 'nama_lengkap', 'gelar', 'golongan', 'foto', 'kepegawaian_master_kategori_id', 'unit')
             ->with([
                 'kategori:id,nama_kategori',

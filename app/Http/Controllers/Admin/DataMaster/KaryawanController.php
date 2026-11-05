@@ -26,7 +26,7 @@ class KaryawanController extends Controller
     public function __construct(
         protected KaryawanService $service
     ) {
-        $this->middleware('role:super admin');
+        //$this->middleware('role:super admin');
     }
 
     public function foto(Karyawan $karyawan)

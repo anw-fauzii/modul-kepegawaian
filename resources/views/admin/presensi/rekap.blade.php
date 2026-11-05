@@ -137,10 +137,12 @@
                     class="btn btn-outline-secondary shadow-sm font-weight-bold" style="border-radius: 8px;">
                     <i class="fa fa-calendar-check-o mr-1"></i> Matriks Harian
                 </a>
-                <a href="{{ route('presensi.create') }}" class="btn text-white shadow-sm font-weight-bold"
-                    style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px;">
-                    <i class="fa fa-plus-circle mr-1"></i> Input Presensi
-                </a>
+                @role('super admin')
+                    <a href="{{ route('presensi.create') }}" class="btn text-white shadow-sm font-weight-bold"
+                        style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px;">
+                        <i class="fa fa-plus-circle mr-1"></i> Input Presensi
+                    </a>
+                @endrole
             </div>
         </div>
     </div>
@@ -257,7 +259,7 @@
                     <div class="col-md-2 col-sm-12 mb-2 mb-md-0">
                         <a href="{{ route('presensi.rekap') }}" class="btn btn-light border btn-block font-weight-bold shadow-sm d-flex align-items-center justify-content-center"
                             style="border-radius: 8px; height: 38px;" title="Reset Filter">
-                            <i class="fa fa-undo mr-1"></i> Reset
+                            <i class="fa fa-undo mr-1"></i>
                         </a>
                     </div>
                 </div>

@@ -232,7 +232,7 @@
         <div class="page-title-wrapper">
             <div class="page-title-heading">
                 <div class="page-title-icon text-white shadow-sm"
-                    style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important; border-radius: 14px;">
+                    style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 14px;">
                     <i class="pe-7s-display1" style="color: white;"></i>
                 </div>
                 <div>
@@ -272,7 +272,7 @@
             </div>
 
             <!-- Pilihan Kategori Pegawai (Opsional) -->
-            <div class="col-md-4 mb-2">
+            <div class="col-md-5 mb-2">
                 <label class="form-label font-weight-bold text-dark small text-uppercase mb-1">
                     <i class="fa fa-layer-group text-primary mr-1"></i> Kategori Pegawai
                 </label>
@@ -287,11 +287,9 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="col-md-3 mb-2 d-flex">
-                <button type="submit" class="btn btn-primary btn-block shadow-sm mr-2" style="border-radius: 8px; font-weight: 600;">
-                    <i class="fa fa-filter mr-1"></i> Terapkan
-                </button>
-                <a href="{{ route('presensi.statistik-tahunan') }}" class="btn btn-light shadow-sm" style="border-radius: 8px;" title="Reset Filter">
+            <div class="col-md-2 mb-2">
+                <a href="{{ route('presensi.statistik-tahunan') }}" class="btn btn-light border btn-block font-weight-bold shadow-sm d-flex align-items-center justify-content-center"
+                            style="border-radius: 8px; height: 40px;" title="Reset Filter">
                     <i class="fa fa-undo"></i>
                 </a>
             </div>

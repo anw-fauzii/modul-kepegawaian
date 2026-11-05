@@ -95,9 +95,29 @@
         white-space: nowrap;
     }
     .btn-file-pill:hover { background-color: #e11d48; color: #fff; border-color: #e11d48; }
-    @media (max-width: 767.98px) {
-        .filter-actions-wrap { width: 100%; display: flex; gap: 8px; margin-top: 4px; }
-        .filter-actions-wrap .btn { flex: 1; justify-content: center; }
+    .form-filter-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #475569;
+        letter-spacing: 0.04em;
+        margin-bottom: 5px;
+        display: block;
+    }
+    .form-filter-control {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        font-size: 13px;
+        height: 38px;
+        width: 100%;
+        transition: all 0.2s ease;
+        color: #1e293b;
+        background-color: #fff;
+    }
+    .form-filter-control:focus {
+        border-color: #ea580c;
+        box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+        outline: none;
     }
 </style>
 
@@ -106,18 +126,20 @@
     <div class="app-page-title mb-3">
         <div class="page-title-wrapper">
             <div class="page-title-heading">
-                <div class="page-title-icon bg-info text-white shadow-sm" style="border-radius: 12px;">
-                    <i class="pe-7s-graph1"></i>
+                <div class="page-title-icon text-white shadow-sm"
+                    style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 14px;">
+                    <i class="pe-7s-graph1" style="color: white;"></i>
                 </div>
                 <div>
-                    <strong>Rapot Kinerja Karyawan</strong>
+                    Rapot Kinerja Karyawan
                     <div class="page-title-subheading">
                         Pengelolaan dan pengarsipan berkas hasil evaluasi / rapot kinerja karyawan per tahun ajaran.
                     </div>
                 </div>
             </div>
-            <div class="page-title-actions">
-                <a href="{{ route('rapot-kinerja.create') }}" class="btn btn-primary font-weight-bold shadow-sm" style="border-radius: 9px;">
+            <div class="page-title-actions d-flex align-items-center" style="gap: 8px;">
+                <a href="{{ route('rapot-kinerja.create') }}" class="btn text-white shadow-sm font-weight-bold"
+                    style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px;">
                     <i class="fa fa-plus-circle mr-1"></i> Unggah Rapot Baru
                 </a>
             </div>
@@ -186,35 +208,43 @@
         </div>
     </div>
 
-    {{-- Filter Card --}}
-    <div class="main-card card border-0 shadow-sm mb-4" style="border-radius: 14px;">
+    <!-- FILTER CARD -->
+    <div class="main-card card mb-3 shadow-sm border-0" style="border-radius: 12px;">
         <div class="card-body p-3">
-            <form method="GET" action="{{ route('rapot-kinerja.index') }}" class="row align-items-end">
-                <div class="col-lg-5 col-md-5 col-sm-12 mb-2 mb-lg-0">
-                    <label class="font-weight-bold small text-muted mb-1"><i class="fa fa-search mr-1 text-primary"></i> Pencarian</label>
-                    <input type="text" name="search" class="form-control" placeholder="Cari NIPY, Nama Karyawan, Unit..." value="{{ $filters['search'] ?? '' }}">
-                </div>
+            <form method="GET" action="{{ route('rapot-kinerja.index') }}" class="w-100 mb-0">
+                <div class="row align-items-end">
+                    <div class="col-md-5 col-sm-12 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-search mr-1 text-warning"></i> Pencarian
+                        </label>
+                        <input type="text" name="search" class="form-control form-filter-control" placeholder="Cari NIPY, Nama Karyawan, Unit..." value="{{ $filters['search'] ?? '' }}">
+                    </div>
 
-                <div class="col-lg-4 col-md-4 col-sm-6 mb-2 mb-lg-0">
-                    <label class="font-weight-bold small text-muted mb-1"><i class="fa fa-graduation-cap mr-1 text-primary"></i> Tahun Ajaran</label>
-                    <select name="akademik_master_tahun_ajaran_id" class="form-control">
-                        <option value="">-- Semua Tahun Ajaran --</option>
-                        @foreach($tahunAjaranList as $ta)
-                            <option value="{{ $ta->id }}" {{ (isset($filters['akademik_master_tahun_ajaran_id']) && $filters['akademik_master_tahun_ajaran_id'] == $ta->id) ? 'selected' : '' }}>
-                                {{ $ta->nama_tahun_ajaran }} ({{ $ta->semester }}) {{ $ta->is_active ? '★ Aktif' : '' }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                    <div class="col-md-5 col-sm-6 mb-2 mb-md-0">
+                        <label class="form-filter-label">
+                            <i class="fa fa-graduation-cap mr-1 text-warning"></i> Tahun Ajaran
+                        </label>
+                        <select name="akademik_master_tahun_ajaran_id" class="form-control form-filter-control">
+                            <option value="">-- Semua Tahun Ajaran --</option>
+                            @foreach($tahunAjaranList as $ta)
+                                <option value="{{ $ta->id }}" {{ (isset($filters['akademik_master_tahun_ajaran_id']) && $filters['akademik_master_tahun_ajaran_id'] == $ta->id) ? 'selected' : '' }}>
+                                    {{ $ta->nama_tahun_ajaran }} ({{ $ta->semester }}) {{ $ta->is_active ? '★ Aktif' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <div class="col-lg-3 col-md-3 col-sm-6 d-flex align-items-center justify-content-md-end">
-                    <div class="filter-actions-wrap d-flex align-items-center" style="gap: 6px;">
-                        <button type="submit" class="btn btn-primary font-weight-bold" style="white-space: nowrap; border-radius: 8px;">
-                            <i class="fas fa-filter mr-1"></i> Filter
-                        </button>
-                        <a href="{{ route('rapot-kinerja.index') }}" class="btn btn-outline-secondary font-weight-bold" title="Reset Filter" style="white-space: nowrap; border-radius: 8px;">
-                            <i class="fas fa-redo"></i>
-                        </a>
+                    <div class="col-md-2 col-sm-6 mb-2 mb-md-0">
+                        <div class="d-flex w-100" style="gap: 6px; width: 100%;">
+                            <button type="submit" class="btn text-white font-weight-bold d-flex align-items-center justify-content-center"
+                                style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important; border-radius: 8px; height: 38px; border: none; flex: 1 1 auto; width: 100%; box-shadow: 0 2px 6px rgba(234, 88, 12, 0.2);">
+                                <i class="fa fa-filter mr-1"></i> Filter
+                            </button>
+                            <a href="{{ route('rapot-kinerja.index') }}" class="btn btn-light border font-weight-bold shadow-sm d-flex align-items-center justify-content-center"
+                                style="border-radius: 8px; height: 38px; width: 38px; min-width: 38px; flex-shrink: 0;" title="Reset Filter">
+                                <i class="fa fa-undo"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </form>
