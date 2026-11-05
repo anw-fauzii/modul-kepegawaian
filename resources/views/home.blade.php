@@ -515,6 +515,8 @@
         @endforeach
     </div>
 
+    @include('admin.dashboard._golongan_naik')
+
     <!-- ROW 2: CHARTS (Tren 7 Hari & Komposisi Kategori) -->
     <div class="row">
         <!-- Chart 1: Tren Presensi 7 Hari Terakhir -->

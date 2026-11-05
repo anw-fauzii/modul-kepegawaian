@@ -19,6 +19,7 @@ use App\Models\Admin\SertifikatPenghargaan\SertifikatPenghargaan;
 use App\Models\Admin\SuratKeputusan\SuratKeputusan;
 use App\Models\Admin\Tupoksi\Tupoksi;
 use App\Models\User;
+use App\Services\Admin\DataMaster\GolonganService;
 use App\Services\Admin\Presensi\PresensiService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -27,7 +28,8 @@ use Illuminate\Support\Facades\DB;
 class DashboardService
 {
     public function __construct(
-        protected PresensiService $presensiService
+        protected PresensiService $presensiService,
+        protected GolonganService $golonganService
     ) {}
 
     /**
@@ -138,7 +140,13 @@ class DashboardService
         $kegiatanAktifCount = KegiatanLembaga::where('is_active', true)->count();
         $sertifikasiPersen = $totalKaryawan > 0 ? round(($totalSertifikasi / $totalKaryawan) * 100) : 0;
 
+        // 7. KENAIKAN GOLONGAN (baru naik & akan naik)
+        $golonganBaruNaik = $this->golonganService->baruNaik();
+        $golonganAkanNaik = $this->golonganService->akanNaik();
+
         return compact(
+            'golonganBaruNaik',
+            'golonganAkanNaik',
             'totalKaryawan',
             'totalLaki',
             'totalPerempuan',

@@ -22,3 +22,11 @@ Schedule::command('import:hari-libur')
     ->monthlyOn(1, '01:00')
     ->withoutOverlapping()
     ->runInBackground();
+
+/**
+ * Kenaikan golongan otomatis berdasarkan masa kerja & jenjang pendidikan (setiap hari 00:30).
+ */
+Schedule::command('golongan:sync')
+    ->dailyAt('00:30')
+    ->withoutOverlapping()
+    ->runInBackground();
