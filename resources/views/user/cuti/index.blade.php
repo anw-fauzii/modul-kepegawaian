@@ -71,6 +71,12 @@
                         <input type="hidden" name="status" value="{{ request('status') }}">
                     @endif
 
+                    <div class="up-search-input-wrap">
+                        <i class="fa fa-search up-search-icon"></i>
+                        <input type="text" name="search" value="{{ $filters['search'] ?? request('search') ?? '' }}"
+                            placeholder="Cari permohonan cuti..." class="up-search-input">
+                    </div>
+
                     <div class="up-select-wrapper" style="min-width: 140px;">
                         <select name="tahun" onchange="this.form.submit()" title="Pilih Tahun">
                             <option value="semua" {{ $selectedYear === null ? 'selected' : '' }}>Semua Tahun</option>
@@ -83,9 +89,11 @@
                         <i class="fa fa-chevron-down up-select-icon"></i>
                     </div>
 
-                    <a href="{{ route('user.cuti.index') }}" class="up-btn-reset" title="Reset ke Tahun Berjalan">
-                        <i class="fa fa-sync-alt"></i>
-                    </a>
+                    @if (!empty($filters['search']) || request('search') || request('tahun') || request('status'))
+                        <a href="{{ route('user.cuti.index') }}" class="up-btn-reset" title="Reset Filter">
+                            <i class="fa fa-sync-alt"></i>
+                        </a>
+                    @endif
                 </form>
             </div>
         </div>
@@ -544,37 +552,68 @@
         color: #be123c;
     }
 
+    /* Search Input Wrapper */
+    .up-search-input-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .up-search-icon {
+        position: absolute;
+        left: 12px;
+        color: #94a3b8;
+        font-size: 0.82rem;
+        pointer-events: none;
+    }
+    .up-search-input {
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 8px 12px 8px 34px;
+        font-size: 0.82rem;
+        color: #0f172a;
+        font-weight: 500;
+        outline: none;
+        transition: all 0.2s ease;
+        min-width: 180px;
+    }
+    .up-search-input:focus {
+        border-color: #f97316;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+    }
+
     /* =========================================================================
        1. HERO HEADER CARD
        ========================================================================= */
     .up-hero-card {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #c2410c 100%);
+        border-radius: 20px;
+        padding: 26px 30px;
+        color: #fff;
+        margin-bottom: 22px;
         position: relative;
         overflow: hidden;
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #c2410c 100%);
-        border-radius: 20px;
-        color: #ffffff;
-        padding: 24px 28px;
-        margin-bottom: 22px;
-        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.25), 0 8px 10px -6px rgba(194, 65, 12, 0.2);
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22);
     }
     .up-hero-card__decor-1 {
         position: absolute;
-        width: 320px;
-        height: 320px;
+        top: -40px;
+        right: -40px;
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, rgba(249, 115, 22, 0.22) 0%, rgba(249, 115, 22, 0) 70%);
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(249, 115, 22, 0.25) 0%, rgba(249, 115, 22, 0) 70%);
-        top: -120px;
-        right: 80px;
         pointer-events: none;
     }
     .up-hero-card__decor-2 {
         position: absolute;
-        width: 200px;
-        height: 200px;
+        bottom: -30px;
+        left: 25%;
+        width: 160px;
+        height: 160px;
+        background: radial-gradient(circle, rgba(234, 88, 12, 0.18) 0%, rgba(234, 88, 12, 0) 70%);
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(251, 146, 60, 0.15) 0%, rgba(251, 146, 60, 0) 70%);
-        bottom: -80px;
-        left: 20%;
         pointer-events: none;
     }
     .up-hero-card__content {
@@ -595,21 +634,16 @@
         width: 58px;
         height: 58px;
         border-radius: 16px;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 28px;
-        color: #fb923c;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        font-size: 26px;
         flex-shrink: 0;
     }
     .up-hero-icon--orange {
-        color: #f97316;
-        background: rgba(249, 115, 22, 0.18);
-        border: 1px solid rgba(249, 115, 22, 0.35);
+        background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        color: #ffffff;
+        box-shadow: 0 6px 16px rgba(249, 115, 22, 0.35);
     }
     .up-hero-title {
         font-size: 1.45rem;
@@ -619,52 +653,44 @@
         color: #ffffff;
     }
     .up-hero-desc {
-        margin: 0;
-        font-size: 0.88rem;
+        font-size: 0.85rem;
         color: #cbd5e1;
-        font-weight: 500;
+        margin: 0;
     }
-    .up-hero-nipy {
-        color: #f97316;
-        font-weight: 700;
-    }
-    .up-hero-unit {
-        color: #fdba74;
+    .up-hero-nipy, .up-hero-unit {
+        color: #fed7aa;
         font-weight: 600;
     }
     .up-hero-metrics-bar {
         display: flex;
-        align-items: center;
-        gap: 8px;
+        gap: 10px;
         margin-top: 10px;
         flex-wrap: wrap;
     }
     .up-metric-badge {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        background: rgba(15, 23, 42, 0.45);
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        gap: 7px;
+        padding: 4px 11px;
+        border-radius: 9999px;
         font-size: 0.74rem;
-        color: #e2e8f0;
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(8px);
+        color: #f1f5f9;
     }
     .up-metric-dot {
         width: 7px;
         height: 7px;
         border-radius: 50%;
-        display: inline-block;
     }
     .up-metric-value {
-        color: #ffffff;
+        color: #fff;
         font-weight: 700;
     }
     .up-hero-card__actions {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         flex-wrap: wrap;
     }
     .up-btn-primary-hero {
@@ -686,72 +712,83 @@
         transform: translateY(-2px);
         box-shadow: 0 6px 16px rgba(234, 88, 12, 0.5);
     }
-
-    /* Filter Form */
     .up-period-filter {
         display: flex;
         align-items: center;
         gap: 8px;
-        background: rgba(15, 23, 42, 0.4);
-        padding: 6px 8px;
+        background: #fff;
+        padding: 5px 7px 5px 12px;
         border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+        flex-wrap: wrap;
     }
     .up-select-wrapper {
         position: relative;
+        display: flex;
+        align-items: center;
     }
     .up-select-wrapper select {
         appearance: none;
         -webkit-appearance: none;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        color: #ffffff;
-        border-radius: 10px;
-        padding: 7px 32px 7px 12px;
+        background: transparent;
+        border: none;
+        padding: 6px 26px 6px 6px;
         font-size: 0.82rem;
-        font-weight: 600;
+        font-weight: 700;
+        color: #0f172a;
         cursor: pointer;
         outline: none;
-        transition: all 0.2s ease;
         width: 100%;
     }
-    .up-select-wrapper select:hover,
-    .up-select-wrapper select:focus {
-        background: rgba(255, 255, 255, 0.15);
-        border-color: rgba(249, 115, 22, 0.6);
-    }
     .up-select-wrapper select option {
-        background: #1e293b;
-        color: #ffffff;
+        background: #ffffff;
+        color: #0f172a;
     }
     .up-select-icon {
         position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
+        right: 8px;
+        font-size: 0.7rem;
+        color: #f97316;
         pointer-events: none;
-        font-size: 10px;
-        color: #cbd5e1;
     }
     .up-btn-reset {
-        display: inline-flex;
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        background: #f1f5f9;
+        display: flex;
         align-items: center;
         justify-content: center;
-        width: 34px;
-        height: 34px;
-        border-radius: 10px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        color: #cbd5e1;
+        color: #64748b;
         transition: all 0.2s ease;
         text-decoration: none;
+        border: none;
     }
     .up-btn-reset:hover {
-        background: #ea580c;
-        border-color: #ea580c;
-        color: #ffffff;
-        transform: rotate(180deg);
+        background: #f97316;
+        color: #fff;
+    }
+
+    @media (max-width: 767px) {
+        .up-hero-card {
+            padding: 20px 18px;
+        }
+        .up-hero-card__content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .up-hero-card__actions {
+            width: 100%;
+        }
+        .up-period-filter {
+            width: 100%;
+        }
+        .up-search-input-wrap {
+            width: 100%;
+        }
+        .up-search-input {
+            width: 100%;
+        }
     }
 
     /* =========================================================================

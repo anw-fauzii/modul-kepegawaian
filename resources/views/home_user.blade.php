@@ -86,6 +86,9 @@
         box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
     }
     .modern-card:hover {
         border-color: #cbd5e1;
@@ -98,6 +101,118 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        min-height: 52px;
+        box-sizing: border-box;
+    }
+
+    /* Enhanced Featured Widget Cards (Presensi & Shaum) */
+    .widget-featured-card {
+        border-radius: 16px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+    }
+    .widget-featured-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.09), 0 2px 6px rgba(15, 23, 42, 0.04);
+        border-color: #cbd5e1;
+    }
+    .widget-card-presensi {
+        border-top: 4px solid #ea580c;
+    }
+    .widget-card-presensi.is-hadir {
+        border-top: 4px solid #10b981;
+    }
+    .widget-card-presensi.is-terlambat {
+        border-top: 4px solid #f59e0b;
+    }
+    .widget-card-shaum {
+        border-top: 4px solid #10b981;
+        background: linear-gradient(145deg, #f0fdf4 0%, #ecfdf5 45%, #ffffff 100%);
+        border-color: #a7f3d0 !important;
+    }
+    .widget-card-shaum:hover {
+        border-color: #6ee7b7 !important;
+        box-shadow: 0 12px 28px -4px rgba(16, 185, 129, 0.12), 0 2px 6px rgba(16, 185, 129, 0.05);
+    }
+    .widget-featured-header {
+        padding: 14px 20px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 54px;
+        box-sizing: border-box;
+    }
+    .widget-card-shaum .widget-featured-header {
+        border-bottom-color: rgba(167, 243, 208, 0.7);
+        background: transparent;
+    }
+    .widget-header-title {
+        font-size: 11.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+    }
+    .widget-header-icon-pill {
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        margin-right: 8px;
+    }
+    .widget-header-badge {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 9999px;
+        letter-spacing: 0.02em;
+    }
+    .widget-stat-tile {
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 9px 10px;
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+    .widget-stat-tile:hover {
+        background-color: #f1f5f9;
+    }
+    .widget-card-shaum .widget-stat-tile {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-color: #d1fae5;
+    }
+    .widget-card-shaum .widget-stat-tile:hover {
+        background-color: #ffffff;
+    }
+    .widget-tile-val {
+        font-size: 13px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.25;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .widget-tile-lbl {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #64748b;
+        letter-spacing: 0.04em;
+        margin-bottom: 2px;
     }
 
     /* KPI Mini Cards */
@@ -281,8 +396,8 @@
         }
         .modern-card-header {
             padding: 12px 14px;
-            flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
+            justify-content: space-between;
             gap: 8px;
         }
         .list-feed-row {
@@ -474,150 +589,245 @@
     </div>
 
     <!-- ROW 1: DUA WIDGET UTAMA (PRESENSI HARI INI & WIDGET SHAUM SUNNAH) -->
-    <div class="row mb-4">
+    <div class="row align-items-stretch mb-4">
         <!-- CARD PRESENSI SAYA HARI INI -->
-        <div class="col-lg-6 mb-3 mb-lg-0">
-            <div class="modern-card h-100">
-                <div class="modern-card-header">
-                    <span class="text-uppercase text-muted font-weight-bold small">
-                        <i class="fa fa-calendar-check text-primary mr-1"></i> Presensi Saya Hari Ini
-                    </span>
-                    <span class="badge badge-light border text-muted font-weight-normal small">
-                        Standar: {{ $jamMasukNormal }} WIB
+        <div class="col-lg-6 mb-3 mb-lg-0 d-flex flex-column">
+            <div class="widget-featured-card widget-card-presensi {{ $myPresensiToday ? ($myPresensiToday->status === 'hadir' ? 'is-hadir' : ($myPresensiToday->status === 'terlambat' ? 'is-terlambat' : '')) : '' }}">
+                <div class="widget-featured-header">
+                    <div class="widget-header-title text-muted">
+                        <span class="widget-header-icon-pill" style="background: #eff6ff; color: #2563eb;">
+                            <i class="fa fa-calendar-check"></i>
+                        </span>
+                        Presensi Saya Hari Ini
+                    </div>
+                    <span class="widget-header-badge" style="background: #f8fafc; border: 1px solid #e2e8f0; color: #475569;">
+                        <i class="fa fa-clock mr-1 text-slate-400"></i> Standar: {{ $jamMasukNormal }} WIB
                     </span>
                 </div>
-                <div class="p-3.5 p-sm-4 d-flex flex-column justify-content-between" style="min-height: 165px;">
-                    @if ($myPresensiToday && (!empty($myPresensiToday->jam_masuk) || in_array($myPresensiToday->status, ['hadir', 'terlambat', 'tugas'])))
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center mr-3 shadow-sm text-white flex-shrink-0"
-                                style="width: 48px; height: 48px; background: {{ $myPresensiToday->status === 'hadir' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' }}; font-size: 20px;">
-                                <i class="{{ $myPresensiToday->status === 'hadir' ? 'fa fa-check' : 'fa fa-clock' }}"></i>
-                            </div>
-                            <div class="min-w-0">
-                                <div class="d-flex align-items-center flex-wrap gap-2">
-                                    <h4 class="font-weight-bold text-dark mb-0">
-                                        {{ $myPresensiToday->jam_masuk ? substr($myPresensiToday->jam_masuk, 0, 5) . ' WIB' : '-' }}
-                                    </h4>
-                                    @if ($myPresensiToday->status === 'hadir')
-                                        <span class="badge badge-soft-success font-weight-bold px-2 py-0.5">Hadir Tepat Waktu</span>
-                                    @elseif ($myPresensiToday->status === 'terlambat')
-                                        <span class="badge badge-soft-warning font-weight-bold px-2 py-0.5">
-                                            Telat +{{ $myPresensiToday->keterlambatan_menit }} Menit
-                                        </span>
-                                    @else
-                                        <span class="badge badge-soft-primary font-weight-bold px-2 py-0.5">
-                                            {{ ucfirst($myPresensiToday->status) }}
-                                        </span>
-                                    @endif
-                                </div>
-                                <div class="small text-muted mt-1">
-                                    Jam Pulang: <strong class="text-dark">{{ $myPresensiToday->jam_pulang ? substr($myPresensiToday->jam_pulang, 0, 5) . ' WIB' : 'Belum Tap Pulang' }}</strong>
-                                    @if ($myPresensiToday->durasi_kerja && $myPresensiToday->durasi_kerja !== '-')
-                                        &bull; Durasi: {{ $myPresensiToday->durasi_kerja }}
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
 
-                        @if ($myPresensiToday->status === 'terlambat' && $myPresensiToday->izin_terlambat)
-                            <div class="p-2 px-3 rounded small mb-2" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #166534;">
-                                <i class="fa fa-check-circle mr-1"></i> Ada Dispensasi/Izin Keterlambatan
+                <div class="p-3.5 p-sm-4 d-flex flex-column flex-fill justify-content-between">
+                    <div class="flex-grow-1">
+                        @if ($myPresensiToday && (!empty($myPresensiToday->jam_masuk) || in_array($myPresensiToday->status, ['hadir', 'terlambat', 'tugas'])))
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="shadow-sm text-white flex-shrink-0 mr-3 d-flex align-items-center justify-content-center"
+                                    style="width: 48px; height: 48px; border-radius: 13px; background: {{ $myPresensiToday->status === 'hadir' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' }}; font-size: 20px;">
+                                    <i class="{{ $myPresensiToday->status === 'hadir' ? 'fa fa-check' : 'fa fa-clock' }}"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="d-flex align-items-center flex-wrap gap-2">
+                                        <h4 class="font-weight-bold text-dark mb-0" style="font-size: 1.35rem; letter-spacing: -0.02em;">
+                                            {{ $myPresensiToday->jam_masuk ? substr($myPresensiToday->jam_masuk, 0, 5) . ' WIB' : '-' }}
+                                        </h4>
+                                        @if ($myPresensiToday->status === 'hadir')
+                                            <span class="badge px-2.5 py-1 text-emerald-700 bg-emerald-50 border border-emerald-200 font-bold" style="font-size: 11px; border-radius: 9999px;">
+                                                <i class="fa fa-check-circle mr-1 text-emerald-500"></i> Hadir Tepat Waktu
+                                            </span>
+                                        @elseif ($myPresensiToday->status === 'terlambat')
+                                            <span class="badge px-2.5 py-1 text-amber-700 bg-amber-50 border border-amber-200 font-bold" style="font-size: 11px; border-radius: 9999px;">
+                                                <i class="fa fa-clock mr-1 text-amber-500"></i> Telat +{{ $myPresensiToday->keterlambatan_menit }} Menit
+                                            </span>
+                                        @else
+                                            <span class="badge px-2.5 py-1 text-primary bg-primary-light border font-bold" style="font-size: 11px; border-radius: 9999px;">
+                                                {{ ucfirst($myPresensiToday->status) }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <p class="small text-muted mb-0 mt-1">
+                                        Tercatat hadir pada sistem presensi harian Yayasan Prima Insani.
+                                    </p>
+                                </div>
+                            </div>
+
+                            @if ($myPresensiToday->status === 'terlambat' && $myPresensiToday->izin_terlambat)
+                                <div class="py-1 px-2.5 rounded small d-inline-flex align-items-center mb-2" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 11.5px; font-weight: 600;">
+                                    <i class="fa fa-check-circle mr-1 text-emerald-600"></i> Ada Dispensasi/Izin Keterlambatan
+                                </div>
+                            @endif
+                        @else
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="shadow-sm flex-shrink-0 mr-3 d-flex align-items-center justify-content-center"
+                                    style="width: 48px; height: 48px; border-radius: 13px; background: #fffbeb; border: 1.5px solid #fde68a; font-size: 20px; color: #d97706;">
+                                    <i class="fa fa-clock"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="d-flex align-items-center flex-wrap gap-2">
+                                        <h5 class="font-weight-bold text-dark mb-0" style="font-size: 1.15rem; letter-spacing: -0.01em;">
+                                            Belum Tap Presensi Masuk
+                                        </h5>
+                                        <span class="badge px-2.5 py-1 text-amber-700 bg-amber-50 border border-amber-200 font-bold" style="font-size: 11px; border-radius: 9999px;">
+                                            <i class="fa fa-exclamation-triangle mr-1 text-amber-500"></i> Menunggu Kehadiran
+                                        </span>
+                                    </div>
+                                    <p class="small text-muted mb-0 mt-1">
+                                        Silakan tap kartu presensi saat tiba di lembaga. Batas toleransi s/d <strong>{{ $jamToleransi }} WIB</strong>.
+                                    </p>
+                                </div>
                             </div>
                         @endif
-                    @else
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center mr-3 shadow-sm text-warning flex-shrink-0"
-                                style="width: 48px; height: 48px; background: #fffbeb; border: 1px solid #fde68a; font-size: 20px;">
-                                <i class="fa fa-exclamation-triangle"></i>
+
+                        <!-- 3 Mini Data Tiles Presensi -->
+                        <div class="row row-cols-3 mt-3 mb-2" style="margin-left: -4px; margin-right: -4px;">
+                            <div class="col px-1">
+                                <div class="widget-stat-tile">
+                                    <div class="widget-tile-lbl">Tap Masuk</div>
+                                    <div class="widget-tile-val text-dark">
+                                        {{ $myPresensiToday?->jam_masuk ? substr($myPresensiToday->jam_masuk, 0, 5) . ' WIB' : '-' }}
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <h6 class="font-weight-bold text-dark mb-0">Belum Ada Presensi Masuk Hari Ini</h6>
-                                <p class="small text-muted mb-0 mt-1">
-                                    Silakan tap kartu presensi saat tiba di lembaga. Batas toleransi s/d <strong>{{ $jamToleransi }} WIB</strong>.
-                                </p>
+                            <div class="col px-1">
+                                <div class="widget-stat-tile">
+                                    <div class="widget-tile-lbl">Tap Pulang</div>
+                                    <div class="widget-tile-val text-dark">
+                                        {{ $myPresensiToday?->jam_pulang ? substr($myPresensiToday->jam_pulang, 0, 5) . ' WIB' : '-' }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col px-1">
+                                <div class="widget-stat-tile">
+                                    <div class="widget-tile-lbl">Durasi Kerja</div>
+                                    <div class="widget-tile-val text-dark">
+                                        {{ ($myPresensiToday?->durasi_kerja && $myPresensiToday->durasi_kerja !== '-') ? $myPresensiToday->durasi_kerja : '-' }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    @endif
+                    </div>
 
-                    <div class="pt-2.5 border-top d-flex justify-content-between align-items-center small text-muted">
-                        <span>Jadwal Pulang Hari Ini: <strong class="text-dark">{{ $jamPulangNormal }} WIB</strong></span>
-                        <a href="{{ route('kegiatan.scanner') }}" class="font-weight-bold text-success text-decoration-none">
-                            Scan QR Kegiatan <i class="fa fa-arrow-right ml-1"></i>
+                    <div class="pt-3 border-top mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+                        <a href="{{ route('kegiatan.scanner') }}" class="btn btn-sm font-weight-bold text-white shadow-sm btn-mobile-block"
+                            style="background: linear-gradient(135deg, #ea580c 0%, #d97706 100%); border-radius: 8px; padding: 7px 18px; font-size: 12.5px; border: none; box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);">
+                            <i class="fa fa-qrcode mr-1.5"></i> Scan QR Kegiatan
                         </a>
+                        <div class="small text-muted mt-1 mt-sm-0 text-sm-right font-weight-semibold">
+                            <i class="fa fa-door-open text-primary mr-1"></i> Pulang: <strong class="text-dark">{{ $jamPulangNormal }} WIB</strong>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- CARD STATUS SHAUM SUNNAH HARI INI (HANYA BISA DIKLIK JIKA SUDAH ABSEN MASUK) -->
-        <div class="col-lg-6">
-            <div class="modern-card h-100" style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border-color: #a7f3d0 !important;">
-                <div class="modern-card-header" style="background: transparent; border-bottom-color: rgba(167, 243, 208, 0.7);">
-                    <span class="text-uppercase font-weight-bold text-success small">
-                        <i class="fa fa-moon mr-1"></i> Ibadah Shaum Sunnah Hari Ini
-                    </span>
-                    <span class="badge badge-soft-success font-weight-bold px-2 py-0.5" style="font-size: 11px;">
-                        {{ $todayShaumCount }} Pegawai Shaum
+        <!-- CARD STATUS SHAUM SUNNAH HARI INI -->
+        <div class="col-lg-6 mb-3 mb-lg-0 d-flex flex-column">
+            <div class="widget-featured-card widget-card-shaum">
+                <div class="widget-featured-header">
+                    <div class="widget-header-title text-success">
+                        <span class="widget-header-icon-pill" style="background: #dcfce7; color: #059669;">
+                            <i class="fa fa-moon"></i>
+                        </span>
+                        Ibadah Shaum Sunnah Hari Ini
+                    </div>
+                    <span class="widget-header-badge" style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;">
+                        <i class="fa fa-users mr-1 text-emerald-600"></i> {{ $todayShaumCount }} Pegawai Shaum
                     </span>
                 </div>
-                <div class="p-3.5 p-sm-4 d-flex flex-column justify-content-between" style="min-height: 165px;">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center mr-3 shadow-sm text-white flex-shrink-0"
-                            style="width: 48px; height: 48px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); font-size: 20px;">
-                            <i class="fa fa-moon"></i>
-                        </div>
-                        <div>
-                            <h5 class="font-weight-bold text-dark mb-0">
-                                @if ($myPresensiToday?->shaum)
-                                    <span class="text-success"><i class="fa fa-check-circle mr-1"></i> Anda Sedang Shaum (Puasa)</span>
-                                @elseif ($hasAbsenToday)
-                                    <span class="text-secondary"><i class="fa fa-info-circle mr-1"></i> Tidak Sedang Shaum</span>
-                                @else
-                                    <span class="text-muted"><i class="fa fa-lock mr-1"></i> Belum Melakukan Presensi Masuk</span>
-                                @endif
-                            </h5>
-                            <p class="small text-muted mb-0 mt-1">
-                                @if ($hasAbsenToday)
+
+                <div class="p-3.5 p-sm-4 d-flex flex-column flex-fill justify-content-between">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="shadow-sm text-white flex-shrink-0 mr-3 d-flex align-items-center justify-content-center"
+                                style="width: 48px; height: 48px; border-radius: 13px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); font-size: 20px;">
+                                <i class="fa fa-moon"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="d-flex align-items-center flex-wrap gap-2">
+                                    <h5 class="font-weight-bold text-dark mb-0" style="font-size: 1.15rem; letter-spacing: -0.01em;">
+                                        @if ($myPresensiToday?->shaum)
+                                            <span class="text-emerald-800">Sedang Shaum Sunnah</span>
+                                        @elseif ($hasAbsenToday)
+                                            <span class="text-slate-800">Tidak Sedang Shaum</span>
+                                        @else
+                                            <span class="text-slate-600">Presensi Belum Masuk</span>
+                                        @endif
+                                    </h5>
                                     @if ($myPresensiToday?->shaum)
-                                        Alhamdulillah, status shaum Anda tercatat aktif hari ini. Baarakallahu fiikum.
+                                        <span class="badge px-2.5 py-1 text-emerald-800 bg-emerald-100 border border-emerald-300 font-bold" style="font-size: 11px; border-radius: 9999px;">
+                                            <i class="fa fa-check-circle mr-1 text-emerald-600"></i> Tercatat Aktif
+                                        </span>
+                                    @elseif ($hasAbsenToday)
+                                        <span class="badge px-2.5 py-1 text-slate-600 bg-slate-100 border border-slate-200 font-bold" style="font-size: 11px; border-radius: 9999px;">
+                                            Hari Biasa
+                                        </span>
                                     @else
-                                        Klik tombol di bawah jika Anda sedang menjalankan shaum sunnah.
+                                        <span class="badge px-2.5 py-1 text-amber-700 bg-amber-50 border border-amber-200 font-bold" style="font-size: 11px; border-radius: 9999px;">
+                                            <i class="fa fa-lock mr-1 text-amber-500"></i> Terkunci
+                                        </span>
                                     @endif
-                                @else
-                                    <span class="text-warning font-weight-semibold">
-                                        Status shaum hanya dapat dikonfirmasi setelah Anda melakukan presensi masuk hari ini.
-                                    </span>
-                                @endif
-                            </p>
+                                </div>
+                                <p class="small text-muted mb-0 mt-1">
+                                    @if ($hasAbsenToday)
+                                        @if ($myPresensiToday?->shaum)
+                                            Alhamdulillah, status shaum Anda tercatat aktif hari ini. Baarakallahu fiikum.
+                                        @else
+                                            Klik tombol di bawah jika hari ini Anda sedang menjalankan ibadah shaum sunnah.
+                                        @endif
+                                    @else
+                                        Status shaum dapat dikonfirmasi setelah Anda melakukan tap presensi masuk.
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 3 Mini Data Tiles Shaum -->
+                        <div class="row row-cols-3 mt-3 mb-2" style="margin-left: -4px; margin-right: -4px;">
+                            <div class="col px-1">
+                                <div class="widget-stat-tile">
+                                    <div class="widget-tile-lbl">Status Hari Ini</div>
+                                    <div class="widget-tile-val {{ $myPresensiToday?->shaum ? 'text-success' : 'text-slate-600' }}">
+                                        @if ($myPresensiToday?->shaum)
+                                            <i class="fa fa-check-circle mr-0.5 text-success"></i> Shaum
+                                        @elseif ($hasAbsenToday)
+                                            Tidak
+                                        @else
+                                            Terkunci
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col px-1">
+                                <div class="widget-stat-tile">
+                                    <div class="widget-tile-lbl">Bulan Ini</div>
+                                    <div class="widget-tile-val text-success">
+                                        {{ $myShaumBulanIni ?? $myShaumDays }} <span style="font-size: 11px; font-weight: 600;">Hari</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col px-1">
+                                <div class="widget-stat-tile">
+                                    <div class="widget-tile-lbl">Total Akumulasi</div>
+                                    <div class="widget-tile-val text-success">
+                                        {{ $myShaumDays }} <span style="font-size: 11px; font-weight: 600;">Hari</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="pt-2.5 border-top d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2" style="border-top-color: rgba(167, 243, 208, 0.7) !important;">
+                    <div class="pt-3 border-top mt-auto d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2" style="border-top-color: rgba(167, 243, 208, 0.7) !important;">
                         @if ($hasAbsenToday)
-                            <form action="{{ route('presensi.my-shaum.toggle') }}" method="POST" class="d-inline">
+                            <form action="{{ route('presensi.my-shaum.toggle') }}" method="POST" class="d-inline m-0">
                                 @csrf
                                 <input type="hidden" name="karyawan_nipy" value="{{ $karyawan?->nipy }}">
                                 <button type="submit" class="btn btn-sm font-weight-bold shadow-sm btn-mobile-block"
-                                    style="border-radius: 8px; padding: 7px 18px; font-size: 12.5px; {{ $myPresensiToday->shaum ? 'background: #ffffff; color: #047857; border: 1.5px solid #10b981;' : 'background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff;' }}"
+                                    style="border-radius: 8px; padding: 7px 18px; font-size: 12.5px; {{ $myPresensiToday?->shaum ? 'background: #ffffff; color: #dc2626; border: 1.5px solid #fecaca;' : 'background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);' }}"
                                     title="Klik untuk mengubah status shaum Anda hari ini">
-                                    @if ($myPresensiToday->shaum)
+                                    @if ($myPresensiToday?->shaum)
                                         <i class="fa fa-times text-danger mr-1"></i> Ubah ke Tidak Shaum
                                     @else
-                                        <i class="fa fa-moon mr-1"></i> Konfirmasi Saya Sedang Shaum
+                                        <i class="fa fa-moon mr-1.5"></i> Konfirmasi Sedang Shaum
                                     @endif
                                 </button>
                             </form>
                         @else
                             <button type="button" class="btn btn-sm btn-light border text-muted btn-mobile-block" disabled
-                                style="border-radius: 8px; font-size: 12px; cursor: not-allowed;"
+                                style="border-radius: 8px; font-size: 12px; padding: 7px 18px; cursor: not-allowed;"
                                 title="Anda harus absen harian terlebih dahulu sebelum mengonfirmasi shaum">
-                                <i class="fa fa-lock mr-1.5 text-secondary"></i> Wajib Absen Masuk Terlebih Dahulu
+                                <i class="fa fa-lock mr-1.5 text-secondary"></i> Wajib Absen Masuk Dulu
                             </button>
                         @endif
-                        <span class="small text-muted mt-1 mt-sm-0">
-                            Bulan Ini: <strong class="text-success">{{ $myShaumBulanIni ?? $myShaumDays }} Hari</strong>
-                            &bull; Total: <strong class="text-success">{{ $myShaumDays }} Hari</strong>
-                        </span>
+                        <div class="small text-muted mt-1 mt-sm-0 text-sm-right font-weight-semibold">
+                            <i class="fa fa-award text-success mr-1"></i> Total: <strong class="text-success">{{ $myShaumDays }} Hari Shaum</strong>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -625,7 +835,7 @@
     </div>
 
     <!-- ROW 2: 4 KARTU STATISTIK KEHADIRAN (RESPONSIF 2x2 PADA MOBILE & 4 KOLOM PADA DESKTOP) -->
-    <div class="row mb-4">
+    <div class="row mb-3">
         <!-- KPI 1: Kehadiran -->
         <div class="col-6 col-lg-3 mb-3">
             <div class="kpi-stat-card">

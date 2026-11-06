@@ -7,23 +7,6 @@
 @section('content')
 <div class="user-presensi-wrapper user-fasilitas-wrapper">
 
-    {{-- Alert Notifikasi Success / Error --}}
-    @if (session('success'))
-        <div class="up-alert up-alert--success">
-            <i class="fa fa-check-circle"></i>
-            <span>{{ session('success') }}</span>
-        </div>
-    @endif
-    @if (session('error'))
-        <div class="up-alert up-alert--error">
-            <i class="fa fa-exclamation-triangle"></i>
-            <span>{{ session('error') }}</span>
-        </div>
-    @endif
-
-    {{-- =========================================================================
-         1. MODERN HERO CARD & FILTER STATUS
-         ========================================================================= --}}
     <div class="up-hero-card">
         <div class="up-hero-card__decor-1"></div>
         <div class="up-hero-card__decor-2"></div>

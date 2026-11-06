@@ -433,10 +433,6 @@
                     <i class="fa fa-user-plus text-primary"></i> Presensi Manual
                 </button>
 
-                <button type="button" class="btn btn-light border btn-action-modern text-dark" onclick="openKegiatanModal('scannerModal')">
-                    <i class="fa fa-camera text-success"></i> Scan Kamera
-                </button>
-
                 <a href="{{ route('kegiatan.qr', $kegiatan->id) }}" target="_blank" class="btn btn-primary btn-action-modern shadow-sm">
                     <i class="fa fa-qrcode"></i> Layar QR Proyektor
                 </a>

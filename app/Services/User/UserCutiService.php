@@ -26,7 +26,7 @@ class UserCutiService
         $karyawan = $user->karyawan ?? Karyawan::where('nipy', $user->no_induk)->first();
         $nipy = $karyawan?->nipy ?? $user->no_induk;
 
-        // 2. Filter Periode Tahun & Status
+        // 2. Filter Periode Tahun, Status & Pencarian
         $selectedYear = null;
         if (isset($filters['tahun'])) {
             if ($filters['tahun'] !== 'semua' && $filters['tahun'] !== '') {
@@ -37,12 +37,13 @@ class UserCutiService
         }
 
         $selectedStatus = !empty($filters['status']) ? $filters['status'] : null;
+        $search = !empty($filters['search']) ? trim($filters['search']) : null;
 
         // 3. Ringkasan KPI Statistik (Agregasi 1 Query Bersatu)
-        $statistik = $this->getStatistikCuti($nipy, $selectedYear);
+        $statistik = $this->getStatistikCuti($nipy, $selectedYear, $search);
 
         // 4. Riwayat Seluruh Pengajuan Cuti Pegawai (Zero N+1 Eager Loading)
-        $riwayatCuti = $this->getRiwayatCuti($nipy, $selectedYear, $selectedStatus);
+        $riwayatCuti = $this->getRiwayatCuti($nipy, $selectedYear, $selectedStatus, $search);
 
         // 5. Opsi Filter Tahun dari riwayat yang pernah tercatat
         $tahunOptions = $this->getTahunOptions($nipy);
@@ -58,6 +59,8 @@ class UserCutiService
             'selectedYear'   => $selectedYear,
             'selectedStatus' => $selectedStatus,
             'tahunOptions'   => $tahunOptions,
+            'filters'        => $filters,
+            'search'         => $search,
         ];
     }
 
@@ -179,9 +182,10 @@ class UserCutiService
      *
      * @param string|null $nipy
      * @param int|null $tahun
+     * @param string|null $search
      * @return array
      */
-    public function getStatistikCuti(?string $nipy, ?int $tahun = null): array
+    public function getStatistikCuti(?string $nipy, ?int $tahun = null, ?string $search = null): array
     {
         if (!$nipy) {
             return [
@@ -196,6 +200,17 @@ class UserCutiService
 
         if ($tahun) {
             $query->whereYear('awal_cuti', $tahun);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('alasan', 'like', "%{$search}%")
+                  ->orWhere('alamat', 'like', "%{$search}%")
+                  ->orWhere('telepon', 'like', "%{$search}%")
+                  ->orWhereHas('jenisCuti', function ($sub) use ($search) {
+                      $sub->where('nama', 'like', "%{$search}%");
+                  });
+            });
         }
 
         $row = $query->selectRaw("
@@ -219,9 +234,10 @@ class UserCutiService
      * @param string|null $nipy
      * @param int|null $tahun
      * @param string|null $status
+     * @param string|null $search
      * @return Collection
      */
-    public function getRiwayatCuti(?string $nipy, ?int $tahun = null, ?string $status = null): Collection
+    public function getRiwayatCuti(?string $nipy, ?int $tahun = null, ?string $status = null, ?string $search = null): Collection
     {
         if (!$nipy) {
             return new Collection();
@@ -241,6 +257,17 @@ class UserCutiService
             $query->where('acc', true);
         } elseif ($status === 'menunggu') {
             $query->where('acc', false);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('alasan', 'like', "%{$search}%")
+                  ->orWhere('alamat', 'like', "%{$search}%")
+                  ->orWhere('telepon', 'like', "%{$search}%")
+                  ->orWhereHas('jenisCuti', function ($sub) use ($search) {
+                      $sub->where('nama', 'like', "%{$search}%");
+                  });
+            });
         }
 
         return $query->orderByDesc('awal_cuti')->orderByDesc('id')->get();

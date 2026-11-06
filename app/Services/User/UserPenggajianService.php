@@ -34,12 +34,13 @@ class UserPenggajianService
         }
 
         $selectedJenis = !empty($filters['jenis']) ? $filters['jenis'] : null;
+        $search = !empty($filters['search']) ? trim((string) $filters['search']) : null;
 
         // 3. Ringkasan Statistik Bulanan/Tahunan (1 Query Agregasi Bersatu)
-        $statistik = $this->getStatistikGaji($nipy, $selectedYear, $selectedJenis);
+        $statistik = $this->getStatistikGaji($nipy, $selectedYear, $selectedJenis, $search);
 
         // 4. Riwayat Slip Gaji Pegawai (Zero N+1 Query Eager Loading)
-        $riwayatPenggajian = $this->getRiwayatGaji($nipy, $selectedYear, $selectedJenis);
+        $riwayatPenggajian = $this->getRiwayatGaji($nipy, $selectedYear, $selectedJenis, $search);
 
         // 5. Opsi Filter Tahun dari riwayat yang pernah tercatat
         $tahunOptions = $this->getTahunOptions($nipy);
@@ -70,6 +71,8 @@ class UserPenggajianService
             'statusList'         => $statusList,
             'penerimaanList'     => $penerimaanList,
             'potonganList'       => $potonganList,
+            'filters'            => $filters,
+            'search'             => $search,
         ];
     }
 
@@ -79,9 +82,10 @@ class UserPenggajianService
      * @param string|null $nipy
      * @param int|null $tahun
      * @param string|null $jenis
+     * @param string|null $search
      * @return array
      */
-    public function getStatistikGaji(?string $nipy, ?int $tahun = null, ?string $jenis = null): array
+    public function getStatistikGaji(?string $nipy, ?int $tahun = null, ?string $jenis = null, ?string $search = null): array
     {
         if (!$nipy) {
             return [
@@ -100,6 +104,16 @@ class UserPenggajianService
 
         if ($jenis) {
             $query->where('jenis', $jenis);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('bulan', function ($bq) use ($search) {
+                    $bq->where('nama_bulan', 'like', "%{$search}%");
+                })
+                ->orWhere('jenis', 'like', "%{$search}%")
+                ->orWhere('keterangan', 'like', "%{$search}%");
+            });
         }
 
         $row = $query->selectRaw("
@@ -123,9 +137,10 @@ class UserPenggajianService
      * @param string|null $nipy
      * @param int|null $tahun
      * @param string|null $jenis
+     * @param string|null $search
      * @return Collection
      */
-    public function getRiwayatGaji(?string $nipy, ?int $tahun = null, ?string $jenis = null): Collection
+    public function getRiwayatGaji(?string $nipy, ?int $tahun = null, ?string $jenis = null, ?string $search = null): Collection
     {
         if (!$nipy) {
             return new Collection();
@@ -143,6 +158,16 @@ class UserPenggajianService
 
         if ($jenis) {
             $query->where('jenis', $jenis);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('bulan', function ($bq) use ($search) {
+                    $bq->where('nama_bulan', 'like', "%{$search}%");
+                })
+                ->orWhere('jenis', 'like', "%{$search}%")
+                ->orWhere('keterangan', 'like', "%{$search}%");
+            });
         }
 
         return $query->orderByDesc('id')->get();
