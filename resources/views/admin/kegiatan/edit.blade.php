@@ -57,7 +57,7 @@
 
                     <div class="col-md-3 mb-3">
                         <label class="font-weight-bold text-dark">Jenis Kegiatan <span class="text-danger">*</span></label>
-                        <select name="jenis_kegiatan" class="form-control @error('jenis_kegiatan') is-invalid @enderror" required>
+                        <select name="jenis_kegiatan" class="form-control select2 @error('jenis_kegiatan') is-invalid @enderror" required>
                             <option value="pelatihan" {{ old('jenis_kegiatan', $kegiatan->jenis_kegiatan) == 'pelatihan' ? 'selected' : '' }}>Pelatihan / Diklat</option>
                             <option value="rapat" {{ old('jenis_kegiatan', $kegiatan->jenis_kegiatan ?? 'rapat') == 'rapat' ? 'selected' : '' }}>Rapat</option>
                             <option value="seminar" {{ old('jenis_kegiatan', $kegiatan->jenis_kegiatan) == 'seminar' ? 'selected' : '' }}>Seminar / Workshop</option>
@@ -72,7 +72,7 @@
 
                     <div class="col-md-4 mb-3">
                         <label class="font-weight-bold text-dark">Tahun Ajaran <span class="text-danger">*</span></label>
-                        <select name="akademik_master_tahun_ajaran_id" class="form-control @error('akademik_master_tahun_ajaran_id') is-invalid @enderror" required>
+                        <select name="akademik_master_tahun_ajaran_id" class="form-control select2 @error('akademik_master_tahun_ajaran_id') is-invalid @enderror" required>
                             <option value="">-- Pilih Tahun Ajaran --</option>
                             @foreach($tahunAjaranList as $ta)
                                 <option value="{{ $ta->id }}" {{ old('akademik_master_tahun_ajaran_id', $kegiatan->akademik_master_tahun_ajaran_id) == $ta->id ? 'selected' : '' }}>

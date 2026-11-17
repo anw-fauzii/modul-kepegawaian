@@ -54,7 +54,7 @@
     <div class="col-md-4">
         <div class="position-relative form-group">
             <label for="is_active" class="font-weight-bold">Status Jenis Cuti</label>
-            <select name="is_active" id="is_active" class="form-control @error('is_active') is-invalid @enderror">
+            <select name="is_active" id="is_active" class="form-control select2 @error('is_active') is-invalid @enderror">
                 <option value="1" {{ old('is_active', $isEdit ? ($jenisCuti->is_active ? '1' : '0') : '1') === '1' ? 'selected' : '' }}>
                     Aktif (Dapat Dipilih)
                 </option>

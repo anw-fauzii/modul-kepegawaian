@@ -506,7 +506,7 @@
                         <label class="form-filter-label d-flex justify-content-between">
                             <span><i class="fa fa-calendar-alt mr-1 text-warning"></i> Periode Master Bulan</span>
                         </label>
-                        <select name="bulan_id" class="form-control form-filter-control" onchange="document.getElementById('filterMatriksForm').submit();">
+                        <select name="bulan_id" class="form-control form-filter-control select2" onchange="document.getElementById('filterMatriksForm').submit();">
                             @foreach ($bulanList as $b)
                                 <option value="{{ $b->id }}" {{ $selectedBulanId == $b->id ? 'selected' : '' }}>
                                     {{ $b->nama_bulan }} {{ $b->tahunAjaran ? '(' . $b->tahunAjaran->nama_tahun_ajaran . ')' : '' }} {{ $b->status ? ' [Aktif]' : '' }}
@@ -519,7 +519,7 @@
                         <label class="form-filter-label">
                             <i class="fa fa-layer-group mr-1 text-primary"></i> Kategori Pegawai
                         </label>
-                        <select name="kepegawaian_master_kategori_id" class="form-control form-filter-control" onchange="document.getElementById('filterMatriksForm').submit();">
+                        <select name="kepegawaian_master_kategori_id" class="form-control form-filter-control select2" onchange="document.getElementById('filterMatriksForm').submit();">
                             <option value="">Semua Kategori Pegawai</option>
                             @foreach ($kategoriList as $kat)
                                 <option value="{{ $kat->id }}" {{ $selectedKategoriId == $kat->id ? 'selected' : '' }}>

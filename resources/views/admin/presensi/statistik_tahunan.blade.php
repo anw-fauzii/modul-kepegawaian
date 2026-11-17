@@ -260,7 +260,7 @@
                 <label class="form-label font-weight-bold text-dark small text-uppercase mb-1">
                     <i class="fa fa-calendar-alt text-primary mr-1"></i> Tahun Ajaran (Akademik Master)
                 </label>
-                <select name="akademik_master_tahun_ajaran_id" class="form-control shadow-sm" style="border-radius: 8px;" onchange="this.form.submit()">
+                <select name="akademik_master_tahun_ajaran_id" class="form-control select2 shadow-sm" style="border-radius: 8px;" onchange="this.form.submit()">
                     @forelse ($tahunAjaranList as $ta)
                         <option value="{{ $ta->id }}" {{ $selectedTahunAjaranId == $ta->id ? 'selected' : '' }}>
                             {{ $ta->nama_tahun_ajaran }} {{ $ta->semester ? '(' . $ta->semester . ')' : '' }} {{ $ta->is_active ? ' [AKTIF]' : '' }}
@@ -276,7 +276,7 @@
                 <label class="form-label font-weight-bold text-dark small text-uppercase mb-1">
                     <i class="fa fa-layer-group text-primary mr-1"></i> Kategori Pegawai
                 </label>
-                <select name="kepegawaian_master_kategori_id" class="form-control shadow-sm" style="border-radius: 8px;" onchange="this.form.submit()">
+                <select name="kepegawaian_master_kategori_id" class="form-control select2 shadow-sm" style="border-radius: 8px;" onchange="this.form.submit()">
                     <option value="">-- Semua Kategori Pegawai --</option>
                     @foreach ($kategoriList as $kat)
                         <option value="{{ $kat->id }}" {{ $selectedKategoriId == $kat->id ? 'selected' : '' }}>
@@ -785,7 +785,7 @@
             </div>
             <div class="d-flex flex-wrap align-items-center mt-2 mt-sm-0" style="gap: 8px;">
                 @if (empty($selectedKategoriId))
-                    <select id="pegawaiKategoriFilter" class="form-control form-control-sm" style="width: 185px; border-radius: 8px;" onchange="filterPegawaiTable()">
+                    <select id="pegawaiKategoriFilter" class="form-control form-control-sm select2" data-width="195px" style="width: 195px; border-radius: 8px;" onchange="filterPegawaiTable()">
                         <option value="">Semua Kategori ({{ count($rekapPegawai) }})</option>
                         @foreach ($kategoriList as $kat)
                             @php

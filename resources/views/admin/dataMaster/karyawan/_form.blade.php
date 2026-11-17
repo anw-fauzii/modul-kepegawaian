@@ -36,7 +36,7 @@
                 <label for="jk" class="font-weight-bold" style="font-size: 0.85rem; color: #475569;">
                     Jenis Kelamin <span class="text-danger">*</span>
                 </label>
-                <select name="jk" id="jk" class="form-control @error('jk') is-invalid @enderror" style="border-radius: 6px;">
+                <select name="jk" id="jk" class="form-control select2 @error('jk') is-invalid @enderror" style="border-radius: 6px;">
                     <option value="">-- Pilih Jenis Kelamin --</option>
                     <option value="L" @selected($val('jk') === 'L')>Laki-laki</option>
                     <option value="P" @selected($val('jk') === 'P')>Perempuan</option>
@@ -136,7 +136,7 @@
                     Kategori Karyawan <span class="text-danger">*</span>
                 </label>
                 <select name="kepegawaian_master_kategori_id" id="kepegawaian_master_kategori_id"
-                    class="form-control @error('kepegawaian_master_kategori_id') is-invalid @enderror" style="border-radius: 6px;">
+                    class="form-control select2 @error('kepegawaian_master_kategori_id') is-invalid @enderror" style="border-radius: 6px;">
                     <option value="">-- Pilih Kategori --</option>
                     @foreach ($kategori as $item)
                         <option value="{{ $item->id }}" @selected((string) $val('kepegawaian_master_kategori_id') === (string) $item->id)>
@@ -163,7 +163,7 @@
                     Jam Kerja <span class="text-danger">*</span>
                 </label>
                 <select name="kepegawaian_master_jam_kerja_id" id="kepegawaian_master_jam_kerja_id"
-                    class="form-control @error('kepegawaian_master_jam_kerja_id') is-invalid @enderror" style="border-radius: 6px;">
+                    class="form-control select2 @error('kepegawaian_master_jam_kerja_id') is-invalid @enderror" style="border-radius: 6px;">
                     <option value="">-- Pilih Jam Kerja --</option>
                     @foreach ($jamKerja as $item)
                         <option value="{{ $item->id }}" @selected((string) $val('kepegawaian_master_jam_kerja_id') === (string) $item->id)>
@@ -202,7 +202,7 @@
                     Jenjang Pendidikan <span class="text-danger">*</span>
                 </label>
                 <select name="akademik_pelengkap_jenjang_pendidikan_id" id="akademik_pelengkap_jenjang_pendidikan_id"
-                    class="form-control @error('akademik_pelengkap_jenjang_pendidikan_id') is-invalid @enderror" style="border-radius: 6px;">
+                    class="form-control select2 @error('akademik_pelengkap_jenjang_pendidikan_id') is-invalid @enderror" style="border-radius: 6px;">
                     <option value="">-- Pilih Jenjang --</option>
                     @foreach ($jenjang as $item)
                         <option value="{{ $item->id }}" @selected((string) $val('akademik_pelengkap_jenjang_pendidikan_id') === (string) $item->id)>

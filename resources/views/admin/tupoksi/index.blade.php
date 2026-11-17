@@ -218,7 +218,7 @@
                         <label class="form-filter-label">
                             <i class="fa fa-graduation-cap mr-1 text-warning"></i> Tahun Ajaran
                         </label>
-                        <select name="akademik_master_tahun_ajaran_id" class="form-control form-filter-control">
+                        <select name="akademik_master_tahun_ajaran_id" class="form-control form-filter-control select2">
                             <option value="">-- Semua Tahun Ajaran --</option>
                             @foreach($tahunAjaranList as $ta)
                                 <option value="{{ $ta->id }}" {{ (isset($filters['akademik_master_tahun_ajaran_id']) && $filters['akademik_master_tahun_ajaran_id'] == $ta->id) ? 'selected' : '' }}>

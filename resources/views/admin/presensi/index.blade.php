@@ -180,7 +180,7 @@
                         <label class="form-filter-label">
                             <i class="fa fa-layer-group mr-1 text-primary"></i> Kategori Pegawai
                         </label>
-                        <select name="kepegawaian_master_kategori_id" class="form-control form-filter-control">
+                        <select name="kepegawaian_master_kategori_id" class="form-control form-filter-control select2">
                             <option value="">Semua Kategori</option>
                             @foreach ($kategoriList as $k)
                                 <option value="{{ $k->id }}" {{ request('kepegawaian_master_kategori_id') == $k->id ? 'selected' : '' }}>
@@ -213,7 +213,7 @@
                         <label class="form-filter-label">
                             <i class="fa fa-tag mr-1 text-success"></i> Status Kehadiran
                         </label>
-                        <select name="status" class="form-control form-filter-control">
+                        <select name="status" class="form-control form-filter-control select2">
                             <option value="">Semua Status</option>
                             @foreach ([
                                 'hadir'       => 'Hadir Tepat Waktu',
@@ -238,7 +238,7 @@
                         <label class="form-filter-label">
                             <i class="fa fa-moon mr-1 text-success"></i> Status Shaum
                         </label>
-                        <select name="shaum" class="form-control form-filter-control">
+                        <select name="shaum" class="form-control form-filter-control select2">
                             <option value="">Semua</option>
                             <option value="1" {{ request('shaum') === '1' ? 'selected' : '' }}>Shaum</option>
                             <option value="0" {{ request('shaum') === '0' ? 'selected' : '' }}>Tidak Shaum</option>

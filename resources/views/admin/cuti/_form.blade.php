@@ -189,7 +189,7 @@
         {{-- STATUS ACC --}}
         <div class="col-md-4 mb-2">
             <label for="acc" class="font-weight-bold text-dark">Status ACC</label>
-            <select name="acc" id="acc" class="form-control @error('acc') is-invalid @enderror">
+            <select name="acc" id="acc" class="form-control select2 @error('acc') is-invalid @enderror">
                 <option value="0" {{ old('acc', $isEdit ? ($cuti->acc ? '1' : '0') : '0') === '0' ? 'selected' : '' }}>
                     ⏳ Menunggu Persetujuan (Belum ACC)
                 </option>
@@ -502,28 +502,26 @@
         }
 
         if (jenisCutiSelect) {
-            jenisCutiSelect.addEventListener('change', onJenisCutiChange);
-            if (window.jQuery && $(jenisCutiSelect).data('select2')) {
-                $(jenisCutiSelect).on('select2:select', onJenisCutiChange);
+            if (window.jQuery) {
+                $(jenisCutiSelect).on('change', onJenisCutiChange);
+            } else {
+                jenisCutiSelect.addEventListener('change', onJenisCutiChange);
             }
         }
 
         // Auto isi nomor telepon dari Karyawan yang dipilih
         if (karyawanSelect) {
-            karyawanSelect.addEventListener('change', function () {
-                const selected = this.options[this.selectedIndex];
+            const onKaryawanPhoneSync = function () {
+                const selected = karyawanSelect.options[karyawanSelect.selectedIndex];
                 const phone = selected ? selected.getAttribute('data-phone') : '';
                 if (phone && (!teleponInput.value || teleponInput.value.trim() === '')) {
                     teleponInput.value = phone;
                 }
-            });
-            if (window.jQuery && $(karyawanSelect).data('select2')) {
-                $(karyawanSelect).on('select2:select', function (e) {
-                    const phone = $(this).find(':selected').data('phone');
-                    if (phone && (!teleponInput.value || teleponInput.value.trim() === '')) {
-                        teleponInput.value = phone;
-                    }
-                });
+            };
+            if (window.jQuery) {
+                $(karyawanSelect).on('change', onKaryawanPhoneSync);
+            } else {
+                karyawanSelect.addEventListener('change', onKaryawanPhoneSync);
             }
         }
 

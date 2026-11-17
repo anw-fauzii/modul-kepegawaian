@@ -228,7 +228,7 @@
                             <span><i class="fa fa-calendar-alt mr-1 text-info"></i> Periode Bulan</span>
                             <span class="text-warning" style="text-transform: none;"><i class="fa fa-info-circle"></i> Cut-off tgl 28</span>
                         </label>
-                        <select name="kepegawaian_master_bulan_id" class="form-control form-filter-control" onchange="document.getElementById('filterCategoryForm').submit();">
+                        <select name="kepegawaian_master_bulan_id" class="form-control form-filter-control select2" onchange="document.getElementById('filterCategoryForm').submit();">
                             <option value="">-- Otomatis (Cut-off 28) --</option>
                             @foreach ($bulanList as $b)
                                 <option value="{{ $b->id }}" {{ $selectedBulanId == $b->id ? 'selected' : '' }}>
@@ -242,7 +242,7 @@
                         <label class="form-filter-label">
                             <i class="fa fa-layer-group mr-1 text-primary"></i> Kategori Pegawai <span class="text-danger">*</span>
                         </label>
-                        <select name="kepegawaian_master_kategori_id" class="form-control form-filter-control" required onchange="document.getElementById('filterCategoryForm').submit();">
+                        <select name="kepegawaian_master_kategori_id" class="form-control form-filter-control select2" required onchange="document.getElementById('filterCategoryForm').submit();">
                             <option value="">-- Pilih Kategori Pegawai --</option>
                             @foreach ($kategoriList as $kat)
                                 <option value="{{ $kat->id }}" {{ $selectedKategoriId == $kat->id ? 'selected' : '' }}>

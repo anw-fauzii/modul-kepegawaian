@@ -23,7 +23,7 @@
             <div class="form-row">
                 <div class="col-md-4 mb-3">
                     <label class="font-weight-bold small text-muted mb-1">Karyawan <span class="text-danger">*</span></label>
-                    <select name="karyawan_nipy" id="karyawan_nipy" class="form-control @error('karyawan_nipy') is-invalid @enderror" required>
+                    <select name="karyawan_nipy" id="karyawan_nipy" class="form-control select2 @error('karyawan_nipy') is-invalid @enderror" required>
                         <option value="">-- Pilih Karyawan --</option>
                         @foreach ($karyawanList as $k)
                             <option value="{{ $k->nipy }}"
@@ -37,7 +37,7 @@
                 </div>
                 <div class="col-md-3 mb-3">
                     <label class="font-weight-bold small text-muted mb-1">Jenis Pembayaran <span class="text-danger">*</span></label>
-                    <select name="jenis" id="formJenisSelect" class="form-control @error('jenis') is-invalid @enderror" required>
+                    <select name="jenis" id="formJenisSelect" class="form-control select2 @error('jenis') is-invalid @enderror" required>
                         @foreach ($jenisList as $key => $label)
                             <option value="{{ $key }}" @selected($val('jenis', request('jenis', 'gaji')) === $key)>{{ $label }}</option>
                         @endforeach
@@ -54,7 +54,7 @@
                             Periode Bulan <span class="text-danger">*</span>
                         @endif
                     </label>
-                    <select name="kepegawaian_master_bulan_id" id="formBulanSelect" class="form-control @error('kepegawaian_master_bulan_id') is-invalid @enderror" required>
+                    <select name="kepegawaian_master_bulan_id" id="formBulanSelect" class="form-control select2 @error('kepegawaian_master_bulan_id') is-invalid @enderror" required>
                         @foreach ($bulanList as $b)
                             <option value="{{ $b->id }}"
                                 data-gaji="{{ $b->nama_bulan }}{{ $b->tahunAjaran ? ' - ' . $b->tahunAjaran->nama_tahun_ajaran : '' }}{{ $b->status ? ' ★ Aktif' : '' }}"
@@ -75,7 +75,7 @@
                 </div>
                 <div class="col-md-2 mb-3">
                     <label class="font-weight-bold small text-muted mb-1">Status <span class="text-danger">*</span></label>
-                    <select name="status" class="form-control @error('status') is-invalid @enderror" required>
+                    <select name="status" class="form-control select2 @error('status') is-invalid @enderror" required>
                         @foreach ($statusList as $key => $label)
                             <option value="{{ $key }}" @selected($val('status', 'draft') === $key)>{{ $label }}</option>
                         @endforeach
@@ -176,13 +176,18 @@
         // Isi otomatis unit/jabatan/golongan saat karyawan dipilih
         var sel = document.getElementById('karyawan_nipy');
         if (sel) {
-            sel.addEventListener('change', function () {
+            var syncKaryawanMeta = function () {
                 var opt = sel.options[sel.selectedIndex];
                 ['unit', 'jabatan', 'golongan'].forEach(function (f) {
                     var el = document.getElementById(f);
                     if (el) el.value = opt ? (opt.dataset[f] || '') : '';
                 });
-            });
+            };
+            if (window.jQuery) {
+                $(sel).on('change', syncKaryawanMeta);
+            } else {
+                sel.addEventListener('change', syncKaryawanMeta);
+            }
         }
 
         // Update label & opsi periode saat jenis pembayaran diganti
@@ -211,11 +216,18 @@
                         opt.textContent = opt.getAttribute('data-gaji') || opt.textContent;
                     }
                 });
+                if (window.jQuery && $(bulanSelect).data('select2')) {
+                    $(bulanSelect).trigger('change.select2');
+                }
             }
         };
 
         if (jenisSelect) {
-            jenisSelect.addEventListener('change', updateBulanDisplay);
+            if (window.jQuery) {
+                $(jenisSelect).on('change', updateBulanDisplay);
+            } else {
+                jenisSelect.addEventListener('change', updateBulanDisplay);
+            }
             updateBulanDisplay();
         }
     });

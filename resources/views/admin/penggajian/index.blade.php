@@ -182,7 +182,7 @@
                                 Periode Bulan
                             @endif
                         </label>
-                        <select name="kepegawaian_master_bulan_id" class="form-control form-filter-control font-weight-bold" required>
+                        <select name="kepegawaian_master_bulan_id" class="form-control form-filter-control font-weight-bold select2" required>
                             @foreach ($bulanList as $b)
                                 <option value="{{ $b->id }}" @selected(($filters['kepegawaian_master_bulan_id'] ?? '') == $b->id)>
                                     @if ($currentJenis === 'thr')
@@ -200,7 +200,7 @@
                         <label class="form-filter-label">
                             <i class="fa fa-tags mr-1 text-warning"></i> Jenis Pembayaran
                         </label>
-                        <select name="jenis" class="form-control form-filter-control">
+                        <select name="jenis" class="form-control form-filter-control select2">
                             <option value="">-- Semua Jenis --</option>
                             @foreach ($jenisList as $key => $label)
                                 <option value="{{ $key }}" @selected(($filters['jenis'] ?? '') === $key)>{{ $label }}</option>
@@ -211,7 +211,7 @@
                         <label class="form-filter-label">
                             <i class="fa fa-check-circle mr-1 text-warning"></i> Status
                         </label>
-                        <select name="status" class="form-control form-filter-control">
+                        <select name="status" class="form-control form-filter-control select2">
                             <option value="">-- Semua --</option>
                             @foreach ($statusList as $key => $label)
                                 <option value="{{ $key }}" @selected(($filters['status'] ?? '') === $key)>{{ $label }}</option>
@@ -423,7 +423,7 @@
 
                 <div class="form-group mb-3">
                     <label class="font-weight-bold small text-dark mb-1">Jenis Pembayaran <span class="text-danger">*</span></label>
-                    <select name="jenis" class="form-control" required style="border-radius: 8px;">
+                    <select name="jenis" class="form-control select2" required style="border-radius: 8px;">
                         @foreach ($jenisList as $key => $label)
                             <option value="{{ $key }}" @selected(($filters['jenis'] ?? 'gaji') === $key)>{{ $label }}</option>
                         @endforeach
@@ -441,7 +441,7 @@
                             Periode Bulan <span class="text-danger">*</span>
                         @endif
                     </label>
-                    <select name="kepegawaian_master_bulan_id" id="modalBulanSelect" class="form-control font-weight-bold" required style="border-radius: 8px;">
+                    <select name="kepegawaian_master_bulan_id" id="modalBulanSelect" class="form-control font-weight-bold select2" required style="border-radius: 8px;">
                         @foreach ($bulanList as $b)
                             <option value="{{ $b->id }}"
                                 data-gaji="{{ $b->nama_bulan }}{{ $b->tahunAjaran ? ' - ' . $b->tahunAjaran->nama_tahun_ajaran : '' }}{{ $b->status ? ' [Aktif]' : '' }}"
@@ -462,7 +462,7 @@
 
                 <div class="form-group mb-3">
                     <label class="font-weight-bold small text-dark mb-1">Status Slip Baru <span class="text-danger">*</span></label>
-                    <select name="status" class="form-control" required style="border-radius: 8px;">
+                    <select name="status" class="form-control select2" required style="border-radius: 8px;">
                         <option value="draft" selected>Draft (Dapat ditinjau / diedit kembali)</option>
                         <option value="final">Final (Slip siap diproses)</option>
                     </select>
@@ -520,31 +520,45 @@
     });
 
     // Update label & opsi modal saat pilihan jenis pembayaran diganti
-    document.querySelector('#modalImportGaji select[name="jenis"]')?.addEventListener('change', function() {
-        var jenis = this.value;
-        var lbl = document.getElementById('lblModalPeriode');
-        var select = document.getElementById('modalBulanSelect');
-        if (lbl) {
-            if (jenis === 'thr') {
-                lbl.innerHTML = 'Tahun THR <span class="text-danger">*</span>';
-            } else if (jenis === 'bonus') {
-                lbl.innerHTML = 'Tahun Ajaran <span class="text-danger">*</span>';
-            } else {
-                lbl.innerHTML = 'Periode Bulan <span class="text-danger">*</span>';
-            }
-        }
-        if (select) {
-            Array.from(select.options).forEach(function(opt) {
+    (function() {
+        var syncModalBulanLabel = function(jenis) {
+            var lbl = document.getElementById('lblModalPeriode');
+            var select = document.getElementById('modalBulanSelect');
+            if (lbl) {
                 if (jenis === 'thr') {
-                    opt.textContent = opt.getAttribute('data-thr') || opt.textContent;
+                    lbl.innerHTML = 'Tahun THR <span class="text-danger">*</span>';
                 } else if (jenis === 'bonus') {
-                    opt.textContent = opt.getAttribute('data-bonus') || opt.textContent;
+                    lbl.innerHTML = 'Tahun Ajaran <span class="text-danger">*</span>';
                 } else {
-                    opt.textContent = opt.getAttribute('data-gaji') || opt.textContent;
+                    lbl.innerHTML = 'Periode Bulan <span class="text-danger">*</span>';
                 }
+            }
+            if (select) {
+                Array.from(select.options).forEach(function(opt) {
+                    if (jenis === 'thr') {
+                        opt.textContent = opt.getAttribute('data-thr') || opt.textContent;
+                    } else if (jenis === 'bonus') {
+                        opt.textContent = opt.getAttribute('data-bonus') || opt.textContent;
+                    } else {
+                        opt.textContent = opt.getAttribute('data-gaji') || opt.textContent;
+                    }
+                });
+                if (typeof jQuery !== 'undefined' && jQuery(select).data('select2')) {
+                    jQuery(select).trigger('change.select2');
+                }
+            }
+        };
+
+        if (typeof jQuery !== 'undefined') {
+            jQuery(document).on('change', '#modalImportGaji select[name="jenis"]', function() {
+                syncModalBulanLabel(this.value);
+            });
+        } else {
+            document.querySelector('#modalImportGaji select[name="jenis"]')?.addEventListener('change', function() {
+                syncModalBulanLabel(this.value);
             });
         }
-    });
+    })();
 
     if (typeof jQuery !== 'undefined') {
         jQuery(document).on('click', '[data-target="#modalImportGaji"], [data-toggle="modal"][data-target="#modalImportGaji"]', function(e) {

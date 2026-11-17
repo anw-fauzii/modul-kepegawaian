@@ -80,7 +80,7 @@
                         <label class="font-weight-bold text-dark">
                             Tahun Ajaran <span class="text-danger">*</span>
                         </label>
-                        <select name="akademik_master_tahun_ajaran_id" class="form-control @error('akademik_master_tahun_ajaran_id') is-invalid @enderror" required>
+                        <select name="akademik_master_tahun_ajaran_id" class="form-control select2 @error('akademik_master_tahun_ajaran_id') is-invalid @enderror" required>
                             <option value="">-- Pilih Tahun Ajaran --</option>
                             @foreach($tahunAjaranList as $ta)
                                 <option value="{{ $ta->id }}" {{ old('akademik_master_tahun_ajaran_id', $suratKeputusan->akademik_master_tahun_ajaran_id) == $ta->id ? 'selected' : '' }}>

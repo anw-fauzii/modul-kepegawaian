@@ -50,7 +50,7 @@
     <div class="col-md-5">
         <div class="position-relative form-group">
             <label for="is_libur_nasional" class="font-weight-bold">Kategori Libur</label>
-            <select name="is_libur_nasional" id="is_libur_nasional" class="form-control @error('is_libur_nasional') is-invalid @enderror">
+            <select name="is_libur_nasional" id="is_libur_nasional" class="form-control select2 @error('is_libur_nasional') is-invalid @enderror">
                 <option value="1" {{ old('is_libur_nasional', $isEdit ? ($hariLibur->is_libur_nasional ? '1' : '0') : '1') === '1' ? 'selected' : '' }}>
                     🇮🇩 Libur Nasional Resmi / Cuti Bersama Pemerintah
                 </option>

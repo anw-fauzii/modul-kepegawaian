@@ -79,7 +79,7 @@
                         <label class="font-weight-bold text-dark">
                             Kategori Diklat <span class="text-danger">*</span>
                         </label>
-                        <select name="kategori" id="kategoriSelect" class="form-control @error('kategori') is-invalid @enderror" required>
+                        <select name="kategori" id="kategoriSelect" class="form-control select2 @error('kategori') is-invalid @enderror" required>
                             <option value="lembaga" {{ old('kategori', $diklat->kategori) === 'lembaga' ? 'selected' : '' }}>
                                 Lembaga (Diselenggarakan oleh Yayasan / Lembaga)
                             </option>
@@ -278,13 +278,17 @@
         }
 
         if (kategoriSelect) {
-            kategoriSelect.addEventListener('change', toggleLembagaWrapper);
+            if (window.jQuery) {
+                $(kategoriSelect).on('change', toggleLembagaWrapper);
+            } else {
+                kategoriSelect.addEventListener('change', toggleLembagaWrapper);
+            }
             toggleLembagaWrapper();
         }
 
         if (kegiatanSelect) {
-            kegiatanSelect.addEventListener('change', function () {
-                const selected = this.options[this.selectedIndex];
+            var onKegiatanChange = function () {
+                const selected = kegiatanSelect.options[kegiatanSelect.selectedIndex];
                 if (selected && selected.value) {
                     if (selected.dataset.nama) namaInput.value = selected.dataset.nama;
                     if (selected.dataset.pengisi) pelaksanaInput.value = selected.dataset.pengisi;
@@ -292,7 +296,12 @@
                     if (selected.dataset.lokasi) tempatInput.value = selected.dataset.lokasi;
                     if (selected.dataset.materi) materiTextarea.value = selected.dataset.materi;
                 }
-            });
+            };
+            if (window.jQuery) {
+                $(kegiatanSelect).on('change', onKegiatanChange);
+            } else {
+                kegiatanSelect.addEventListener('change', onKegiatanChange);
+            }
         }
 
         const fileInput = document.getElementById('berkasInput');

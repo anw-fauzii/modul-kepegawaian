@@ -170,7 +170,7 @@
                         <label class="form-filter-label">
                             <i class="fa fa-layer-group mr-1 text-warning"></i> Jenis Cuti
                         </label>
-                        <select name="kepegawaian_master_jenis_cuti_id" class="form-control form-filter-control">
+                        <select name="kepegawaian_master_jenis_cuti_id" class="form-control form-filter-control select2">
                             <option value="">-- Semua Jenis Cuti --</option>
                             @foreach ($jenisCutiOptions as $jopt)
                                 <option value="{{ $jopt->id }}" {{ request('kepegawaian_master_jenis_cuti_id') == $jopt->id ? 'selected' : '' }}>
@@ -184,7 +184,7 @@
                         <label class="form-filter-label">
                             <i class="fa fa-check-circle mr-1 text-warning"></i> Status ACC
                         </label>
-                        <select name="acc" class="form-control form-filter-control">
+                        <select name="acc" class="form-control form-filter-control select2">
                             <option value="">-- Semua Status --</option>
                             <option value="1" {{ request('acc') === '1' ? 'selected' : '' }}>Disetujui (ACC)</option>
                             <option value="0" {{ request('acc') === '0' ? 'selected' : '' }}>Menunggu ACC</option>

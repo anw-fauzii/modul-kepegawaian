@@ -195,7 +195,7 @@
                         <label class="form-filter-label">
                             <i class="fa fa-exchange-alt mr-1 text-warning"></i> Status Pengembalian
                         </label>
-                        <select name="status" class="form-control form-filter-control">
+                        <select name="status" class="form-control form-filter-control select2">
                             <option value="">-- Semua Status --</option>
                             <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Belum Dikembalikan</option>
                             <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Sudah Dikembalikan</option>

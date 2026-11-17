@@ -30,6 +30,9 @@
     <!-- DataTables Tailwind CSS Integration -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.tailwindcss.min.css">
 
+    <!-- Select2 Searchable Dropdown -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css">
+
     <!-- Tailwind CSS & App JS via Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -64,6 +67,153 @@
         .modal.show, .modal.is-open { display: flex !important; align-items: center; justify-content: center; }
         .modal-dialog { position: relative; width: 100%; max-width: 520px; margin: auto; pointer-events: auto; }
         .modal-backdrop { display: none !important; }
+
+        /* Global Select2 PION Modern Theme Adapter */
+        .select2-container { min-width: 0; }
+        .select2-container--default .select2-selection--single {
+            height: 40px !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 0.625rem !important;
+            background-color: #ffffff !important;
+            display: flex !important;
+            align-items: center !important;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+        }
+        select.form-filter-control.select2 + .select2-container--default .select2-selection--single {
+            height: 38px !important;
+            border-radius: 8px !important;
+        }
+        select.form-control-sm.select2 + .select2-container--default .select2-selection--single {
+            height: 31px !important;
+            border-radius: 6px !important;
+        }
+        select.up-form-control.select2 + .select2-container--default .select2-selection--single {
+            height: 41px !important;
+            border-radius: 10px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #0f172a !important;
+            font-size: 0.875rem !important;
+            font-weight: 500;
+            line-height: 1.4 !important;
+            padding-left: 0.85rem !important;
+            padding-right: 2.2rem !important;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        select.form-filter-control.select2 + .select2-container--default .select2-selection--single .select2-selection__rendered {
+            font-size: 13px !important;
+            padding-left: 12px !important;
+            color: #1e293b !important;
+        }
+        select.form-control-sm.select2 + .select2-container--default .select2-selection--single .select2-selection__rendered {
+            font-size: 12.5px !important;
+            padding-left: 10px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__placeholder {
+            color: #64748b !important;
+            font-weight: 400;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 100% !important;
+            right: 8px !important;
+            top: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow b {
+            border-color: #64748b transparent transparent transparent !important;
+        }
+        .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+            border-color: transparent transparent #ea580c transparent !important;
+        }
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-color: #ea580c !important;
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.18) !important;
+            outline: none !important;
+        }
+        select.is-invalid + .select2-container--default .select2-selection--single {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+        }
+        .select2-container--default.select2-container--disabled .select2-selection--single {
+            background-color: #f1f5f9 !important;
+            border-color: #e2e8f0 !important;
+            cursor: not-allowed !important;
+        }
+        .select2-container--open {
+            z-index: 100000 !important;
+        }
+        .select2-dropdown {
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 10px !important;
+            box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.14), 0 4px 10px -2px rgba(15, 23, 42, 0.07) !important;
+            overflow: hidden;
+            background-color: #ffffff !important;
+            margin-top: 3px;
+        }
+        .select2-dropdown--above {
+            margin-top: -3px;
+        }
+        .select2-container--default .select2-search--dropdown {
+            padding: 8px !important;
+            background-color: #f8fafc;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .select2-container--default .select2-search--dropdown .select2-search__field {
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 7px !important;
+            padding: 6px 10px !important;
+            font-size: 13px !important;
+            color: #0f172a !important;
+            background-color: #ffffff !important;
+            outline: none !important;
+            width: 100% !important;
+        }
+        .select2-container--default .select2-search--dropdown .select2-search__field:focus {
+            border-color: #ea580c !important;
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.14) !important;
+        }
+        .select2-container--default .select2-results > .select2-results__options {
+            max-height: 250px !important;
+            overflow-y: auto;
+            padding: 4px;
+        }
+        .select2-results__option {
+            padding: 7px 10px !important;
+            font-size: 13px !important;
+            border-radius: 7px;
+            color: #334155;
+            margin-bottom: 1px;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected],
+        .select2-container--default .select2-results__option--highlighted[data-selected] {
+            background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important;
+            color: #ffffff !important;
+        }
+        .select2-container--default .select2-results__option[aria-selected=true],
+        .select2-container--default .select2-results__option[data-selected=true] {
+            background-color: #fff7ed !important;
+            color: #c2410c !important;
+            font-weight: 600;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected=true],
+        .select2-container--default .select2-results__option--highlighted[data-selected=true] {
+            color: #ffffff !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            color: #94a3b8;
+            font-size: 16px;
+            margin-right: 4px;
+            padding: 0 4px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__clear:hover {
+            color: #ef4444;
+        }
     </style>
 
     @stack('css')
@@ -113,8 +263,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
-    <!-- Global Application Scripts (DataTables, Toastr, SweetAlert) -->
+    <!-- Global Application Scripts (DataTables, Select2, Toastr, SweetAlert) -->
     <script>
         $(document).ready(function() {
             // Toastr Setup
@@ -126,6 +277,55 @@
                 "showMethod": "fadeIn",
                 "hideMethod": "fadeOut"
             };
+
+            // Global Select2 Initializer (Searchable Dropdowns)
+            window.initSelect2 = function(root = document) {
+                if (!$.fn.select2) return;
+
+                $(root).find('select.select2').each(function() {
+                    const $select = $(this);
+                    if ($select.hasClass('select2-hidden-accessible')) return;
+
+                    const $modalParent = $select.closest('.modal-import-backdrop, .modal');
+                    const customMinSearch = $select.attr('data-minimum-results-for-search');
+                    const options = {
+                        width: $select.data('width') || '100%',
+                        minimumResultsForSearch: customMinSearch !== undefined ? parseInt(customMinSearch, 10) : 0,
+                        language: {
+                            noResults: function() {
+                                return 'Data tidak ditemukan';
+                            },
+                            searching: function() {
+                                return 'Mencari...';
+                            }
+                        }
+                    };
+
+                    if ($select.is('[data-allow-clear="true"]')) {
+                        const emptyOpt = $select.find('option[value=""]').first();
+                        options.placeholder = $select.data('placeholder') || (emptyOpt.length ? emptyOpt.text().trim() : '-- Pilih --');
+                        options.allowClear = true;
+                    }
+
+                    if ($modalParent.length) {
+                        options.dropdownParent = $modalParent.first();
+                    }
+
+                    $select.select2(options);
+                });
+            };
+
+            window.initSelect2(document);
+
+            // Auto-focus Select2 search input upon opening dropdown
+            $(document).on('select2:open', function() {
+                setTimeout(function() {
+                    const searchField = document.querySelector('.select2-container--open .select2-search__field');
+                    if (searchField) {
+                        searchField.focus();
+                    }
+                }, 0);
+            });
 
             // DataTables Global Configuration
             const dtDefaultConfig = {

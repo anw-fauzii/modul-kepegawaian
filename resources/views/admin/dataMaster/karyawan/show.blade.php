@@ -456,7 +456,7 @@
                         </div>
                         <div class="col-md-5 mb-2">
                             <label class="small font-weight-bold text-dark mb-1">Kategori Pegawai</label>
-                            <select name="kepegawaian_master_kategori_id" class="form-control form-control-sm">
+                            <select name="kepegawaian_master_kategori_id" class="form-control form-control-sm select2">
                                 <option value="">-- Pilih Kategori --</option>
                                 @foreach ($kategoriList ?? [] as $kat)
                                     <option value="{{ $kat->id }}" @selected($karyawan->kepegawaian_master_kategori_id == $kat->id)>{{ $kat->nama_kategori }}</option>

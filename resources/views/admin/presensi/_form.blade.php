@@ -24,7 +24,7 @@
         <label for="kepegawaian_master_bulan_id" class="form-label font-weight-bold">
             Periode Bulan
         </label>
-        <select name="kepegawaian_master_bulan_id" id="kepegawaian_master_bulan_id" class="form-control @error('kepegawaian_master_bulan_id') is-invalid @enderror">
+        <select name="kepegawaian_master_bulan_id" id="kepegawaian_master_bulan_id" class="form-control select2 @error('kepegawaian_master_bulan_id') is-invalid @enderror">
             <option value="">-- Otomatis Sesuai Tanggal (Cut-off 28) --</option>
             @foreach ($bulanList as $b)
                 <option value="{{ $b->id }}"
@@ -59,7 +59,7 @@
         <label for="status" class="form-label font-weight-bold">
             Status Kehadiran <span class="text-danger">*</span>
         </label>
-        <select name="status" id="status" class="form-control @error('status') is-invalid @enderror" required>
+        <select name="status" id="status" class="form-control select2 @error('status') is-invalid @enderror" required>
             @foreach ([
                 'hadir'     => 'Hadir',
                 'terlambat' => 'Terlambat',

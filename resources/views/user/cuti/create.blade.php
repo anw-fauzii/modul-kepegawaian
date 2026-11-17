@@ -64,7 +64,7 @@
                             Kategori Jenis Cuti <span class="text-danger">*</span>
                         </label>
                         <select name="kepegawaian_master_jenis_cuti_id" id="kepegawaian_master_jenis_cuti_id"
-                            class="up-form-control @error('kepegawaian_master_jenis_cuti_id') is-invalid @enderror"
+                            class="up-form-control select2 @error('kepegawaian_master_jenis_cuti_id') is-invalid @enderror"
                             onchange="if(window.onJenisCutiChange) window.onJenisCutiChange();" required>
                             <option value="">-- Pilih Jenis Cuti --</option>
                             @foreach ($jenisCutiList as $jc)

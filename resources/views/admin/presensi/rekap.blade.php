@@ -233,7 +233,7 @@
                             <span><i class="fa fa-calendar-alt mr-1 text-warning"></i> Periode Master Bulan</span>
                             <span class="text-warning" style="text-transform: none;"><i class="fa fa-info-circle"></i> Cut-off tgl 28</span>
                         </label>
-                        <select name="bulan_id" class="form-control form-filter-control" required onchange="document.getElementById('rekapFilterForm').submit();">
+                        <select name="bulan_id" class="form-control form-filter-control select2" required onchange="document.getElementById('rekapFilterForm').submit();">
                             @foreach ($bulanList as $b)
                                 <option value="{{ $b->id }}" {{ $selectedBulanId == $b->id ? 'selected' : '' }}>
                                     {{ $b->nama_bulan }} {{ $b->tahunAjaran ? '(' . $b->tahunAjaran->nama_tahun_ajaran . ')' : '' }} {{ $b->status ? ' [Aktif]' : '' }}
@@ -246,7 +246,7 @@
                         <label class="form-filter-label">
                             <i class="fa fa-layer-group mr-1 text-primary"></i> Kategori Pegawai
                         </label>
-                        <select name="kepegawaian_master_kategori_id" class="form-control form-filter-control" onchange="document.getElementById('rekapFilterForm').submit();">
+                        <select name="kepegawaian_master_kategori_id" class="form-control form-filter-control select2" onchange="document.getElementById('rekapFilterForm').submit();">
                             <option value="">Semua Kategori</option>
                             @foreach ($kategoriList as $k)
                                 <option value="{{ $k->id }}" {{ $selectedKategoriId == $k->id ? 'selected' : '' }}>

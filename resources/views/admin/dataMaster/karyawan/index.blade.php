@@ -365,7 +365,7 @@
 
                     <div class="form-group mb-3">
                         <label class="font-weight-bold small text-dark mb-1">Default Status Akun User <span class="text-danger">*</span></label>
-                        <select name="default_status" class="form-control font-weight-bold" style="border-radius: 8px;">
+                        <select name="default_status" class="form-control font-weight-bold select2" style="border-radius: 8px;">
                             <option value="aktif" selected>Aktif (User dapat langsung login ke portal)</option>
                             <option value="nonaktif">Non-aktif (Akun dinonaktifkan sementara)</option>
                         </select>

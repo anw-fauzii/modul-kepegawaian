@@ -229,7 +229,7 @@
                         <label class="form-filter-label">
                             <i class="fa fa-tags mr-1 text-warning"></i> Kategori
                         </label>
-                        <select name="kategori" class="form-control form-filter-control">
+                        <select name="kategori" class="form-control form-filter-control select2">
                             <option value="">-- Semua --</option>
                             <option value="lembaga" {{ (isset($filters['kategori']) && $filters['kategori'] === 'lembaga') ? 'selected' : '' }}>Lembaga</option>
                             <option value="mandiri" {{ (isset($filters['kategori']) && $filters['kategori'] === 'mandiri') ? 'selected' : '' }}>Mandiri</option>

@@ -22,7 +22,7 @@
         <div class="position-relative form-group">
             <label for="akademik_master_tahun_ajaran_id">Tahun Ajaran</label>
             <select name="akademik_master_tahun_ajaran_id" id="akademik_master_tahun_ajaran_id"
-                class="form-control @error('akademik_master_tahun_ajaran_id') is-invalid @enderror">
+                class="form-control select2 @error('akademik_master_tahun_ajaran_id') is-invalid @enderror">
                 <option value="">-- Pilih Tahun Ajaran --</option>
                 @foreach ($tahunAjaran as $item)
                     <option value="{{ $item->id }}" @selected((string) $val('akademik_master_tahun_ajaran_id') === (string) $item->id)>
