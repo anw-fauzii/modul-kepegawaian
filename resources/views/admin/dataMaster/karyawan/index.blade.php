@@ -56,25 +56,6 @@
             </div>
         </div>
 
-        @if (session('success'))
-            <div class="alert alert-success border-0 shadow-sm d-flex align-items-center mb-3" style="border-radius: 10px;">
-                <i class="fa fa-check-circle fa-lg mr-2"></i>
-                <div>{{ session('success') }}</div>
-            </div>
-        @endif
-        @if (session('warning'))
-            <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center mb-3" style="border-radius: 10px;">
-                <i class="fa fa-exclamation-triangle fa-lg mr-2"></i>
-                <div>{{ session('warning') }}</div>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger border-0 shadow-sm d-flex align-items-center mb-3" style="border-radius: 10px;">
-                <i class="fa fa-exclamation-circle fa-lg mr-2"></i>
-                <div>{{ session('error') }}</div>
-            </div>
-        @endif
-
         <!-- Baris 1: Status Keaktifan Akun User -->
         <div class="row mb-3">
             <div class="col-md-4 mb-2">
@@ -231,7 +212,7 @@
         <div class="main-card card mb-4 shadow-sm border-0" style="border-radius: 12px;">
             <div class="card-body p-3">
                 <div class="table-responsive">
-                    <table class="mb-0 table table-hover table-striped align-middle" id="myTable3" style="width: 100%;">
+                    <table class="mb-0 table table-hover table-striped align-middle" id="myTable3" data-empty-table="Belum ada data karyawan." style="width: 100%;">
                         <thead>
                             <tr style="background: #f8fafc;">
                                 <th style="width: 5%; text-align: center;">No</th>

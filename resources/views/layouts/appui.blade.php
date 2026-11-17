@@ -137,6 +137,7 @@
                     info: "Menampilkan _START_ s/d _END_ dari _TOTAL_ data",
                     infoEmpty: "Data tidak ditemukan",
                     infoFiltered: "(disaring dari _MAX_ total data)",
+                    emptyTable: "Belum ada data yang tersedia",
                     zeroRecords: "Tidak ada data yang sesuai",
                     paginate: {
                         first: "«",
@@ -147,21 +148,36 @@
                 }
             };
 
-            $('.datatable-default, #myTable, #myTable2, #myTable4').DataTable($.extend({}, dtDefaultConfig, {
+            const initDataTableWithOptions = (selector, extraOptions) => {
+                $(selector).each(function() {
+                    const $table = $(this);
+                    if ($.fn.DataTable.isDataTable(this)) return;
+
+                    const options = $.extend(true, {}, dtDefaultConfig, extraOptions);
+                    const customEmpty = $table.data('empty-table');
+                    if (customEmpty) {
+                        options.language.emptyTable = customEmpty;
+                    }
+
+                    $table.DataTable(options);
+                });
+            };
+
+            initDataTableWithOptions('.datatable-default, #myTable, #myTable2, #myTable4', {
                 ordering: false,
                 lengthMenu: [[25, 50, 100, -1], ['25', '50', '100', 'Semua']]
-            }));
+            });
 
-            $('.datatable-ordered, #myTable3, #myTable5').DataTable($.extend({}, dtDefaultConfig, {
+            initDataTableWithOptions('.datatable-ordered, #myTable3, #myTable5', {
                 ordering: true,
                 lengthMenu: [[25, 50, 100, -1], ['25', '50', '100', 'Semua']]
-            }));
+            });
 
-            $('.datatable-custom, #myTable6').DataTable($.extend({}, dtDefaultConfig, {
+            initDataTableWithOptions('.datatable-custom, #myTable6', {
                 ordering: false,
                 searching: false,
                 lengthMenu: [[25, 50, 100, -1], ['25', '50', '100', 'Semua']]
-            }));
+            });
 
             // Flash Notification Messages
             const $body = $('body');

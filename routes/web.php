@@ -15,10 +15,7 @@ Auth::routes();
 
 // Verifikasi publik keaslian SK (dari QR code pada dokumen)
 Route::get('/verifikasi/sk/{kode}', [App\Http\Controllers\VerifikasiSuratKeputusanController::class, 'show'])->name('verifikasi.sk');
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/data-master/karyawan/{karyawan}/foto', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'foto'])->name('karyawan.foto');
-});
+Route::get('/data-master/karyawan/{karyawan}/foto', [App\Http\Controllers\Admin\DataMaster\KaryawanController::class, 'foto'])->name('karyawan.foto');
 
 Route::middleware(['auth', 'sso.check', 'nocache'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class,'index'])->name('home');

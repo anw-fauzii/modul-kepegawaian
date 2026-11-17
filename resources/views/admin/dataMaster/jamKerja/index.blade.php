@@ -35,7 +35,7 @@
         <div class="main-card card mb-3">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="mb-0 table table-hover table-striped" id="myTable3">
+                    <table class="mb-0 table table-hover table-striped" id="myTable3" data-empty-table="Belum ada data jam kerja tersimpan.">
                         <thead>
                             <tr>
                                 <th style="width: 5%;">No</th>
@@ -50,7 +50,7 @@
                             @php
                                 $no = 1;
                             @endphp
-                            @forelse ($jamKerja as $item)
+                            @foreach ($jamKerja as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->nama }}</td>
@@ -80,13 +80,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">
-                                        <i class="fa fa-info-circle mr-1"></i> Belum ada data jam kerja tersimpan.
-                                    </td>
-                                </tr>
-                            @endforelse
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

@@ -49,29 +49,11 @@
         </div>
     </div>
 
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 10px;">
-            <i class="fa fa-check-circle mr-1.5"></i> {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 10px;">
-            <i class="fa fa-exclamation-triangle mr-1.5"></i> {{ session('error') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
     <!-- MAIN CARD -->
     <div class="main-card card mb-3" style="border-radius: 12px; border: 1px solid #e2e8f0;">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="mb-0 table table-hover table-striped align-middle" id="myTable3">
+                <table class="mb-0 table table-hover table-striped align-middle" id="myTable3" data-empty-table="Belum ada data hari libur tersimpan.">
                     <thead>
                         <tr>
                             <th style="width: 5%;">No</th>
@@ -84,7 +66,7 @@
                     </thead>
                     <tbody>
                         @php $no = 1; @endphp
-                        @forelse ($hariLibur as $item)
+                        @foreach ($hariLibur as $item)
                             <tr>
                                 <td>{{ $no++ }}</td>
                                 <td>
@@ -140,13 +122,7 @@
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center text-muted py-4">
-                                    <i class="fa fa-info-circle mr-1"></i> Belum ada data hari libur tersimpan.
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>

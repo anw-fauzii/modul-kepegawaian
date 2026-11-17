@@ -35,7 +35,7 @@
         <div class="main-card card mb-3">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="mb-0 table table-hover table-striped" id="myTable3">
+                    <table class="mb-0 table table-hover table-striped" id="myTable3" data-empty-table="Belum ada data bulan tersimpan.">
                         <thead>
                             <tr>
                                 <th style="width: 5%;">No</th>
@@ -49,7 +49,7 @@
                             @php
                                 $no = 1;
                             @endphp
-                            @forelse ($bulan as $item)
+                            @foreach ($bulan as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->nama_bulan }}</td>
@@ -89,13 +89,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted py-4">
-                                        <i class="fa fa-info-circle mr-1"></i> Belum ada data bulan tersimpan.
-                                    </td>
-                                </tr>
-                            @endforelse
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

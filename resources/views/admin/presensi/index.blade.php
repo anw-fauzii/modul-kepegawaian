@@ -156,23 +156,6 @@
         </div>
     </div>
 
-    @if (session('sukses'))
-        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 10px;">
-            <i class="fa fa-check-circle mr-1.5"></i> {{ session('sukses') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 10px;">
-            <i class="fa fa-exclamation-triangle mr-1.5"></i> {{ session('error') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
     <!-- FILTER CARD (Form & Quick Shortcuts) -->
     <div class="filter-card card mb-4">
         <div class="card-body p-4">
